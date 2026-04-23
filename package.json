@@ -1,9 +1,9 @@
 {
-    "name": "bf6-portal-scripting-template",
-    "experienceName": "Scripting Template",
-    "version": "1.7.0",
+    "name": "frontlines",
+    "experienceName": "Frontlines",
+    "version": "0.0.1",
     "type": "module",
-    "description": "Scripting template for Battlefield 6 Portal (use \"Use this template\" on GitHub to create a new project)",
+    "description": "Battlefield Frontlines",
     "engines": {
         "node": ">=24.0.0"
     },
@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/deluca-mike/bf6-portal-scripting-template.git"
+        "url": "git+https://github.com/The0zzy/bf6-portal-frontlines"
     },
     "keywords": [
         "template",
@@ -33,28 +33,29 @@
         "battlefield-6",
         "bf6"
     ],
-    "author": "Michael De Luca",
+    "author": "The0zzy, andy6170, mancour",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/deluca-mike/bf6-portal-scripting-template/issues"
+        "url": "https://github.com/The0zzy/bf6-portal-frontlines/issues"
     },
-    "homepage": "https://github.com/deluca-mike/bf6-portal-scripting-template#readme",
+    "homepage": "https://github.com/The0zzy/bf6-portal-frontlines#readme",
     "devDependencies": {
         "@bf6mods/portal": "^1.1.0",
-        "@clack/prompts": "^1.0.1",
-        "@typescript-eslint/eslint-plugin": "^8.56.0",
-        "@typescript-eslint/parser": "^8.56.0",
-        "bf6-portal-bundler": "^1.3.0",
+        "@clack/prompts": "^1.2.0",
+        "@typescript-eslint/eslint-plugin": "^8.59.0",
+        "@typescript-eslint/parser": "^8.59.0",
+        "bf6-portal-bundler": "^1.3.1",
         "bf6-portal-mod-types": "^2.3.1",
-        "bf6-portal-utils": "^9.0.1",
-        "dotenv": "^17.3.1",
-        "eslint": "^10.0.1",
+        "bf6-portal-utils": "^9.1.0",
+        "dotenv": "^17.4.2",
+        "eslint": "^10.2.1",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.5",
-        "prettier": "^3.8.1",
+        "prettier": "^3.8.3",
         "sharp": "^0.34.5",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.56.0"
-    }
+        "typescript-eslint": "^8.59.0"
+    },
+    "templateVersion": "1.7.0"
 }
