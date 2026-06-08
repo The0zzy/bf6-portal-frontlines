@@ -41,21 +41,21 @@
     "homepage": "https://github.com/The0zzy/bf6-portal-frontlines#readme",
     "devDependencies": {
         "@bf6mods/portal": "^1.1.0",
-        "@clack/prompts": "^1.2.0",
-        "@typescript-eslint/eslint-plugin": "^8.59.0",
-        "@typescript-eslint/parser": "^8.59.0",
-        "bf6-portal-bundler": "^1.3.1",
-        "bf6-portal-mod-types": "^2.3.1",
-        "bf6-portal-utils": "^9.1.0",
+        "@clack/prompts": "^1.5.1",
+        "@typescript-eslint/eslint-plugin": "^8.60.1",
+        "@typescript-eslint/parser": "^8.60.1",
+        "bf6-portal-bundler": "^1.4.1",
+        "bf6-portal-mod-types": "^3.1.0",
+        "bf6-portal-utils": "^9.2.0",
         "dotenv": "^17.4.2",
-        "eslint": "^10.2.1",
+        "eslint": "^10.4.1",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-prettier": "^5.5.6",
         "prettier": "^3.8.3",
         "sharp": "^0.34.5",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.59.0"
+        "typescript-eslint": "^8.60.1"
     },
     "templateVersion": "1.7.0"
 }
