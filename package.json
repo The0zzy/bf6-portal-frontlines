@@ -1,9 +1,9 @@
 {
     "name": "frontlines",
     "experienceName": "Frontlines",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "type": "module",
-    "description": "Battlefield Frontlines",
+    "description": "Frontlines",
     "engines": {
         "node": ">=24.0.0"
     },
@@ -22,10 +22,6 @@
         "deploy:minor": "npm run build && node scripts/deploy.js --script dist/bundle.ts --strings dist/bundle.strings.json --versionBump minor",
         "deploy:major": "npm run build && node scripts/deploy.js --script dist/bundle.ts --strings dist/bundle.strings.json --versionBump major"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/The0zzy/bf6-portal-frontlines"
-    },
     "keywords": [
         "template",
         "portal",
@@ -33,29 +29,25 @@
         "battlefield-6",
         "bf6"
     ],
-    "author": "The0zzy, andy6170, mancour",
+    "author": "TheOzzy, Andy6170, Mancour",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/The0zzy/bf6-portal-frontlines/issues"
-    },
-    "homepage": "https://github.com/The0zzy/bf6-portal-frontlines#readme",
     "devDependencies": {
         "@bf6mods/portal": "^1.1.0",
-        "@clack/prompts": "^1.5.1",
-        "@typescript-eslint/eslint-plugin": "^8.60.1",
-        "@typescript-eslint/parser": "^8.60.1",
+        "@clack/prompts": "^1.6.0",
+        "@typescript-eslint/eslint-plugin": "^8.62.0",
+        "@typescript-eslint/parser": "^8.62.0",
         "bf6-portal-bundler": "^1.4.1",
         "bf6-portal-mod-types": "^3.1.0",
         "bf6-portal-utils": "^9.2.0",
         "dotenv": "^17.4.2",
-        "eslint": "^10.4.1",
+        "eslint": "^10.5.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.6",
-        "prettier": "^3.8.3",
-        "sharp": "^0.34.5",
+        "prettier": "^3.8.4",
+        "sharp": "^0.35.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.60.1"
+        "typescript-eslint": "^8.62.0"
     },
-    "templateVersion": "1.7.0"
+    "templateVersion": "0.0.1"
 }

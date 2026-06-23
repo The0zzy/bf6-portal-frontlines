@@ -1,0 +1,8 @@
+{
+    "frontlines": {
+        "preparation": "Preparation",
+        "capture": "Capture",
+        "neutralization": "Neutralization",
+        "mcom": "M-COM"
+    }
+}
