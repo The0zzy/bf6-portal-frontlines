@@ -7,10 +7,12 @@ This is a mod for Battlefield 6 that adds a new game mode called "Frontlines".
 ### Flag Capture
 
 In the opening stage, teams fight for control over one flag at a time. The flag in the center of the map is contested
-first. The capture zones for the flags are considerably larger. Capture rate is decreased, while neutralize rate is
-increased. Once captured, another flag becomes available for capture after a 30-second delay. The entire flag area is
-open at all times, allowing for wide flanks, vanguard attacks on prospective flags, or booby-trapping of rear flags, but
-at risk of leaving the currently-contested flag open for easy capture.
+first. The capture zones for the flags are considerably larger. Capture rate is a fixed time (no capture multiplier by
+the amount of players on point), while neutralize rate is increased.
+
+Once captured, another flag becomes available for capture after a 30-second delay. The entire play area is open at all
+times, allowing for wide flanks, vanguard attacks on prospective flags, or booby-trapping of rear flags, but at risk of
+leaving the currently-contested flag open for easy capture.
 
 ### Base Defense
 
@@ -24,7 +26,7 @@ play.
 
 Victory is earned upon successful destruction of all the enemy MCOMs. In case of reaching the 40-minute time limit, the
 team with more MCOMs still standing wins. If both teams have the same number of MCOMs still standing, the match ends in
-a draw irregardless of the currently captured flags.
+a draw if both teams have the same amount of captured flags. Otherwise, the team with more captured flags wins.
 
 #### Overtime
 
