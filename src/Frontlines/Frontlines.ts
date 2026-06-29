@@ -24,6 +24,27 @@ export class Frontlines {
         Frontlines.instance.init();
     }
 
+    static isPositionValid(object: mod.Object): boolean {
+        const position = mod.GetObjectPosition(object);
+        const posX = mod.XComponentOf(position);
+        const posY = mod.YComponentOf(position);
+        const posZ = mod.ZComponentOf(position);
+        if (Math.abs(posX) < 1 && Math.abs(posY) < 1 && Math.abs(posZ) < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    static isCapturePointValid(capturePointId: number): boolean {
+        const cp = mod.GetCapturePoint(capturePointId);
+        return Frontlines.isPositionValid(cp);
+    }
+
+    static isMcomValid(mcomId: number): boolean {
+        const mcom = mod.GetMCOM(mcomId);
+        return Frontlines.isPositionValid(mcom);
+    }
+
     init() {
         // Disable all capture points at the start of the game
         const allCapturePoints = mod.AllCapturePoints();
@@ -35,8 +56,36 @@ export class Frontlines {
         // Frontlines capture point object ID range: 0-9
         for (let i = 0; i < 10; i++) {
             const capturePoint = mod.GetCapturePoint(i);
-            if (capturePoint) {
+            if (Frontlines.isCapturePointValid(i)) {
                 this.captureChain.push(capturePoint);
+            }
+        }
+
+        // Frontlines HQ object ID range: 100-120 (twice as many as capture points)
+        // 9 CPs    = 18 HQs 
+        //          + 2 standard HQs 
+        //          = 20 total HQs
+        // 119 (team 1), 120 (team 2) are the outmost HQs that should always be active
+        // 100 (team 1), 101 (team 2) are the next HQs in the chain, and so on
+        for (let i = 100; i < 119; i++) {
+            const hq = mod.GetHQ(i);
+            if (Frontlines.isPositionValid(hq)) {
+                mod.EnableGameModeObjective(hq, false);
+            }
+        }
+        for (let standardHQ of [119, 120]) {
+            const hq = mod.GetHQ(standardHQ);
+            if (Frontlines.isPositionValid(hq)) {
+                mod.EnableGameModeObjective(hq, false);
+            }
+        }
+
+        // Frontlines mcom object ID range: 20-24
+        for (let i = 20; i < 25; i++) {
+            const mcom = mod.GetMCOM(i);
+            if (Frontlines.isMcomValid(i)) {
+                mod.EnableGameModeObjective(mcom, false);
+                this.mcoms.push(mcom);
             }
         }
 
@@ -85,9 +134,7 @@ export class Frontlines {
 
     subscribeToEvents() {
         this.eventSubscriptions.push(
-            Events.OnCapturePointCaptured.subscribe(
-                (capturePoint: mod.CapturePoint) => this.onCapturePointCaptured(capturePoint)
-            )
+            Events.OnCapturePointCaptured.subscribe(this.onCapturePointCaptured.bind(this))
         );
     }
 
