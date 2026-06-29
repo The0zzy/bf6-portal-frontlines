@@ -3,6 +3,9 @@
         "preparation": "Preparation",
         "capture": "Capture",
         "neutralization": "Neutralization",
-        "mcom": "M-COM"
+        "mcom": "M-COM",
+        "debug": {
+            "mcom_phase": "M-COM Phase not implemented yet."
+        }
     }
 }
