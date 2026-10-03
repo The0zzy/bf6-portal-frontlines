@@ -76,7 +76,7 @@ export class Frontlines {
         for (let standardHQ of [119, 120]) {
             const hq = mod.GetHQ(standardHQ);
             if (Frontlines.isPositionValid(hq)) {
-                mod.EnableGameModeObjective(hq, false);
+                mod.EnableGameModeObjective(hq, true);
             }
         }
 
