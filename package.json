@@ -29,7 +29,7 @@
         "battlefield-6",
         "bf6"
     ],
-    "author": "TheOzzy, Andy6170, Mancour",
+    "author": "TheOzzy, Andy6170, Mancour, Markebarca",
     "license": "MIT",
     "devDependencies": {
         "@bf6mods/portal": "^1.2.0",
