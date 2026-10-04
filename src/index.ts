@@ -708,7 +708,7 @@ class FrontlinesUI {
                 mod.UIImageType.CrownOutline,             // UIImageType: imageType
                 BLUEVEC,                // Vektor: imageColor 
                 1,
-                team
+                team                                    
             );
         }
 
@@ -2667,12 +2667,11 @@ export function OnPlayerDeployed(eventPlayer: mod.Player): void {
     if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1))) {
 
         if (currentSectorIndex == sectors.length) {
-
-            if (unitsRemainingTeam1 <= 0) return;
+            
 
             unitsRemainingTeam1--;
 
-
+           
             if (unitsRemainingTeam1 <= 0) {
                 unitsRemainingTeam1 = 0;
                 nextSector(mod.GetTeam(2));
@@ -2684,8 +2683,6 @@ export function OnPlayerDeployed(eventPlayer: mod.Player): void {
     } else {
 
         if (currentSectorIndex == -1) {
-
-            if (unitsRemainingTeam2 <= 0) return;
 
             unitsRemainingTeam2--;
 
