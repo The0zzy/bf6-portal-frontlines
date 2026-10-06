@@ -56,13 +56,15 @@
 */
 
 //Frontlines Settings
-const timeLimit = 60;
-const captureTime = 40;
-const captureNeutralizationTime = 30;
-const mCOMFuseTime = 40;
+const timeLimit = 60; //minutes
+const captureTime = 40; //seconds
+const captureNeutralizationTime = 30; //seconds
+const mCOMFuseTime = 40; //seconds
 const maxUnitsRemaining = 100;
-const redeployTime = 15;
-const sectorTimer = 30;
+const redeployTime = 15; //seconds
+const sectorTimer = 30; //seconds
+const daytime = 14; //minutes
+const nighttime = 10; //minutes
 
 //imports
 import { ParseUI } from "modlib";
@@ -75,7 +77,9 @@ interface FrontlineSettings {
     mCOMFuseTime: number,
     maxUnitsRemaining: number,
     redeployTime: number,
-    sectorTimer: number
+    sectorTimer: number,
+    daytime: number,
+    nighttime: number
 }
 
 //data structures
@@ -374,6 +378,8 @@ let currentSectorIndex: number = 0;
 let unitsRemainingTeam1: number = 200;
 let unitsRemainingTeam2: number = 200;
 
+let isDay: boolean = true;
+
 /***********************************************************************************
 ***************************** Frontlines Setup *************************************
 ***********************************************************************************/
@@ -385,7 +391,9 @@ let frontlinesSettings: FrontlineSettings = {
     mCOMFuseTime: mCOMFuseTime,
     maxUnitsRemaining: maxUnitsRemaining,
     redeployTime: redeployTime,
-    sectorTimer: sectorTimer
+    sectorTimer: sectorTimer,
+    daytime: daytime,
+    nighttime: nighttime,
 }
 
 /***********************************************************************************
@@ -708,7 +716,7 @@ class FrontlinesUI {
                 mod.UIImageType.CrownOutline,             // UIImageType: imageType
                 BLUEVEC,                // Vektor: imageColor 
                 1,
-                team                                    
+                team
             );
         }
 
@@ -1228,25 +1236,57 @@ function getPlayersInTeam(team: number): any[] {
 function secondTimer(): void {
     secondTimerRunning = true;
     mod.Wait(1).then(() => {
-        //Timer update
+        // Timer update
         matchTimer--;
         if (fUITeam1 && fUITeam2) {
             updateTimerUI(fUITeam1);
             updateTimerUI(fUITeam2);
         }
         if (matchTimer == 0) {
-            //Time over
+            // Time over
             if (currentSectorIndex > sectors.length - 1) {
                 mod.EndGameMode(mod.GetTeam(1));
-            }
-            else {
+            } else {
                 mod.EndGameMode(mod.GetTeam(2));
             }
-
             return;
         }
+
+        // Day/Night cycle
+        const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
+        const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
+
+        if (minutesPassed < frontlinesSettings.daytime) {
+            if (!isDay) {
+                const allPlayers = [
+                    ...modlib.getPlayersInTeam(mod.GetTeam(1)),
+                    ...modlib.getPlayersInTeam(mod.GetTeam(2))
+                ];
+
+                for (const player of allPlayers) {
+                    mod.EnableScreenEffect(player, mod.ScreenEffects.Night, false);
+                    mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
+                }
+
+                isDay = true;
+            }
+        } else {
+            if (isDay) {
+                const allPlayers = [
+                    ...modlib.getPlayersInTeam(mod.GetTeam(1)),
+                    ...modlib.getPlayersInTeam(mod.GetTeam(2))
+                ];
+
+                for (const player of allPlayers) {
+                    mod.EnableScreenEffect(player, mod.ScreenEffects.Night, true);
+                    mod.AddEquipment(player, mod.Gadgets.Mask_NVG);
+                }
+
+                isDay = false;
+            }
+        }
         secondTimer();
-    })
+    });
 }
 
 function findCapturePoint(capturePoint: mod.CapturePoint): ICapturePoint | undefined {
@@ -1266,13 +1306,25 @@ function getConquerMessageFromSector(): mod.Message {
     if (sectors) {
         switch (sector.letter) {
             case "A":
-                mod.Message(mod.stringkeys.conquerSectorAMSG);
+                result = mod.Message(mod.stringkeys.conquerSectorAMSG);
                 break;
             case "B":
-                mod.Message(mod.stringkeys.conquerSectorBMSG);
+                result = mod.Message(mod.stringkeys.conquerSectorBMSG);
                 break;
             case "C":
-                mod.Message(mod.stringkeys.conquerSectorCMSG);
+                result = mod.Message(mod.stringkeys.conquerSectorCMSG);
+                break;
+            case "D":
+                result = mod.Message(mod.stringkeys.conquerSectorDMSG);
+                break;
+            case "E":
+                result = mod.Message(mod.stringkeys.conquerSectorEMSG);
+                break;
+            case "F":
+                result = mod.Message(mod.stringkeys.conquerSectorFMSG);
+                break;
+            case "G":
+                result = mod.Message(mod.stringkeys.conquerSectorGMSG);
                 break;
         }
     }
@@ -1281,31 +1333,31 @@ function getConquerMessageFromSector(): mod.Message {
 }
 
 function getLooseMessageFromSector(): mod.Message {
-    let result = mod.Message(mod.stringkeys.conquerSectorAMSG);
+    let result = mod.Message(mod.stringkeys.looseSectorAMSG);
 
     let sector = sectors[currentSectorIndex];
     if (sectors) {
         switch (sector.letter) {
             case "A":
-                mod.Message(mod.stringkeys.looseSectorAMSG);
+                result = mod.Message(mod.stringkeys.looseSectorAMSG);
                 break;
             case "B":
-                mod.Message(mod.stringkeys.looseSectorBMSG);
+                result = mod.Message(mod.stringkeys.looseSectorBMSG);
                 break;
             case "C":
-                mod.Message(mod.stringkeys.looseSectorCMSG);
+                result = mod.Message(mod.stringkeys.looseSectorCMSG);
                 break;
             case "D":
-                mod.Message(mod.stringkeys.looseSectorDMSG);
+                result = mod.Message(mod.stringkeys.looseSectorDMSG);
                 break;
             case "E":
-                mod.Message(mod.stringkeys.looseSectorEMSG);
+                result = mod.Message(mod.stringkeys.looseSectorEMSG);
                 break;
             case "F":
-                mod.Message(mod.stringkeys.looseSectorFMSG);
+                result = mod.Message(mod.stringkeys.looseSectorFMSG);
                 break;
             case "G":
-                mod.Message(mod.stringkeys.looseSectorGMSG);
+                result = mod.Message(mod.stringkeys.looseSectorGMSG);
                 break;
         }
     }
@@ -1868,20 +1920,31 @@ function nextSector(team: mod.Team): void {
         console.log("PusherHQ:" + lastSector.hqId);
     }
 
-    mod.Wait(2).then(() => {
-        //enable new HQ for defender
-        // let defenderTeam = mod.Equals(team, mod.GetTeam(1))? mod.GetTeam(2): mod.GetTeam(1);
-
-        let lastDefenderSector = sectors[currentSectorIndex + 1];
-
-        let hq2 = mod.GetHQ(lastDefenderSector.hqId);
-        if (hq2) {
-            mod.SetHQTeam(hq2, mod.GetTeam(2));
-            mod.EnableHQ(hq2, true);
-
-            console.log("DefenderHQ:" + lastDefenderSector.hqId);
-        }
+    //backup
+    mod.Wait(3).then(() => {
+        mod.SetHQTeam(hq1, mod.GetTeam(1));
+        mod.EnableHQ(hq1, true);
     })
+
+    //enable new HQ for defender
+    // let defenderTeam = mod.Equals(team, mod.GetTeam(1))? mod.GetTeam(2): mod.GetTeam(1);
+
+    let lastDefenderSector = sectors[currentSectorIndex + 1];
+
+    let hq2 = mod.GetHQ(lastDefenderSector.hqId);
+    if (hq2) {
+        mod.SetHQTeam(hq2, mod.GetTeam(2));
+        mod.EnableHQ(hq2, true);
+
+        console.log("DefenderHQ:" + lastDefenderSector.hqId);
+    }
+
+    //backup
+    mod.Wait(3).then(() => {
+        mod.SetHQTeam(hq2, mod.GetTeam(2));
+        mod.EnableHQ(hq2, true);
+    })
+
 
     //deactivate objectives and spawn icons
     let currentSector = sectors[currentSectorIndex];
@@ -2664,14 +2727,24 @@ function OnPlayerSwitchTeam(eventPlayer: mod.Player, eventTeam: mod.Team): void 
 }
 
 export function OnPlayerDeployed(eventPlayer: mod.Player): void {
+    //day/night
+    if (isDay) {
+        mod.EnableScreenEffect(eventPlayer, mod.ScreenEffects.Night, false);
+        mod.RemoveEquipment(eventPlayer, mod.Gadgets.Mask_NVG);
+    }
+    else {
+        mod.EnableScreenEffect(eventPlayer, mod.ScreenEffects.Night, true);
+        mod.AddEquipment(eventPlayer, mod.Gadgets.Mask_NVG);
+    }
+
     if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1))) {
 
         if (currentSectorIndex == sectors.length) {
-            
+
 
             unitsRemainingTeam1--;
 
-           
+
             if (unitsRemainingTeam1 <= 0) {
                 unitsRemainingTeam1 = 0;
                 nextSector(mod.GetTeam(2));
