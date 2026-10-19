@@ -221,56 +221,17 @@ class CustomMCOM {
         if (this.alarmSFX) {
             mod.StopSound(this.alarmSFX);
         }
-        let gameEventNotificationData = mod.CreateGameEventNotificationData();
 
-
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: mcomDestroyedMessage1,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(1)
-        });
-
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: mcomDestroyedMessage2,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(2)
-        });
+        let notification = mod.CreateGameEventNotificationData();
+        mod.SetIconForGameEventNotificationData(notification, mod.WorldIconImages.Explosion);
+        mod.SetSizeForGameEventNotificationData(notification, mod.GameEventNotificationSizes.Normal);
+        mod.SetColorForGameEventNotificationData(notification, mod.GameEventNotificationColors.Neutral)
+        mod.SetStyleForGameEventNotificationData(notification, mod.GameEventNotificationStyles.Normal);
+        mod.SetMessageForGameEventNotificationData(notification, mcomDestroyedMessage1);
+        mod.SetObjectiveForGameEventNotificationData(notification, this.mcomObj);
+        mod.SendGameEventNotification(notification, mod.GetTeam(1));
+        mod.SetMessageForGameEventNotificationData(notification, mcomDestroyedMessage2);
+        mod.SendGameEventNotification(notification, mod.GetTeam(2));
 
         if (this.team1Icon && this.team2Icon) {
             mod.UnspawnObject(this.team1Icon);
@@ -889,36 +850,6 @@ interface PlaySoundProps {
     seconds?: number | undefined; // Duration in seconds for which the sound should play
     player?: mod.Player | undefined;  // Optional player to target (for local playback)
     sfx?: mod.SFX | undefined;
-}
-
-function PlaySFX(props: PlaySoundProps) {
-    // Determines default values for missing properties
-    const position = props.position ?? mod.CreateVector(0, 0, 0);
-    const seconds = props.seconds ?? 5;
-    const volume = props.volume ?? 1;
-    const range = props.range ?? 1;
-    let playerValid = props.player && mod.IsPlayerValid(props.player);
-
-    let sfx: mod.SFX = props.sfx ?? mod.SpawnObject(props.sfxAsset, position, mod.CreateVector(0, 0, 0));
-
-    if (!props.position && playerValid) {
-        mod.PlaySound(sfx, volume, props.player!);
-    }
-    else if (!props.position) {
-        mod.PlaySound(sfx, volume);
-    }
-    else if (playerValid) {
-        mod.PlaySound(sfx, volume, position, range, props.player!);
-    } else {
-        mod.PlaySound(sfx, volume, position, range);
-    }
-
-    mod.Wait(seconds).then(() => {
-        mod.StopSound(sfx);
-        if (!props.sfx) {
-            mod.UnspawnObject(sfx);
-        }
-    });
 }
 
 function updateTimerUI(prophunt_ui: FrontlinesUI): void {
@@ -2197,10 +2128,6 @@ export function OnPlayerEarnedKillAssist(eventPlayer: mod.Player, eventOtherPlay
 
         updateScoreboard(eventPlayer, playerData);
     }
-}
-
-export function OnPlayerLeaveGame(eventNumber: number): void {
-    autoTeamBalanceLeave(true, 2);
 }
 
 export function OnPlayerJoinGame(eventPlayer: mod.Player): void {

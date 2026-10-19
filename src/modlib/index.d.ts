@@ -36397,3 +36397,4 @@ declare namespace mod {
         export function OnVehicleSpawned(eventVehicle: mod.Vehicle): void;
     }
 }
+declare const console: { log(...args: any[]): void };
