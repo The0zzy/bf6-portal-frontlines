@@ -11,15 +11,15 @@
     Sector and Object ID Rules
     -------------------------
 
-    â¢ sectorIDs:        101â110
-    â¢ areaIDs:          301â310        (areaID = sectorID + 200)
-    â¢ hqIDs:            401â410        (hqID = sectorID + 300)
+    sectorIDs:        101 - 110
+    areaIDs:          301 - 310        (areaID = sectorID + 200)
+    hqIDs:            401 - 410        (hqID = sectorID + 300)
 
-    â¢ capturePointIDs per sector:
-        Sector 101 â 1001â1010
-        Sector 102 â 1101â1110
-        Sector 103 â 1201â1210
-        Sector 104 â 1301â1310
+    capturePointIDs per sector:
+        Sector 101  -  1001 - 1010
+        Sector 102  -  1101 - 1110
+        Sector 103  -  1201 - 1210
+        Sector 104  -  1301 - 1310
         ...
         Formula:
             baseID = 1001 + (sectorID - 101) * 100
@@ -45,14 +45,14 @@
     Important Notes
     -------------------------
 
-    â¢ All IDs must be assigned correctly in the Godot map.
-    â¢ If an ID is missing or incorrect, the corresponding object will not be detected.
-    â¢ The code automatically loads:
+    - All IDs must be assigned correctly in the Godot map.
+    - If an ID is missing or incorrect, the corresponding object will not be detected.
+    - The code automatically loads:
         - Sectors via mod.GetSector(sectorID)
         - Areas via mod.GetArea(areaID)
         - HQs via mod.GetHQ(hqID)
         - Capture Points via mod.GetCapturePoint(capturePointID)
-    â¢ No additional setup or registration is needed in the code.
+    -  No additional setup or registration is needed in the code.
 */
 
 //Frontlines Settings
@@ -65,10 +65,6 @@ const redeployTime = 15; //seconds
 const sectorTimer = 30; //seconds
 const daytime = 14; //minutes
 const nighttime = 10; //minutes
-
-//imports
-import { ParseUI } from "modlib";
-import * as modlib from "modlib";
 
 interface FrontlineSettings {
     timeLimit: number,
@@ -225,6 +221,8 @@ class CustomMCOM {
         if (this.alarmSFX) {
             mod.StopSound(this.alarmSFX);
         }
+        let gameEventNotificationData = mod.CreateGameEventNotificationData();
+
 
         playTextSequence({
             background: {
@@ -445,47 +443,6 @@ let mComTeam2: IMCOM[] =
 ***********************************************************************************/
 
 let sectors: ISector[] = [];
-
-// outdated
-
-// let sectors: ISector[] = [
-//     {
-//         letter: "A",
-//         id: 101,
-//         areaId: 301,
-//         hqId: 401,
-//         captureStatus: 0,
-//         ownerTeam: mod.GetTeam(1),
-//         capturePoints: new Map([
-//             [201, { letter: "A", playerIds: [], player2Ids: [] }],
-//         ]),
-//     },
-//     {
-//         letter: "B",
-//         id: 102,
-//         areaId: 302,
-//         hqId: 402,
-//         captureStatus: 0,
-//         ownerTeam: undefined,
-//         capturePoints: new Map([
-//             [202, { letter: "A", playerIds: [], player2Ids: [] }],
-//             [203, { letter: "B", playerIds: [], player2Ids: [] }],
-//         ]),
-
-//     },
-//     {
-//         letter: "C",
-//         id: 103,
-//         areaId: 303,
-//         hqId: 403,
-//         captureStatus: 0,
-//         ownerTeam: mod.GetTeam(2),
-//         capturePoints: new Map([
-//             [204, { letter: "A", playerIds: [], player2Ids: [] }],
-//         ]),
-
-//     }
-// ];
 
 /*----------------------------------------------------------------------------------------------------*/
 
@@ -920,192 +877,6 @@ class FrontlinesUI {
 
 }
 
-// -------------------- Text Sequence System --------------------
-
-interface TextElement {
-    message: mod.Message;
-    anchor?: mod.UIAnchor;
-    delay?: number;
-    duration?: number;
-    fadeInSpeed?: number;
-    fadeOutDuration?: number;
-    textSize?: number;
-    color?: [number, number, number];
-    shrinkScale?: number;
-    moveDown?: number;
-    offsetY?: number;
-}
-
-interface BackgroundConfig {
-    position?: [number, number];
-    size: [number, number];
-    color: [number, number, number];
-    alpha: number;
-    anchor?: mod.UIAnchor;
-}
-
-interface SequenceConfig {
-    background: BackgroundConfig;
-    texts: TextElement[];
-    player?: mod.Player;
-    team?: mod.Team;
-}
-
-function animateText(
-    elem: TextElement,
-    root: mod.UIWidget,
-    bg: BackgroundConfig,
-    currentYOffset: number,
-    onFinished?: () => void
-): void {
-    const textSize = elem.textSize ?? 36;
-    const color = elem.color ?? [1, 1, 1];
-
-    currentYOffset += elem.offsetY ?? 20;
-
-    const textWidget = ParseUI({
-        type: "Text",
-        parent: root,
-        size: [0, 0],
-        position: [0, currentYOffset],
-        anchor: elem.anchor ?? mod.UIAnchor.Center,
-        textAnchor: mod.UIAnchor.Center,
-        bgFill: mod.UIBgFill.None,
-        textSize: textSize,
-        textColor: color,
-        textLabel: elem.message
-    });
-
-    if (!textWidget) {
-        // Nothing to animate; still notify completion to avoid hanging the root
-        if (onFinished) onFinished();
-        return;
-    }
-
-    mod.SetUIWidgetVisible(textWidget, false);
-
-    // Start fade-in sequence 
-    const start = () => {
-        mod.SetUIWidgetVisible(textWidget, true);
-
-        // Fade-In
-        const fadeSpeed = elem.fadeInSpeed ?? 0.03;
-        const steps = Math.max(1, Math.floor(1 / fadeSpeed));
-        const targetSize = mod.CreateVector(bg.size[0], textSize + 10, 1);
-
-        let i = 0;
-        const fadeInStep = () => {
-            const progress = i / steps;
-            const newSize = mod.CreateVector(
-                mod.XComponentOf(targetSize) * progress,
-                mod.YComponentOf(targetSize) * progress,
-                1
-            );
-            mod.SetUIWidgetSize(textWidget, newSize);
-            i++;
-            if (i <= steps) {
-                mod.Wait(fadeSpeed).then(fadeInStep);
-            } else {
-                // Hold then fade out
-                const hold = elem.duration ?? 2.0;
-                mod.Wait(hold).then(() => fadeOut());
-            }
-        };
-
-        fadeInStep();
-    };
-
-    if (elem.delay && elem.delay > 0) {
-        mod.Wait(elem.delay).then(start);
-    } else {
-        start();
-    }
-
-    // Fade-Out sequence
-    const fadeOut = () => {
-        const fadeOutDur = elem.fadeOutDuration ?? 1.0;
-        const fadeSteps = Math.max(1, Math.floor(fadeOutDur / 0.05));
-        const shrinkScale = elem.shrinkScale ?? 0.8;
-        const moveDown = elem.moveDown ?? 15;
-
-        const baseSize = mod.GetUIWidgetSize(textWidget);
-        const basePos = mod.GetUIWidgetPosition(textWidget);
-        if (!baseSize || !basePos) {
-            // If cannot read size/pos, just hide and finish
-            mod.SetUIWidgetVisible(textWidget, false);
-            if (onFinished) onFinished();
-            return;
-        }
-
-        let j = 0;
-        const fadeOutStep = () => {
-            const progress = j / fadeSteps;
-            const scale = 1 - progress * (1 - shrinkScale);
-            const moveY = mod.YComponentOf(basePos) + progress * moveDown;
-
-            const newSize = mod.CreateVector(
-                mod.XComponentOf(baseSize) * scale,
-                mod.YComponentOf(baseSize) * scale,
-                1
-            );
-
-            mod.SetUIWidgetSize(textWidget, newSize);
-            mod.SetUIWidgetPosition(
-                textWidget,
-                mod.CreateVector(mod.XComponentOf(basePos), moveY, 1)
-            );
-
-            j++;
-            if (j < fadeSteps) {
-                mod.Wait(0.05).then(fadeOutStep);
-            } else {
-                // hide text and notify completion
-                mod.SetUIWidgetVisible(textWidget, false);
-                if (onFinished) onFinished();
-            }
-        };
-
-        fadeOutStep();
-    };
-}
-
-export function playTextSequence(config: SequenceConfig): void {
-    const bg = config.background;
-
-    const root = ParseUI({
-        type: "Container",
-        size: bg.size,
-        position: bg.position ?? [0, 0],
-        anchor: bg.anchor ?? mod.UIAnchor.Center,
-        bgFill: mod.UIBgFill.Solid,
-        bgColor: bg.color,
-        bgAlpha: bg.alpha,
-        playerId: config.player,
-        teamId: config.team
-    });
-    if (!root) return;
-
-    let currentYOffset = 0;
-    let finishedCount = 0;
-    const total = config.texts.length;
-
-    // Completion callback: hide background after all texts are done
-    const onFinished = () => {
-        finishedCount++;
-        if (finishedCount >= total) {
-            mod.SetUIWidgetVisible(root, false);
-            mod.DeleteUIWidget(root);
-        }
-    };
-
-    // Schedule all text animations
-    config.texts.forEach(elem => {
-        const offset = currentYOffset;
-        // currentYOffset += (elem.offsetY ?? 20) + (elem.textSize ?? 36);
-        animateText(elem, root, bg, offset, onFinished);
-    });
-}
-
 /*-----------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------- Helper Functions ------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -1180,59 +951,6 @@ function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
 }
 
-function GetPlayerFromId(playerId: number): mod.Player | null {
-    const players = mod.AllPlayers();
-    for (let i = 0; i < mod.CountOf(players); i++) {
-        const p = mod.ValueInArray(players, i);
-        if (modlib.getPlayerId(p) === playerId) {
-            return p;
-        }
-    }
-    return null;
-}
-
-function updateProgressBar(progressBarBG: mod.UIWidget, progressBarFill: mod.UIWidget, value: number, min: number, max: number): void {
-    if (value < min) value = min;
-    if (value > max) value = max;
-
-    let progress: number = (value - min) / (max - min);
-
-    const bgSize = mod.GetUIWidgetSize(progressBarBG);
-
-    let newSize: mod.Vector = mod.CreateVector(mod.XComponentOf(bgSize) * progress, mod.YComponentOf(bgSize), mod.ZComponentOf(bgSize));
-
-    mod.SetUIWidgetSize(progressBarFill, newSize);
-
-}
-
-function getAllNearbyPlayer(location: mod.Vector, radius: number): any[] {
-    const allPlayers = [
-        ...modlib.getPlayersInTeam(mod.GetTeam(1)),
-        ...modlib.getPlayersInTeam(mod.GetTeam(2))
-    ];
-
-    let nearbyPlayers: any[] = [];
-    for (const player of allPlayers) {
-        if (mod.DistanceBetween(location, mod.GetObjectPosition(player)) <= radius) {
-            nearbyPlayers.push(player);
-        }
-    }
-
-    return nearbyPlayers; //Player[] as type
-}
-
-function getPlayersInTeam(team: number): any[] {
-    let players = modlib.ConvertArray(mod.AllPlayers());
-    let playersInTeam = [];
-    for (const player of players) {
-        if (mod.Equals(mod.GetTeam(player), mod.GetTeam(team))) {
-            playersInTeam.push(player);
-        }
-    }
-
-    return playersInTeam;
-}
-
 function secondTimer(): void {
     secondTimerRunning = true;
     mod.Wait(1).then(() => {
@@ -1255,15 +973,12 @@ function secondTimer(): void {
         // Day/Night cycle
         const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
         const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
-
+        const allPlayers = mod.GetAllPlayers();
         if (minutesPassed < frontlinesSettings.daytime) {
             if (!isDay) {
-                const allPlayers = [
-                    ...modlib.getPlayersInTeam(mod.GetTeam(1)),
-                    ...modlib.getPlayersInTeam(mod.GetTeam(2))
-                ];
-
-                for (const player of allPlayers) {
+                console.log("Transitioning to day.");
+                for (let i = 0; i < mod.CountOf(allPlayers); i++) {
+                    const player = mod.ValueInArray(allPlayers, i);
                     mod.EnableScreenEffect(player, mod.ScreenEffects.Night, false);
                     mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
                 }
@@ -1272,12 +987,9 @@ function secondTimer(): void {
             }
         } else {
             if (isDay) {
-                const allPlayers = [
-                    ...modlib.getPlayersInTeam(mod.GetTeam(1)),
-                    ...modlib.getPlayersInTeam(mod.GetTeam(2))
-                ];
-
-                for (const player of allPlayers) {
+                console.log("Transitioning to night.");
+                for (let i = 0; i < mod.CountOf(allPlayers); i++) {
+                    const player = mod.ValueInArray(allPlayers, i);
                     mod.EnableScreenEffect(player, mod.ScreenEffects.Night, true);
                     mod.AddEquipment(player, mod.Gadgets.Mask_NVG);
                 }
@@ -1363,59 +1075,6 @@ function getLooseMessageFromSector(): mod.Message {
     }
 
     return result;
-}
-
-function autoTeamBalanceJoin(joinedPlayer: mod.Player): void {
-    if (mod.GetSoldierState(joinedPlayer, mod.SoldierStateBool.IsAISoldier)) {
-        return;
-    }
-    console.log("Team1Count:" + team1PlayersCount + " Team2Count:" + team2PlayersCount);
-
-    if (team1PlayersCount < team2PlayersCount) {
-        mod.SetTeam(joinedPlayer, mod.GetTeam(1));
-        team1PlayersCount++;
-    }
-    else if (team1PlayersCount > team2PlayersCount) {
-        mod.SetTeam(joinedPlayer, mod.GetTeam(2));
-        team2PlayersCount++;
-    }
-    else {
-        mod.SetTeam(joinedPlayer, mod.GetTeam(1));
-        team1PlayersCount++;
-    }
-}
-
-function autoTeamBalanceLeave(moveLastPlayers: boolean, minMoveDiff: number): void {
-    let team1Players = modlib.getPlayersInTeam(mod.GetTeam(1));
-    let team2Players = modlib.getPlayersInTeam(mod.GetTeam(2));
-
-    team1PlayersCount = team1Players.length;
-    team2PlayersCount = team2Players.length;
-
-    if (moveLastPlayers) {
-        const diff = team1PlayersCount - team2PlayersCount;
-        if (diff * -1 < minMoveDiff) {
-            return;
-        }
-
-        if (diff > 0) {
-            for (let i = 0; i < diff; i++) {
-                let playerIndex = team1PlayersCount - i;
-                let playerToMove = team1Players[playerIndex];
-
-                mod.SetTeam(playerToMove, mod.GetTeam(2));
-            }
-        }
-        else {
-            for (let i = 0; i < diff; i++) {
-                let playerIndex = team2PlayersCount - i;
-                let playerToMove = team2Players[playerIndex];
-
-                mod.SetTeam(playerToMove, mod.GetTeam(1));
-            }
-
-        }
-    }
 }
 
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -2222,115 +1881,6 @@ function checkPlayerEnteredAllowedZone(player: mod.Player, eventAreaTrigger: mod
 
 export function OnPlayerEnterAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
     checkPlayerEnteredAllowedZone(eventPlayer, eventAreaTrigger);
-    // outdated
-    // let area = mod.GetAreaTrigger(sectors[currentSectorIndex].areaId)
-    // if (!area) {
-    //     return;
-    // }
-    // if (mod.Equals(area, eventAreaTrigger)) {
-    //     let playerData = playerDataMap.get(modlib.getPlayerId(eventPlayer));
-
-    //     if (playerData && playerData.ui) {
-    //         playerData.inBounds = true;
-    //         playerData.ui.ShowBoundsUI(eventPlayer, false);
-    //     }
-    // }
-    //mcom arm/fuse area
-    // else if (currentSectorIndex == -1) {
-    //     for (const mcom of mComTeam1) {
-    //         let areaObj = mod.GetAreaTrigger(mcom.customMCOM.data.interactionAreaId);
-    //         if (areaObj) {
-    //             if (mod.Equals(areaObj, eventAreaTrigger)) {
-
-    //                 return;
-    //             }
-    //         }
-    //     }
-    // }
-    // else if (currentSectorIndex == 3) {
-    //     for (const mcom of mComTeam2) {
-    //         let areaObj = mod.GetAreaTrigger(mcom.customMCOM.data.interactionAreaId);
-    //         if (areaObj) {
-    //             if (mod.Equals(areaObj, eventAreaTrigger)) {
-
-    //                 return;
-    //             }
-    //         }
-    //     }
-    // }
-}
-
-export function OnMCOMArmed(eventMCOM: mod.MCOM): void {
-    // outdated
-    // let ownerMCOM: IMCOM | undefined;
-
-    // let sfxArmed = mod.GetSFX(mod.RuntimeSpawn_Common.SFX_GameModes_Rush_Armed_OneShot3D);
-    // if (sfxArmed) {
-    //     mod.PlaySound(sfxArmed, 1, mod.GetObjectPosition(eventMCOM), 1);
-    // }
-
-    // let sfxAlarm = mod.GetSFX(mod.RuntimeSpawn_Common.SFX_GameModes_Rush_Alarm_SimpleLoop3D);
-    // if (sfxAlarm) {
-    //     mod.PlaySound(sfxAlarm, 1, mod.GetObjectPosition(eventMCOM), 1);
-    // }
-
-    // for (const mcom of mComTeam1) {
-    //     let mcomObj = mod.GetMCOM(mcom.customMCOM.data.id);
-    //     if (mod.Equals(mcomObj, eventMCOM)) {
-    //         ownerMCOM = mcom;
-    //     }
-    // }
-
-    // for (const mcom of mComTeam2) {
-    //     let mcomObj = mod.GetMCOM(mcom.customMCOM.data.id);
-    //     if (mod.Equals(mcomObj, eventMCOM)) {
-    //         ownerMCOM = mcom;
-    //     }
-    // }
-
-    // if (!ownerMCOM) {
-    //     return;
-    // }
-
-    // //vo
-    // if (mod.Equals(ownerMCOM.customMCOM.data.ownerTeam, mod.GetTeam(1))) {
-    //     let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-    //     mod.PlayVO(vo, mod.VoiceOverEvents2D.MComDefuseEnemy, mod.VoiceOverFlags.Alpha, mod.GetTeam(2));
-
-    //     mod.PlayVO(vo, mod.VoiceOverEvents2D.MComArmFriendly, mod.VoiceOverFlags.Alpha, mod.GetTeam(1));
-
-    //     mod.Wait(8).then(() => {
-    //         if (vo) {
-    //             mod.UnspawnObject(vo);
-    //         }
-    //     })
-
-
-    // }
-    // else {
-    //     let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-    //     mod.PlayVO(vo, mod.VoiceOverEvents2D.MComArmFriendly, mod.VoiceOverFlags.Alpha, mod.GetTeam(1));
-
-    //     mod.PlayVO(vo, mod.VoiceOverEvents2D.MComArmEnemy, mod.VoiceOverFlags.Alpha, mod.GetTeam(2));
-
-    //     mod.Wait(8).then(() => {
-    //         if (vo) {
-    //             mod.UnspawnObject(vo);
-    //         }
-    //     })
-    // }
-}
-
-export function OnMCOMDefused(eventMCOM: mod.MCOM): void {
-    // let sfxDefused = mod.GetSFX(mod.RuntimeSpawn_Common.SFX_GameModes_Rush_Armed_OneShot3D);
-    // if (sfxDefused) {
-    //     mod.PlaySound(sfxDefused, 1, mod.GetObjectPosition(eventMCOM), 1);
-    // }
-
-    // let sfxAlarm = mod.GetSFX(mod.RuntimeSpawn_Common.SFX_GameModes_Rush_Alarm_SimpleLoop3D);
-    // if (sfxAlarm) {
-    //     mod.StopSound(sfxAlarm);
-    // }
 }
 
 export function OnMCOMDestroyed(eventMCOM: mod.MCOM): void {
@@ -2526,7 +2076,7 @@ export function OngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
 
             activePoints++;
 
-            let progress = mod.GetCaptureProgress(cp); // 0â1
+            let progress = mod.GetCaptureProgress(cp); // 0 - 1
             let owner = mod.GetOwnerProgressTeam(cp);
 
             if (mod.Equals(owner, mod.GetTeam(1))) {
@@ -2569,7 +2119,7 @@ export function OngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
 
                 // Neutraler Bereich liegt automatisch zwischen Fill1 und Fill2,
                 // weil Fill1 von unten wÃ¤chst und Fill2 von oben.
-                // â Kein extra UIâElement nÃ¶tig.
+                //  -  Kein extra UIâElement nÃ¶tig.
             }
 
             // Line = Ownership
@@ -2649,15 +2199,6 @@ export function OnPlayerEarnedKillAssist(eventPlayer: mod.Player, eventOtherPlay
     }
 }
 
-export function OngoingPlayer(eventPlayer: mod.Player): void {
-
-
-}
-
-export function OnRayCastHit(eventPlayer: mod.Player, eventPoint: mod.Vector, eventNormal: mod.Vector): void {
-
-}
-
 export function OnPlayerLeaveGame(eventNumber: number): void {
     autoTeamBalanceLeave(true, 2);
 }
@@ -2719,10 +2260,6 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player): void {
 
         }
     })
-
-}
-
-function OnPlayerSwitchTeam(eventPlayer: mod.Player, eventTeam: mod.Team): void {
 
 }
 
