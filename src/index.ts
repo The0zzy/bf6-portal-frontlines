@@ -1299,6 +1299,8 @@ function nextSector(team: mod.Team): void {
         }
     }
 
+    const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
+    const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.defendNextSectorMSG);
     if (mod.Equals(team, mod.GetTeam(1))) {
         const sectorConquerMessage: mod.Message = getConquerMessageFromSector();
         const sectorLooseMessage: mod.Message = getLooseMessageFromSector();
@@ -1334,77 +1336,17 @@ function nextSector(team: mod.Team): void {
         //     }
         // }
 
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: sectorConquerMessage,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-                {
-                    message: mod.Message(mod.stringkeys.conquerNextSectorMSG),
-                    delay: 6,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(1)
-        });
+        let notification = mod.CreateGameEventNotificationData();
+        mod.SetIconForGameEventNotificationData(notification, mod.WorldIconImages.Flag);
+        mod.SetSizeForGameEventNotificationData(notification, mod.GameEventNotificationSizes.Normal);
+        mod.SetColorForGameEventNotificationData(notification, mod.GameEventNotificationColors.Neutral)
+        mod.SetStyleForGameEventNotificationData(notification, mod.GameEventNotificationStyles.Normal);
+        mod.SetMessageForGameEventNotificationData(notification, sectorConquerMessage, conquerNextSectorMessage);
+        //mod.SetObjectiveForGameEventNotificationData(notification, this.mcomObj);
+        mod.SendGameEventNotification(notification, mod.GetTeam(2));
+        mod.SetMessageForGameEventNotificationData(notification, sectorLooseMessage, defendNextSectorMessage);
+        mod.SendGameEventNotification(notification, mod.GetTeam(1));
 
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: sectorLooseMessage,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-                {
-                    message: mod.Message(mod.stringkeys.defendNextSectorMSG),
-                    delay: 6,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(2)
-        });
     }
     else {
         const sectorConquerMessage: mod.Message = getConquerMessageFromSector();
@@ -1424,77 +1366,16 @@ function nextSector(team: mod.Team): void {
 
         currentSectorIndex--;
 
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: sectorConquerMessage,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-                {
-                    message: mod.Message(mod.stringkeys.conquerNextSectorMSG),
-                    delay: 6,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(2)
-        });
-
-        playTextSequence({
-            background: {
-                position: [100, 100],
-                anchor: mod.UIAnchor.TopLeft,
-                size: [400, 40],
-                color: [0, 0.5, 0],
-                alpha: 0.8,
-            },
-            texts: [
-                {
-                    message: sectorLooseMessage,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-                {
-                    message: mod.Message(mod.stringkeys.defendNextSectorMSG),
-                    delay: 6,
-                    duration: 5,
-                    fadeInSpeed: 0.1,
-                    fadeOutDuration: 0.2,
-                    textSize: 30,
-                    color: [1, 1, 1],
-                    shrinkScale: 0.85,
-                    moveDown: 20,
-                    offsetY: 0
-                },
-            ],
-            team: mod.GetTeam(1)
-        });
+        let notification = mod.CreateGameEventNotificationData();
+        mod.SetIconForGameEventNotificationData(notification, mod.WorldIconImages.Flag);
+        mod.SetSizeForGameEventNotificationData(notification, mod.GameEventNotificationSizes.Normal);
+        mod.SetColorForGameEventNotificationData(notification, mod.GameEventNotificationColors.Neutral)
+        mod.SetStyleForGameEventNotificationData(notification, mod.GameEventNotificationStyles.Normal);
+        mod.SetMessageForGameEventNotificationData(notification, sectorConquerMessage, conquerNextSectorMessage);
+        //mod.SetObjectiveForGameEventNotificationData(notification, this.mcomObj);
+        mod.SendGameEventNotification(notification, mod.GetTeam(1));
+        mod.SetMessageForGameEventNotificationData(notification, sectorLooseMessage, defendNextSectorMessage);
+        mod.SendGameEventNotification(notification, mod.GetTeam(2));
     }
 
     updateSectorsState();
@@ -1720,7 +1601,7 @@ function setModeSettings(): void {
 function enableOutOfBounds(player: mod.Player): void {
     let timer: number = 10;
 
-    let playerData = playerDataMap.get(modlib.getPlayerId(player));
+    let playerData = playerDataMap.get(mod.GetObjId(player));
     if (playerData && playerData.ui) {
         playerData.inBounds = false;
         playerData.ui.ShowBoundsUI(player, true);
@@ -1757,7 +1638,7 @@ function enableOutOfBounds(player: mod.Player): void {
 function checkPlayerEnteredAllowedZone(player: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
     console.log('EventAreaTrigger Id: ' + mod.GetObjId(eventAreaTrigger));
     //disable outofbounds
-    let playerData = playerDataMap.get(modlib.getPlayerId(player));
+    let playerData = playerDataMap.get(mod.GetObjId(player));
     if (playerData && playerData.ui) {
         playerData.inBounds = true;
         playerData.ui.ShowBoundsUI(player, false);
@@ -1950,7 +1831,7 @@ export function OnCapturePointCaptured(eventCapturePoint: mod.CapturePoint): voi
 }
 
 export function OnPlayerEnterCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {
-    const playerId = modlib.getPlayerId(eventPlayer);
+    const playerId = mod.GetObjId(eventPlayer);
     let capturePoint = findCapturePoint(eventCapturePoint);
 
     //add to capture data
@@ -1971,7 +1852,7 @@ export function OnPlayerEnterCapturePoint(eventPlayer: mod.Player, eventCaptureP
 
 
 export function OnPlayerExitCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {
-    const playerId = modlib.getPlayerId(eventPlayer);
+    const playerId = mod.GetObjId(eventPlayer);
     let capturePoint = findCapturePoint(eventCapturePoint);
 
     //delete from capture data
@@ -2095,7 +1976,7 @@ export function OngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
 }
 
 export function OnPlayerEarnedKill(eventPlayer: mod.Player, eventOtherPlayer: mod.Player, eventDeathType: mod.DeathType, eventWeaponUnlock: mod.WeaponUnlock): void {
-    let playerData = playerDataMap.get(modlib.getPlayerId(eventPlayer));
+    let playerData = playerDataMap.get(mod.GetObjId(eventPlayer));
 
     if (playerData) {
         playerData.stats.kills++;
@@ -2107,7 +1988,7 @@ export function OnPlayerEarnedKill(eventPlayer: mod.Player, eventOtherPlayer: mo
         updateScoreboard(eventPlayer, playerData);
     }
 
-    let playerData2 = playerDataMap.get(modlib.getPlayerId(eventOtherPlayer));
+    let playerData2 = playerDataMap.get(mod.GetObjId(eventOtherPlayer));
 
     if (playerData2) {
         playerData2.stats.deaths++;
@@ -2121,7 +2002,7 @@ export function OnPlayerEarnedKill(eventPlayer: mod.Player, eventOtherPlayer: mo
 }
 
 export function OnPlayerEarnedKillAssist(eventPlayer: mod.Player, eventOtherPlayer: mod.Player): void {
-    let playerData = playerDataMap.get(modlib.getPlayerId(eventPlayer));
+    let playerData = playerDataMap.get(mod.GetObjId(eventPlayer));
 
     if (playerData) {
         playerData.stats.assists++;
@@ -2134,7 +2015,7 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player): void {
     mod.Wait(2).then(() => {
 
         let fUI = new FrontlinesUI();
-        playerDataMap.set(modlib.getPlayerId(eventPlayer), {
+        playerDataMap.set(mod.GetObjId(eventPlayer), {
             ui: fUI,
             stats: {
                 captures: 0,
@@ -2157,11 +2038,11 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player): void {
         mod.SetRedeployTime(eventPlayer, frontlinesSettings.redeployTime);
 
         if (mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAISoldier)) {
-            aiSoldierMap.set(modlib.getPlayerId(eventPlayer), eventPlayer);
+            aiSoldierMap.set(mod.GetObjId(eventPlayer), eventPlayer);
         }
 
         if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2))) {
-            const id = modlib.getPlayerId(eventPlayer);
+            const id = mod.GetObjId(eventPlayer);
             let data = playerDataMap.get(id);
             if (!data) {
                 return;
@@ -2174,7 +2055,7 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player): void {
         }
         else {
 
-            const id = modlib.getPlayerId(eventPlayer);
+            const id = mod.GetObjId(eventPlayer);
             let data = playerDataMap.get(id);
             if (!data) {
                 return;
