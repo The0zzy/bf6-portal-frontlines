@@ -38,7 +38,7 @@
         "@typescript-eslint/eslint-plugin": "^8.72.0",
         "@typescript-eslint/parser": "^8.72.0",
         "bf6-portal-bundler": "^1.4.1",
-        "bf6-portal-mod-types": "^4.3.0",
+        "bf6-portal-mod-types": "^5.1.0",
         "bf6-portal-utils": "^10.0.0",
         "dotenv": "^17.4.2",
         "eslint": "^10.13.0",

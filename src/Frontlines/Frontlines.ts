@@ -3,15 +3,15 @@
     Godot Map Setup Requirements
     ============================
 
-    The game logic automatically discovers all sectors, areas, HQs and capture points
-    based solely on their ID numbers. No manual configuration inside the code is required.
-    A correct Godot map setup is the only requirement.
+    Sectors, sector areas, HQs and capture points are discovered by ID number.
+    MCOM objects, MCOM sector/area triggers and HQ area triggers are HARDCODED in this
+    file (see "Hardcoded IDs" below) and must exist in the Godot map with exactly these IDs.
 
     -------------------------
     Sector and Object ID Rules
     -------------------------
 
-    sectorIDs:        101 - 110
+    sectorIDs:        101 - 110        (all six maps; createSectors loops 101 - 110 and skips missing IDs)
     areaIDs:          301 - 310        (areaID = sectorID + 200)
     hqIDs:            401 - 410        (hqID = sectorID + 300)
 
@@ -19,11 +19,19 @@
         Sector 101  -  1001 - 1010
         Sector 102  -  1101 - 1110
         Sector 103  -  1201 - 1210
-        Sector 104  -  1301 - 1310
         ...
         Formula:
             baseID = 1001 + (sectorID - 101) * 100
             capturePointIDs = baseID ... baseID + 9
+
+    -------------------------
+    Hardcoded IDs (not derived from the scheme)
+    -------------------------
+
+        MCOM objects:              601, 602 (Team 1)      603, 604 (Team 2)
+        MCOM sector objects:       10 (Team 1)            20 (Team 2)
+        MCOM area triggers:        41 (Team 1)            42 (Team 2)
+        HQ area triggers:          2001 (hq1AreaId)       3001 (hq2AreaId)
 
     -------------------------
     Example Configurations
@@ -33,13 +41,13 @@
         sectorID:       101
         areaID:         301
         hqID:           401
-        capturePoints:  1001, 1002, 1003 ...
+        capturePoints:  1001, 1002, ...
 
     Sector 2 (sectorID 102):
         sectorID:       102
         areaID:         302
         hqID:           402
-        capturePoints:  1101, 1102, 1103 ...
+        capturePoints:  1101, 1102, ...
 
     -------------------------
     Important Notes
@@ -49,10 +57,9 @@
     - If an ID is missing or incorrect, the corresponding object will not be detected.
     - The code automatically loads:
         - Sectors via mod.GetSector(sectorID)
-        - Areas via mod.GetArea(areaID)
+        - Sector area triggers via mod.GetAreaTrigger(areaID)
         - HQs via mod.GetHQ(hqID)
         - Capture Points via mod.GetCapturePoint(capturePointID)
-    -  No additional setup or registration is needed in the code.
 */
 
 import { Events } from 'bf6-portal-utils/events';
@@ -106,10 +113,8 @@ let fUITeam1: FrontlinesUI | undefined;
 let fUITeam2: FrontlinesUI | undefined;
 
 let playerDataMap: Map<number, PlayerData> = new Map();
-let capturePointMap: Map<number, ICapturePoint> = new Map();
 
 let matchTimer: number = 2400;
-let secondTimerRunning = false;
 
 let currentSectorIndex: number = 0;
 
@@ -173,28 +178,25 @@ let team2PlayersCount: number = 0;
 /*--------------------------------------------- Helper Functions ------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------------*/
 
-function updateTimerUI(prophunt_ui: FrontlinesUI): void {
+function updateTimerUI(ui: FrontlinesUI): void {
     const minutes = Math.floor(matchTimer / 60);
     const seconds = matchTimer % 60;
 
-    let subMinutes = '';
-    let subSeconds = '';
-
-    if (!prophunt_ui.WinTimerText) {
+    if (!ui.WinTimerText) {
         return;
     }
 
     if (minutes < 10 && seconds < 10) {
-        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, seconds);
+        ui.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, seconds);
     }
     else if (minutes < 10) {
-        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, seconds);
+        ui.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, seconds);
     }
     else if (seconds < 10) {
-        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, seconds);
+        ui.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, seconds);
     }
     else {
-        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, seconds);
+        ui.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, seconds);
 
     }
 }
@@ -227,7 +229,6 @@ function getPlayerData(player: mod.Player | number): PlayerData {
 }
 
 function secondTimer(): void {
-    secondTimerRunning = true;
     mod.Wait(1).then(() => {
         // Timer update
         matchTimer--;
@@ -255,7 +256,9 @@ function secondTimer(): void {
                 for (let i = 0; i < mod.CountOf(allPlayers); i++) {
                     const player = mod.ValueInArray(allPlayers, i);
                     mod.EnableScreenEffect(player, mod.ScreenEffects.Night, false);
-                    mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
+                    if (mod.HasEquipment(player, mod.Gadgets.Mask_NVG)) {
+                        mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
+                    }
                 }
 
                 isDay = true;
