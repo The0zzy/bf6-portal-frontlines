@@ -56,14 +56,17 @@
 */
 
 import { Events } from 'bf6-portal-utils/events';
-import { BLUE, RED, REDVEC, BLUEVEC, frontlinesSettings, type Color } from './FrontlinesConfig.ts';
+import { UI } from 'bf6-portal-utils/ui';
+import { BLUE, RED, frontlinesSettings } from './FrontlinesConfig.ts';
+import type { UIText } from 'bf6-portal-utils/ui/components/text';
 import type { ICapturePoint, ISector } from './FrontlinesTypes.ts';
 import { FrontlinesUI } from './FrontlinesUI.ts';
+import { BoundsOverlayUI } from '../utils/BoundsOverlayUI.ts';
 import { CustomMCOM } from './CustomMCOM.ts';
 
 //data structures
 interface PlayerData {
-    ui: FrontlinesUI | undefined;
+    bounds: BoundsOverlayUI | undefined;
     stats: IPlayerStats;
     currentCapturePointOd: number;
     inBounds: boolean;
@@ -182,16 +185,16 @@ function updateTimerUI(prophunt_ui: FrontlinesUI): void {
     }
 
     if (minutes < 10 && seconds < 10) {
-        mod.SetUITextLabel(prophunt_ui.WinTimerText, mod.Message(mod.stringkeys.time1MSG, minutes, seconds));
+        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, seconds);
     }
     else if (minutes < 10) {
-        mod.SetUITextLabel(prophunt_ui.WinTimerText, mod.Message(mod.stringkeys.time2MSG, minutes, seconds));
+        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, seconds);
     }
     else if (seconds < 10) {
-        mod.SetUITextLabel(prophunt_ui.WinTimerText, mod.Message(mod.stringkeys.time3MSG, minutes, seconds));
+        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, seconds);
     }
     else {
-        mod.SetUITextLabel(prophunt_ui.WinTimerText, mod.Message(mod.stringkeys.time4MSG, minutes, seconds));
+        prophunt_ui.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, seconds);
 
     }
 }
@@ -205,7 +208,7 @@ function getPlayerData(player: mod.Player | number): PlayerData {
     let data = playerDataMap.get(playerId);
     if (!data) {
         data = {
-            ui: undefined,
+            bounds: undefined,
             stats: { captures: 0, kd: 0, kills: 0, deaths: 0, assists: 0 },
             currentCapturePointOd: -1,
             inBounds: true,
@@ -404,35 +407,21 @@ function updateSectorsState(): void {
 
         if (fUITeam1 && fUITeam2) {
             if (fUITeam1.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam1.rootCapture, false);
+                fUITeam1.rootCapture.visible = false;
             }
             if (fUITeam2.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam2.rootCapture, false);
+                fUITeam2.rootCapture.visible = false;
             }
 
             fUITeam1.ShowMCOMUI(mod.GetTeam(1), RED, true);
             fUITeam2.ShowMCOMUI(mod.GetTeam(2), BLUE, true);
 
-            if (fUITeam1.rootMCOM) {
-                let remainingTeam1Text = mod.FindUIWidgetWithName("UnitsRemainingText", fUITeam1.rootMCOM);
-                if (remainingTeam1Text) {
-                    mod.SetUITextLabel(remainingTeam1Text, mod.Message(mod.stringkeys.UnitsRemainingText, unitsRemainingTeam2));
-                    let unitsRemainingFill = mod.FindUIWidgetWithName("UnitsRemainingFill", fUITeam1.rootMCOM);
-                    if (unitsRemainingFill) {
-                        mod.SetUIWidgetSize(unitsRemainingFill, mod.CreateVector((unitsRemainingTeam2 / frontlinesSettings.maxUnitsRemaining) * 100, 25, 0));
-                    }
-                }
+            if (fUITeam1.UnitsRemainingText && fUITeam1.UnitsRemainingFill) {
+                fUITeam1.setUnitsRemaining(unitsRemainingTeam2, frontlinesSettings.maxUnitsRemaining);
             }
 
-            if (fUITeam2.rootMCOM) {
-                let remainingTeam2Text = mod.FindUIWidgetWithName("UnitsRemainingText", fUITeam2.rootMCOM);
-                if (remainingTeam2Text) {
-                    mod.SetUITextLabel(remainingTeam2Text, mod.Message(mod.stringkeys.UnitsRemainingText, unitsRemainingTeam2));
-                    let unitsRemainingFill = mod.FindUIWidgetWithName("UnitsRemainingFill", fUITeam2.rootMCOM);
-                    if (unitsRemainingFill) {
-                        mod.SetUIWidgetSize(unitsRemainingFill, mod.CreateVector((unitsRemainingTeam2 / frontlinesSettings.maxUnitsRemaining) * 100, 25, 0));
-                    }
-                }
+            if (fUITeam2.UnitsRemainingText && fUITeam2.UnitsRemainingFill) {
+                fUITeam2.setUnitsRemaining(unitsRemainingTeam2, frontlinesSettings.maxUnitsRemaining);
             }
         }
 
@@ -466,32 +455,18 @@ function updateSectorsState(): void {
             fUITeam2.ShowMCOMUI(mod.GetTeam(2), BLUE, true);
 
             if (fUITeam1.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam1.rootCapture, false);
+                fUITeam1.rootCapture.visible = false;
             }
             if (fUITeam2.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam2.rootCapture, false);
+                fUITeam2.rootCapture.visible = false;
             }
 
-            if (fUITeam1.rootMCOM) {
-                let remainingTeam1Text = mod.FindUIWidgetWithName("UnitsRemainingText", fUITeam1.rootMCOM);
-                if (remainingTeam1Text) {
-                    mod.SetUITextLabel(remainingTeam1Text, mod.Message(mod.stringkeys.UnitsRemainingText, unitsRemainingTeam1));
-                    let unitsRemainingFill = mod.FindUIWidgetWithName("UnitsRemainingFill", fUITeam1.rootMCOM);
-                    if (unitsRemainingFill) {
-                        mod.SetUIWidgetSize(unitsRemainingFill, mod.CreateVector((unitsRemainingTeam1 / frontlinesSettings.maxUnitsRemaining) * 100, 25, 0));
-                    }
-                }
+            if (fUITeam1.UnitsRemainingText && fUITeam1.UnitsRemainingFill) {
+                fUITeam1.setUnitsRemaining(unitsRemainingTeam1, frontlinesSettings.maxUnitsRemaining);
             }
 
-            if (fUITeam2.rootMCOM) {
-                let remainingTeam2Text = mod.FindUIWidgetWithName("UnitsRemainingText", fUITeam2.rootMCOM);
-                if (remainingTeam2Text) {
-                    mod.SetUITextLabel(remainingTeam2Text, mod.Message(mod.stringkeys.UnitsRemainingText, unitsRemainingTeam1));
-                    let unitsRemainingFill = mod.FindUIWidgetWithName("UnitsRemainingFill", fUITeam2.rootMCOM);
-                    if (unitsRemainingFill) {
-                        mod.SetUIWidgetSize(unitsRemainingFill, mod.CreateVector((unitsRemainingTeam1 / frontlinesSettings.maxUnitsRemaining) * 100, 25, 0));
-                    }
-                }
+            if (fUITeam2.UnitsRemainingText && fUITeam2.UnitsRemainingFill) {
+                fUITeam2.setUnitsRemaining(unitsRemainingTeam1, frontlinesSettings.maxUnitsRemaining);
             }
         }
 
@@ -522,16 +497,16 @@ function updateSectorsState(): void {
 
         if (fUITeam1 && fUITeam2) {
             if (fUITeam1.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam1.rootCapture, true);
+                fUITeam1.rootCapture.visible = true;
             }
             if (fUITeam2.rootCapture) {
-                mod.SetUIWidgetVisible(fUITeam2.rootCapture, true);
+                fUITeam2.rootCapture.visible = true;
             }
             if (fUITeam1.rootMCOM) {
-                mod.SetUIWidgetVisible(fUITeam1.rootMCOM, false);
+                fUITeam1.rootMCOM.visible = false;
             }
             if (fUITeam2.rootMCOM) {
-                mod.SetUIWidgetVisible(fUITeam2.rootMCOM, false);
+                fUITeam2.rootMCOM.visible = false;
             }
 
         }
@@ -632,88 +607,38 @@ function nextSector(team: mod.Team): void {
 
     const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
     const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.defendNextSectorMSG);
+    const sectorConquerMessage: mod.Message = getConquerMessageFromSector();
+    const sectorLooseMessage: mod.Message = getLooseMessageFromSector();
+    let sectorConqueredNotification = mod.CreateGameEventNotificationData();
+    mod.SetIconForGameEventNotificationData(sectorConqueredNotification, mod.WorldIconImages.Flag);
+    mod.SetSizeForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationSizes.Large);
+    mod.SetColorForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationColors.Friendly)
+    mod.SetStyleForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationStyles.Normal);
+    mod.SetMessageForGameEventNotificationData(sectorConqueredNotification, sectorConquerMessage, conquerNextSectorMessage);
+
+    let sectorLostNotification = mod.CreateGameEventNotificationData();
+    mod.SetIconForGameEventNotificationData(sectorLostNotification, mod.WorldIconImages.Flag);
+    mod.SetSizeForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationSizes.Large);
+    mod.SetColorForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationColors.Enemy)
+    mod.SetStyleForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationStyles.Normal);
+    mod.SetMessageForGameEventNotificationData(sectorLostNotification, sectorLooseMessage, defendNextSectorMessage);
+
+    const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
     if (mod.Equals(team, mod.GetTeam(1))) {
-        const sectorConquerMessage: mod.Message = getConquerMessageFromSector();
-        const sectorLooseMessage: mod.Message = getLooseMessageFromSector();
-
-        mod.Wait(6).then(() => {
-            let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
-
-
-            mod.Wait(6).then(() => {
-                if (vo) {
-                    mod.UnspawnObject(vo);
-                }
-            })
-        })
-
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
+        mod.SendGameEventNotification(sectorConqueredNotification, team);
         currentSectorIndex++;
-
-        //MCOM Sector reached
-        // if (currentSectorIndex > sectors.length) {
-        //     hq1 = mod.GetHQ(sectors[sectors.length - 1].hqId);
-        //     if (hq1) {
-        //         mod.EnableHQ(hq1, true);
-        //         mod.SetHQTeam(hq1, team);
-        //     }
-        // }
-
-        // if (currentSectorIndex == -1) {
-        //     let hq2 = mod.GetHQ(sectors[0].hqId);
-        //     if (hq2) {
-        //         mod.EnableHQ(hq2, true);
-        //         mod.SetHQTeam(hq2, mod.GetTeam(2));
-        //     }
-        // }
-
-        let notification1 = mod.CreateGameEventNotificationData();
-        mod.SetIconForGameEventNotificationData(notification1, mod.WorldIconImages.Flag);
-        mod.SetSizeForGameEventNotificationData(notification1, mod.GameEventNotificationSizes.Normal);
-        mod.SetColorForGameEventNotificationData(notification1, mod.GameEventNotificationColors.Neutral)
-        mod.SetStyleForGameEventNotificationData(notification1, mod.GameEventNotificationStyles.Normal);
-        mod.SetMessageForGameEventNotificationData(notification1, sectorConquerMessage, conquerNextSectorMessage);
-        //mod.SetObjectiveForGameEventNotificationData(notification, this.mcomObj);
-        mod.SendGameEventNotification(notification1, mod.GetTeam(2));
-
-        let notification2 = mod.CreateGameEventNotificationData();
-        mod.SetIconForGameEventNotificationData(notification2, mod.WorldIconImages.Flag);
-        mod.SetSizeForGameEventNotificationData(notification2, mod.GameEventNotificationSizes.Normal);
-        mod.SetColorForGameEventNotificationData(notification2, mod.GameEventNotificationColors.Neutral)
-        mod.SetStyleForGameEventNotificationData(notification2, mod.GameEventNotificationStyles.Normal);
-        mod.SetMessageForGameEventNotificationData(notification2, sectorLooseMessage, defendNextSectorMessage);
-        mod.SendGameEventNotification(notification2, mod.GetTeam(1));
-
     }
     else {
-        const sectorConquerMessage: mod.Message = getConquerMessageFromSector();
-        const sectorLooseMessage: mod.Message = getLooseMessageFromSector();
-
-        mod.Wait(6).then(() => {
-            let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
-
-
-            mod.Wait(6).then(() => {
-                if (vo) {
-                    mod.UnspawnObject(vo);
-                }
-            })
-        })
-
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
+        mod.SendGameEventNotification(sectorLostNotification, mod.GetTeam(2));
         currentSectorIndex--;
-
-        let notification = mod.CreateGameEventNotificationData();
-        mod.SetIconForGameEventNotificationData(notification, mod.WorldIconImages.Flag);
-        mod.SetSizeForGameEventNotificationData(notification, mod.GameEventNotificationSizes.Normal);
-        mod.SetColorForGameEventNotificationData(notification, mod.GameEventNotificationColors.Neutral)
-        mod.SetStyleForGameEventNotificationData(notification, mod.GameEventNotificationStyles.Normal);
-        mod.SetMessageForGameEventNotificationData(notification, sectorConquerMessage, conquerNextSectorMessage);
-        //mod.SetObjectiveForGameEventNotificationData(notification, this.mcomObj);
-        mod.SendGameEventNotification(notification, mod.GetTeam(1));
-        mod.SetMessageForGameEventNotificationData(notification, sectorLooseMessage, defendNextSectorMessage);
-        mod.SendGameEventNotification(notification, mod.GetTeam(2));
     }
+    mod.Wait(6).then(() => {
+        if (vo) {
+            mod.UnspawnObject(vo);
+        }
+    });
 
     updateSectorsState();
 
@@ -786,23 +711,25 @@ function nextSector(team: mod.Team): void {
     //next sector timer
     let sectorTimer = frontlinesSettings.sectorTimer;
 
-    let timer1: mod.UIWidget | undefined;
-    let timer2: mod.UIWidget | undefined;
-    let text1: mod.UIWidget | undefined;
-    let text2: mod.UIWidget | undefined;
+    let timer1: UIText | undefined;
+    let timer2: UIText | undefined;
+    let text1: UIText | undefined;
+    let text2: UIText | undefined;
 
-    if (fUITeam1 && fUITeam1.rootCapture) {
-        timer1 = mod.FindUIWidgetWithName("ST1" + sectors[currentSectorIndex].letter + "Timer", fUITeam1.rootCapture);
-        text1 = mod.FindUIWidgetWithName("ST1" + sectors[currentSectorIndex].letter + "Text", fUITeam1.rootCapture);
-        mod.SetUIWidgetVisible(text1, false);
-        mod.SetUIWidgetVisible(timer1, true);
+    const sectorWidgets1 = fUITeam1?.getSector(sectors[currentSectorIndex].letter);
+    if (fUITeam1 && fUITeam1.rootCapture && sectorWidgets1) {
+        text1 = sectorWidgets1.text;
+        timer1 = sectorWidgets1.timer;
+        text1.visible = false;
+        timer1.visible = true;
     }
 
-    if (fUITeam2 && fUITeam2.rootCapture) {
-        timer2 = mod.FindUIWidgetWithName("ST2" + sectors[currentSectorIndex].letter + "Timer", fUITeam2.rootCapture);
-        text2 = mod.FindUIWidgetWithName("ST2" + sectors[currentSectorIndex].letter + "Text", fUITeam2.rootCapture);
-        mod.SetUIWidgetVisible(text2, false);
-        mod.SetUIWidgetVisible(timer2, true);
+    const sectorWidgets2 = fUITeam2?.getSector(sectors[currentSectorIndex].letter);
+    if (fUITeam2 && fUITeam2.rootCapture && sectorWidgets2) {
+        text2 = sectorWidgets2.text;
+        timer2 = sectorWidgets2.timer;
+        text2.visible = false;
+        timer2.visible = true;
     }
 
     timer();
@@ -812,20 +739,20 @@ function nextSector(team: mod.Team): void {
         sectorTimer--;
 
         if (timer1) {
-            mod.SetUITextLabel(timer1, mod.Message(mod.stringkeys.sectorTimer, sectorTimer));
+            timer1.label = mod.Message(mod.stringkeys.sectorTimer, sectorTimer);
         }
 
         if (timer2) {
-            mod.SetUITextLabel(timer2, mod.Message(mod.stringkeys.sectorTimer, sectorTimer));
+            timer2.label = mod.Message(mod.stringkeys.sectorTimer, sectorTimer);
         }
 
         if (sectorTimer <= 0) {
 
-            if (text1) mod.SetUIWidgetVisible(text1, true);
-            if (text2) mod.SetUIWidgetVisible(text2, true);
+            if (text1) text1.visible = true;
+            if (text2) text2.visible = true;
 
-            if (timer1) mod.SetUIWidgetVisible(timer1, false);
-            if (timer2) mod.SetUIWidgetVisible(timer2, false);
+            if (timer1) timer1.visible = false;
+            if (timer2) timer2.visible = false;
 
             //activate capture points
             for (const [id, data] of currentSector.capturePoints) {
@@ -948,9 +875,9 @@ function enableOutOfBounds(player: mod.Player): void {
     let timer: number = 10;
 
     let playerData = getPlayerData(player);
-    if (playerData.ui) {
+    if (playerData.bounds) {
         playerData.inBounds = false;
-        playerData.ui.ShowBoundsUI(player, true);
+        playerData.bounds.show(mod.Message(mod.stringkeys.boundsMSG, timer));
     }
 
     function loop() {
@@ -959,13 +886,13 @@ function enableOutOfBounds(player: mod.Player): void {
         }
         timer--;
 
-        if (playerData.ui?.BoundsText) {
-            mod.SetUITextLabel(playerData.ui.BoundsText, mod.Message(mod.stringkeys.boundsMSG, timer));
+        if (playerData.bounds) {
+            playerData.bounds.show(mod.Message(mod.stringkeys.boundsMSG, timer));
         }
 
         if (timer <= 0) {
-            if (playerData.ui) {
-                playerData.ui.ShowBoundsUI(player, false);
+            if (playerData.bounds) {
+                playerData.bounds.hide();
             }
 
             mod.UndeployPlayer(player);
@@ -983,9 +910,9 @@ function checkPlayerEnteredAllowedZone(player: mod.Player, eventAreaTrigger: mod
     console.log('EventAreaTrigger Id: ' + mod.GetObjId(eventAreaTrigger));
     //disable outofbounds
     let playerData = getPlayerData(player);
-    if (playerData.ui) {
+    if (playerData.bounds) {
         playerData.inBounds = true;
-        playerData.ui.ShowBoundsUI(player, false);
+        playerData.bounds.hide();
     }
 
     //check if in enemy hq
@@ -1209,19 +1136,20 @@ function handleOngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
         //
         if (fUITeam1 && fUITeam1.rootCapture) {
 
-            let fill1 = mod.FindUIWidgetWithName("ST1" + sector.letter + "Fill1", fUITeam1.rootCapture); // bottom (blue)
-            let fill2 = mod.FindUIWidgetWithName("ST1" + sector.letter + "Fill2", fUITeam1.rootCapture); // top (red)
-            let line = mod.FindUIWidgetWithName("ST1" + sector.letter + "Line", fUITeam1.rootCapture);
+            let sectorWidgets1 = fUITeam1.getSector(sector.letter);
+            let fill1 = sectorWidgets1?.fill1; // bottom (blue)
+            let fill2 = sectorWidgets1?.fill2; // top (red)
+            let line = sectorWidgets1?.line;
 
             if (fill1 && fill2) {
 
                 // Blau unten
-                mod.SetUIWidgetSize(fill1, mod.CreateVector(40, fracTeam1 * 40, 0));
-                mod.SetUIWidgetBgColor(fill1, BLUEVEC);
+                fill1.size = { width: 40, height: Math.round(fracTeam1 * 40) };
+                fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
 
                 // Rot oben
-                mod.SetUIWidgetSize(fill2, mod.CreateVector(40, fracTeam2 * 40, 0));
-                mod.SetUIWidgetBgColor(fill2, REDVEC);
+                fill2.size = { width: 40, height: Math.round(fracTeam2 * 40) };
+                fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
 
                 // Neutraler Bereich liegt automatisch zwischen Fill1 und Fill2,
                 // weil Fill1 von unten wÃ¤chst und Fill2 von oben.
@@ -1231,9 +1159,9 @@ function handleOngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
             // Line = Ownership
             if (line) {
                 if (mod.Equals(sector.ownerTeam, mod.GetTeam(1))) {
-                    mod.SetUIWidgetBgColor(line, BLUEVEC);
+                    line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
                 } else {
-                    mod.SetUIWidgetBgColor(line, REDVEC);
+                    line.bgColor = UI.COLORS.BF_RED_BRIGHT;
                 }
             }
         }
@@ -1243,26 +1171,27 @@ function handleOngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
         //
         if (fUITeam2 && fUITeam2.rootCapture) {
 
-            let fill1 = mod.FindUIWidgetWithName("ST2" + sector.letter + "Fill1", fUITeam2.rootCapture); // bottom (blue)
-            let fill2 = mod.FindUIWidgetWithName("ST2" + sector.letter + "Fill2", fUITeam2.rootCapture); // top (red)
-            let line = mod.FindUIWidgetWithName("ST2" + sector.letter + "Line", fUITeam2.rootCapture);
+            let sectorWidgets2 = fUITeam2.getSector(sector.letter);
+            let fill1 = sectorWidgets2?.fill1; // bottom (blue)
+            let fill2 = sectorWidgets2?.fill2; // top (red)
+            let line = sectorWidgets2?.line;
 
             if (fill1 && fill2) {
 
                 // Team 2 sieht Blau = Team2, Rot = Team1
-                mod.SetUIWidgetSize(fill1, mod.CreateVector(40, fracTeam2 * 40, 0));
-                mod.SetUIWidgetBgColor(fill1, BLUEVEC);
+                fill1.size = { width: 40, height: Math.round(fracTeam2 * 40) };
+                fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
 
-                mod.SetUIWidgetSize(fill2, mod.CreateVector(40, fracTeam1 * 40, 0));
-                mod.SetUIWidgetBgColor(fill2, REDVEC);
+                fill2.size = { width: 40, height: Math.round(fracTeam1 * 40) };
+                fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
             }
 
             // Line = Ownership (gespiegelt)
             if (line) {
                 if (mod.Equals(sector.ownerTeam, mod.GetTeam(2))) {
-                    mod.SetUIWidgetBgColor(line, BLUEVEC);
+                    line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
                 } else {
-                    mod.SetUIWidgetBgColor(line, REDVEC);
+                    line.bgColor = UI.COLORS.BF_RED_BRIGHT;
                 }
             }
         }
@@ -1296,8 +1225,8 @@ function handlePlayerJoinGame(eventPlayer: mod.Player): void {
         if (!mod.IsPlayerValid(eventPlayer)) return;
 
         const data = getPlayerData(eventPlayer);
-        if (!data.ui) {
-            data.ui = new FrontlinesUI();
+        if (!data.bounds) {
+            data.bounds = new BoundsOverlayUI(eventPlayer);
         }
 
         mod.SetRedeployTime(eventPlayer, frontlinesSettings.redeployTime);
@@ -1352,16 +1281,8 @@ function updateUnitsUI(unitsRemaining: number): void {
     const teamsUI = [fUITeam1, fUITeam2];
 
     for (const teamUI of teamsUI) {
-        if (teamUI && teamUI.rootMCOM) {
-            let remainingText = mod.FindUIWidgetWithName("UnitsRemainingText", teamUI.rootMCOM);
-            if (remainingText) {
-                mod.SetUITextLabel(remainingText, mod.Message(mod.stringkeys.UnitsRemainingText, unitsRemaining));
-                let unitsRemainingFill = mod.FindUIWidgetWithName("UnitsRemainingFill", teamUI.rootMCOM);
-                if (unitsRemainingFill) {
-                    let fillPercentage = (unitsRemaining / frontlinesSettings.maxUnitsRemaining) * 100;
-                    mod.SetUIWidgetSize(unitsRemainingFill, mod.CreateVector(fillPercentage, 25, 0));
-                }
-            }
+        if (teamUI && teamUI.UnitsRemainingText && teamUI.UnitsRemainingFill) {
+            teamUI.setUnitsRemaining(unitsRemaining, frontlinesSettings.maxUnitsRemaining);
         }
     }
 }
@@ -1371,7 +1292,7 @@ function handlePlayerUndeploy(eventPlayer: mod.Player): void {
 }
 
 function handlePlayerLeaveGame(playerId: number): void {
-    playerDataMap.get(playerId)?.ui?.destroy();
+    playerDataMap.get(playerId)?.bounds?.destroy();
     playerDataMap.delete(playerId);
 }
 

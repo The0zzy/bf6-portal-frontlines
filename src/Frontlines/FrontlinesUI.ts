@@ -1,452 +1,319 @@
-import { ModHelpers } from '../utils/ModHelpers.ts';
-import { BLUE, RED, REDVEC, BLUEVEC, Color } from './FrontlinesConfig.ts';
-import { ISector } from './FrontlinesTypes.ts';
+import { UI } from 'bf6-portal-utils/ui';
+import { UIContainer } from 'bf6-portal-utils/ui/components/container';
+import { UIImage } from 'bf6-portal-utils/ui/components/image';
+import { UIText } from 'bf6-portal-utils/ui/components/text';
+import type { Color } from './FrontlinesConfig.ts';
+import type { ISector } from './FrontlinesTypes.ts';
 
 /*-----------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------- Frontlines UI -----------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------------*/
 
+export interface SectorWidgets {
+    fill1: UIContainer; // bottom (blue)
+    fill2: UIContainer; // top (red)
+    line: UIContainer;
+    text: UIText;
+    timer: UIText;
+}
+
+const UNITS_BAR_WIDTH = 80;
+
 export class FrontlinesUI {
-    rootCountdown: mod.UIWidget | undefined;
-    CountdownText: mod.UIWidget | undefined;
-    Mcom1team1imageWidget: mod.UIWidget | undefined;
-    Mcom2team1imageWidget: mod.UIWidget | undefined;
-    Mcom1team2imageWidget: mod.UIWidget | undefined;
-    Mcom2team2imageWidget: mod.UIWidget | undefined;
+    private readonly sectors = new Map<string, SectorWidgets>();
+    private sectorElementSpace: number = 0;
 
-    rootRoundWin: mod.UIWidget | undefined;
-    RoundWinText: mod.UIWidget | undefined;
-    SwitchingText: mod.UIWidget | undefined;
+    rootCapture: UIContainer | undefined;
+    WinTimerText: UIText | undefined;
 
-    rootCapture: mod.UIWidget | undefined;
+    rootMCOM: UIContainer | undefined;
+    UnitsRemainingFill: UIContainer | undefined;
+    UnitsRemainingText: UIText | undefined;
 
-    rootMCOMInteract: mod.UIWidget | undefined;
-    MCOMInteractBarBG: mod.UIWidget | undefined;
-    MCOMInteractBarFill: mod.UIWidget | undefined;
-
-    rootCapturePoint: mod.UIWidget | undefined;
-    DistributionBG: mod.UIWidget | undefined;
-    Team1CountText: mod.UIWidget | undefined;
-    Team2CountText: mod.UIWidget | undefined;
-    CapturePointLetterText: mod.UIWidget | undefined;
-
-    rootMCOM: mod.UIWidget | undefined;
-    UnitsRemainingBG: mod.UIWidget | undefined;
-    UnitsRemainingFill: mod.UIWidget | undefined;
-    UnitsRemainingText: mod.UIWidget | undefined;
-
-    rootBounds: mod.UIWidget | undefined;
-    BoundsText: mod.UIWidget | undefined;
-
-    Team1ScoreText: mod.UIWidget | undefined;
-    Team2ScoreText: mod.UIWidget | undefined;
-    Bar1BG: mod.UIWidget | undefined;
-    Bar2BG: mod.UIWidget | undefined;
-    Bar1Fill: mod.UIWidget | undefined;
-    Bar2Fill: mod.UIWidget | undefined;
-    WinTimerText: mod.UIWidget | undefined;
-
-    sectorElementSpace: number = 0;
-
-    constructor() {
-
-    }
-
-    ShowTeamMCOMS(team: mod.Team) {
-        this.Mcom1team1imageWidget = ModHelpers.ParseUI(
-            {
-                name: "MCOM1Team1Image",
-                type: "Image",
-                position: [-130, 140],
-                size: [25, 25],
-                anchor: mod.UIAnchor.TopCenter,
-                visible: true,
-                padding: 0,
-                bgColor: [0.2, 0.2, 0.2],
-                bgAlpha: 0,
-                bgFill: mod.UIBgFill.None,
-                imageType: mod.UIImageType.SpawnBeacon,
-                imageColor: BLUE,
-                imageAlpha: 1,
-                teamId: team
-            }
-        );
-
-        this.Mcom2team1imageWidget = ModHelpers.ParseUI(
-            {
-                name: "MCOM2Team1Image",
-                type: "Image",
-                position: [-90, 140],
-                size: [25, 25],
-                anchor: mod.UIAnchor.TopCenter,
-                visible: true,
-                padding: 0,
-                bgColor: [0.2, 0.2, 0.2],
-                bgAlpha: 0,
-                bgFill: mod.UIBgFill.None,
-                imageType: mod.UIImageType.SpawnBeacon,
-                imageColor: BLUE,
-                imageAlpha: 1,
-                teamId: team
-            }
-        );
-
-        this.Mcom1team2imageWidget = ModHelpers.ParseUI(
-            {
-                name: "MCOM1Team2Image",
-                type: "Image",
-                position: [90, 140],
-                size: [25, 25],
-                anchor: mod.UIAnchor.TopCenter,
-                visible: true,
-                padding: 0,
-                bgColor: [0.2, 0.2, 0.2],
-                bgAlpha: 0,
-                bgFill: mod.UIBgFill.None,
-                imageType: mod.UIImageType.SpawnBeacon,
-                imageColor: RED,
-                imageAlpha: 1,
-                teamId: team
-            }
-        );
-
-        this.Mcom2team2imageWidget = ModHelpers.ParseUI(
-            {
-                name: "MCOM2Team2",
-                type: "Image",
-                position: [130, 140],
-                size: [25, 25],
-                anchor: mod.UIAnchor.TopCenter,
-                visible: true,
-                padding: 0,
-                bgColor: [0.2, 0.2, 0.2],
-                bgAlpha: 0,
-                bgFill: mod.UIBgFill.None,
-                imageType: mod.UIImageType.SpawnBeacon,
-                imageColor: RED,
-                imageAlpha: 1,
-                teamId: team
-            }
-        );
-
-    }
-
-    ShowBoundsUI(player: mod.Player, show: boolean) {
-        if (!show) {
-            if (!this.rootBounds) {
-                return;
-            }
-            mod.SetUIWidgetVisible(this.rootBounds, false);
-            return;
-        }
-
-        if (this.rootBounds) {
-            mod.SetUIWidgetVisible(this.rootBounds, true);
-            return;
-        }
-        this.rootBounds = ModHelpers.ParseUI({
-            type: "Container",
-            name: "rootBounds",
-            size: [1920, 1080],
-            position: [0, 0],
-            anchor: mod.UIAnchor.TopLeft,
-            bgFill: mod.UIBgFill.Solid,
-            bgColor: [0, 0, 0],
-            bgAlpha: 0.9,
-            playerId: player
-        })
-
-        this.BoundsText = ModHelpers.ParseUI({
-            type: "Text",
-            name: "BoundsText",
-            parent: this.rootBounds,
-            textSize: 60,
-            position: [0, 200, 0],
-            size: [800, 300],
-            anchor: mod.UIAnchor.TopCenter,
-            textAnchor: mod.UIAnchor.Center,
-            textColor: [1, 0, 0],
-            bgFill: mod.UIBgFill.Solid,
-            bgColor: [0.2, 0.2, 1],
-            bgAlpha: 0,
-            textLabel: mod.Message(mod.stringkeys.boundsMSG, 10),
-            playerId: player
-        })
-
-        if (!this.rootBounds) {
-            return;
-        }
-        mod.SetUIWidgetVisible(this.rootBounds, true);
+    getSector(letter: string): SectorWidgets | undefined {
+        return this.sectors.get(letter);
     }
 
     ShowCaptureUI(team: mod.Team, sectors: ISector[]) {
-        this.rootCapture = ModHelpers.ParseUI({
-            type: "Container",
-            name: "rootCapture",
-            size: [300, 100],
-            position: [0, 40],
-            anchor: mod.UIAnchor.TopCenter,
-            bgFill: mod.UIBgFill.Solid,
-            bgColor: [0, 0, 0],
-            bgAlpha: 0,
-            teamId: team,
-        })
+        const root = new UIContainer({
+            x: 0,
+            y: 40,
+            width: 300,
+            height: 100,
+            anchor: UI.Anchor.TopCenter,
+            bgFill: UI.BgFill.Solid,
+            receiver: team,
+        });
+        this.rootCapture = root;
 
-        this.WinTimerText = ModHelpers.ParseUI({
-            type: "Text",
-            name: "winTimer",
-            parent: this.rootCapture,
+        this.WinTimerText = new UIText({
+            parent: root,
+            x: 0,
+            y: 100,
+            width: 75,
+            height: 20,
+            anchor: UI.Anchor.TopCenter,
+            padding: 8,
+            bgColor: { r: 0.2, g: 0.2, b: 1 },
+            bgFill: UI.BgFill.Solid,
+            label: mod.Message(mod.stringkeys.time1MSG, 4, 0),
             textSize: 18,
-            position: [0, 100, 0],
-            size: [75, 20],
-            anchor: mod.UIAnchor.TopCenter,
-            textAnchor: mod.UIAnchor.Center,
-            textColor: [1, 1, 1],
-            bgFill: mod.UIBgFill.Solid,
-            bgColor: [0.2, 0.2, 1],
-            bgAlpha: 0,
-            teamId: team,
-            textLabel: mod.Message(mod.stringkeys.time1MSG, 4, 0),
-        })
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+            receiver: team,
+        });
 
         this.sectorElementSpace = 240 - sectors.length * 60;
 
-        if (this.rootCapture) {
-            mod.AddUIImage(
-                "team1Image",                             // String: name
-                mod.CreateVector(this.sectorElementSpace - 60, 0, 0),              // Vektor: position
-                mod.CreateVector(40, 40, 0),              // Vektor: size
-                mod.UIAnchor.BottomLeft,                  // UIAnchor: anchor
-                this.rootCapture,                    // UIWidget: parent
-                true,                                     // Bool: visible
-                0,                                        // Zahl: padding
-                mod.CreateVector(0, 0, 0),                // Vektor: bgColor 
-                0,                                        // Zahl: bgAlpha
-                mod.UIBgFill.Solid,                        // UIBgFill: bgFill
-                mod.UIImageType.CrownOutline,             // UIImageType: imageType
-                BLUEVEC,                // Vektor: imageColor 
-                1,
-                team
-            );
-        }
-
-        let message: mod.Message = mod.Message(mod.stringkeys.a);
+        new UIImage({
+            parent: root,
+            x: this.sectorElementSpace - 60,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.BottomLeft,
+            imageType: UI.ImageType.CrownOutline,
+            imageColor: UI.COLORS.BF_BLUE_BRIGHT,
+            receiver: team,
+        });
 
         for (const sector of sectors) {
+            let message: mod.Message;
             switch (sector.letter) {
-                case "A":
-                    message = mod.Message(mod.stringkeys.a);
-                    break;
                 case "B":
                     message = mod.Message(mod.stringkeys.b);
                     break;
                 case "C":
                     message = mod.Message(mod.stringkeys.c);
-                    break
+                    break;
                 case "D":
                     message = mod.Message(mod.stringkeys.d);
-                    break
+                    break;
                 case "E":
                     message = mod.Message(mod.stringkeys.e);
-                    break
+                    break;
                 case "F":
                     message = mod.Message(mod.stringkeys.f);
-                    break
+                    break;
                 case "G":
-                    message = mod.Message(mod.stringkeys.f);
-                    break
+                    message = mod.Message(mod.stringkeys.g);
+                    break;
                 case "H":
-                    message = mod.Message(mod.stringkeys.f);
-                    break
+                    message = mod.Message(mod.stringkeys.h);
+                    break;
                 case "I":
-                    message = mod.Message(mod.stringkeys.f);
-                    break
+                    message = mod.Message(mod.stringkeys.i);
+                    break;
+                default:
+                    message = mod.Message(mod.stringkeys.a);
+                    break;
             }
-
-            if (mod.Equals(team, mod.GetTeam(1))) {
-                this.AddSectorUIElement("ST1" + sector.letter, message, team);
-            }
-            else {
-                this.AddSectorUIElement("ST2" + sector.letter, message, team);
-            }
-
+            this.AddSectorUIElement(sector.letter, message, team);
         }
 
-        if (this.rootCapture) {
-            //outer right line
-            mod.AddUIContainer("SectorOut" + "Line", mod.CreateVector(this.sectorElementSpace - 20, 15, 0), mod.CreateVector(22.5, 5, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, mod.CreateVector(0, 0, 0), 0.8, mod.UIBgFill.Solid, mod.UIDepth.AboveGameUI, team);
-
-        }
-
-
-        if (this.rootCapture) {
-            mod.AddUIImage(
-                "team2Image",                             // String: name
-                mod.CreateVector(this.sectorElementSpace, 0, 0),              // Vektor: position
-                mod.CreateVector(40, 40, 0),              // Vektor: size
-                mod.UIAnchor.BottomLeft,                  // UIAnchor: anchor
-                this.rootCapture,                    // UIWidget: parent
-                true,                                     // Bool: visible
-                0,                                        // Zahl: padding
-                mod.CreateVector(0, 0, 0),                // Vektor: bgColor
-                0,                                        // Zahl: bgAlpha
-                mod.UIBgFill.Solid,                        // UIBgFill: bgFill
-                mod.UIImageType.CrownOutline,             // UIImageType: imageType
-                REDVEC,                // Vektor: imageColor
-                1,
-                team                                    // Zahl: imageAlpha
-            );
-        }
-
-        if (!this.rootCapture) {
-            return;
-        }
-        mod.SetUIWidgetVisible(this.rootCapture, true);
-
+        new UIContainer({
+            parent: root,
+            x: this.sectorElementSpace - 20,
+            y: 15,
+            width: 23,
+            height: 5,
+            anchor: UI.Anchor.BottomLeft,
+            bgColor: UI.COLORS.BLACK,
+            bgAlpha: 0.8,
+            bgFill: UI.BgFill.Solid,
+            receiver: team,
+        });
     }
 
     ShowMCOMUI(team: mod.Team, color: Color, show: boolean) {
-        if (!show) {
-            if (!this.rootMCOM) {
-                return;
-            }
-            mod.SetUIWidgetVisible(this.rootMCOM, false);
-            return;
-        }
-
         if (this.rootMCOM) {
-            mod.SetUIWidgetVisible(this.rootMCOM, true);
+            this.rootMCOM.visible = show;
             return;
         }
-        this.rootMCOM = ModHelpers.ParseUI(
-            {
-                name: "rootMCOM",
-                type: "Container",
-                position: [755.88, 53.7],
-                size: [408.25, 87.78],
-                anchor: mod.UIAnchor.TopLeft,
-                visible: true,
-                padding: 0,
-                bgColor: [0.4392, 0.9216, 1],
-                bgAlpha: 1,
-                bgFill: mod.UIBgFill.None,
-                teamId: team,
-                children: [
-                    {
-                        name: "UnitsRemainingBG",
-                        type: "Container",
-                        position: [80, 10],
-                        size: [80, 20],
-                        anchor: mod.UIAnchor.TopLeft,
-                        visible: true,
-                        padding: 0,
-                        bgColor: [0.1, 0.1, 0.1],
-                        bgAlpha: 0.6,
-                        bgFill: mod.UIBgFill.Solid,
-                        children: [
-                            {
-                                name: "UnitsRemainingFill",
-                                type: "Container",
-                                position: [0, 0],
-                                size: [1, 20],
-                                anchor: mod.UIAnchor.CenterRight,
-                                visible: true,
-                                padding: 0,
-                                bgColor: color,
-                                bgAlpha: 1,
-                                bgFill: mod.UIBgFill.Solid
-                            },
-                            {
-                                name: "UnitsRemainingText",
-                                type: "Text",
-                                position: [-10, 0],
-                                size: [101.99, 54.97],
-                                anchor: mod.UIAnchor.Center,
-                                visible: true,
-                                padding: 0,
-                                bgColor: [0.2, 0.2, 0.2],
-                                bgAlpha: 1,
-                                bgFill: mod.UIBgFill.None,
-                                textLabel: mod.stringkeys.UnitsRemainingText,
-                                textColor: [1, 1, 1],
-                                textAlpha: 1,
-                                textSize: 23,
-                                textAnchor: mod.UIAnchor.Center
-                            }
-                        ]
-                    },
-                    {
-                        name: "Team1Image",
-                        type: "Image",
-                        position: [0, 0],
-                        size: [40, 40],
-                        anchor: mod.UIAnchor.TopLeft,
-                        visible: true,
-                        padding: 0,
-                        bgColor: [0.2, 0.2, 0.2],
-                        bgAlpha: 1,
-                        bgFill: mod.UIBgFill.None,
-                        imageType: mod.UIImageType.CrownOutline,
-                        imageColor: BLUEVEC,
-                        imageAlpha: 1
-                    },
-                    {
-                        name: "Team2Image",
-                        type: "Image",
-                        position: [60, 0],
-                        size: [40, 40],
-                        anchor: mod.UIAnchor.TopRight,
-                        visible: true,
-                        padding: 0,
-                        bgColor: [0.2, 0.2, 0.2],
-                        bgAlpha: 1,
-                        bgFill: mod.UIBgFill.None,
-                        imageType: mod.UIImageType.CrownOutline,
-                        imageColor: REDVEC,
-                        imageAlpha: 1
-                    }
-                ]
-            }
-        );
+        if (!show) {
+            return;
+        }
 
-        if (!this.rootMCOM) {
-            return;
-        }
-        mod.SetUIWidgetVisible(this.rootMCOM, true);
+        const root = new UIContainer({
+            x: 756,
+            y: 54,
+            width: 408,
+            height: 88,
+            anchor: UI.Anchor.TopLeft,
+            bgColor: UI.COLORS.BF_BLUE_BRIGHT,
+            bgAlpha: 1,
+            receiver: team,
+        });
+        this.rootMCOM = root;
+
+        const unitsBG = new UIContainer({
+            parent: root,
+            x: 80,
+            y: 10,
+            width: UNITS_BAR_WIDTH,
+            height: 20,
+            anchor: UI.Anchor.TopLeft,
+            bgColor: { r: 0.1, g: 0.1, b: 0.1 },
+            bgAlpha: 0.6,
+            bgFill: UI.BgFill.Solid,
+        });
+
+        this.UnitsRemainingFill = new UIContainer({
+            parent: unitsBG,
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 20,
+            anchor: UI.Anchor.CenterRight,
+            bgColor: { r: color[0], g: color[1], b: color[2] },
+            bgFill: UI.BgFill.Solid,
+        });
+
+        this.UnitsRemainingText = new UIText({
+            parent: unitsBG,
+            x: -10,
+            y: 0,
+            width: 102,
+            height: 55,
+            anchor: UI.Anchor.Center,
+            label: mod.Message(mod.stringkeys.UnitsRemainingText),
+            textSize: 23,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+        });
+
+        new UIImage({
+            parent: root,
+            x: 0,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.TopLeft,
+            imageType: UI.ImageType.CrownOutline,
+            imageColor: UI.COLORS.BF_BLUE_BRIGHT,
+        });
+
+        new UIImage({
+            parent: root,
+            x: 60,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.TopRight,
+            imageType: UI.ImageType.CrownOutline,
+            imageColor: UI.COLORS.BF_RED_BRIGHT,
+        });
     }
 
-    AddSectorUIElement(name: string, message: mod.Message, team: mod.Team) {
-        if (!this.rootCapture) {
+    private AddSectorUIElement(letter: string, message: mod.Message, team: mod.Team) {
+        const root = this.rootCapture;
+        if (!root) {
             return;
         }
-        mod.AddUIContainer(name + "BG", mod.CreateVector(this.sectorElementSpace, 0, 0), mod.CreateVector(40, 40, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.OutlineThin, mod.UIDepth.AboveGameUI, team);
-        mod.AddUIContainer(name + "Fill1", mod.CreateVector(this.sectorElementSpace, 0, 0), mod.CreateVector(40, 0, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, BLUEVEC, 0.8, mod.UIBgFill.Solid, mod.UIDepth.AboveGameUI, team);
-        mod.AddUIContainer(name + "Fill2", mod.CreateVector(this.sectorElementSpace, 60, 0), mod.CreateVector(40, 0, 0), mod.UIAnchor.TopLeft, this.rootCapture, true, 0, REDVEC, 0.8, mod.UIBgFill.Solid, mod.UIDepth.AboveGameUI, team);
-        mod.AddUIText(name + "Text", mod.CreateVector(this.sectorElementSpace, 0, 0), mod.CreateVector(40, 40, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, mod.CreateVector(0, 0, 0), 0, mod.UIBgFill.Solid, message, 30, mod.CreateVector(1, 1, 1), 1, mod.UIAnchor.Center, team);
-        mod.AddUIText(name + "Timer", mod.CreateVector(this.sectorElementSpace, 0, 0), mod.CreateVector(40, 40, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, mod.CreateVector(0, 0, 0), 0, mod.UIBgFill.Solid, message, 30, mod.CreateVector(1, 1, 1), 1, mod.UIAnchor.Center, team);
-        mod.AddUIContainer(name + "Line", mod.CreateVector(this.sectorElementSpace - 21, 15, 0), mod.CreateVector(22.5, 5, 0), mod.UIAnchor.BottomLeft, this.rootCapture, true, 0, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.Solid, mod.UIDepth.AboveGameUI, team);
+
+        const x = this.sectorElementSpace;
+
+        new UIContainer({
+            parent: root,
+            x,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.BottomLeft,
+            bgColor: UI.COLORS.BLACK,
+            bgAlpha: 1,
+            bgFill: UI.BgFill.OutlineThin,
+            receiver: team,
+        });
+
+        const fill1 = new UIContainer({
+            parent: root,
+            x,
+            y: 0,
+            width: 40,
+            height: 0,
+            anchor: UI.Anchor.BottomLeft,
+            bgColor: UI.COLORS.BF_BLUE_BRIGHT,
+            bgAlpha: 0.8,
+            bgFill: UI.BgFill.Solid,
+            receiver: team,
+        });
+
+        const fill2 = new UIContainer({
+            parent: root,
+            x,
+            y: 60,
+            width: 40,
+            height: 0,
+            anchor: UI.Anchor.TopLeft,
+            bgColor: UI.COLORS.BF_RED_BRIGHT,
+            bgAlpha: 0.8,
+            bgFill: UI.BgFill.Solid,
+            receiver: team,
+        });
+
+        const text = new UIText({
+            parent: root,
+            x,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.BottomLeft,
+            label: message,
+            textSize: 30,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+            receiver: team,
+        });
+
+        const timer = new UIText({
+            parent: root,
+            x,
+            y: 0,
+            width: 40,
+            height: 40,
+            anchor: UI.Anchor.BottomLeft,
+            label: message,
+            textSize: 30,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+            receiver: team,
+        });
+
+        const line = new UIContainer({
+            parent: root,
+            x: x - 21,
+            y: 15,
+            width: 23,
+            height: 5,
+            anchor: UI.Anchor.BottomLeft,
+            bgColor: UI.COLORS.BLACK,
+            bgAlpha: 1,
+            bgFill: UI.BgFill.Solid,
+            receiver: team,
+        });
+
+        this.sectors.set(letter, { fill1, fill2, line, text, timer });
         this.sectorElementSpace += 60;
     }
 
-    // Deletes children before parents; widgets created via mod.AddUI* without a stored handle are not tracked.
-    destroy(): void {
-        const widgets: (mod.UIWidget | undefined)[] = [
-            this.BoundsText, this.rootBounds,
-            this.CountdownText, this.rootCountdown,
-            this.Mcom1team1imageWidget, this.Mcom2team1imageWidget, this.Mcom1team2imageWidget, this.Mcom2team2imageWidget,
-            this.RoundWinText, this.SwitchingText, this.rootRoundWin,
-            this.MCOMInteractBarFill, this.MCOMInteractBarBG, this.rootMCOMInteract,
-            this.DistributionBG, this.Team1CountText, this.Team2CountText, this.CapturePointLetterText, this.rootCapturePoint,
-            this.UnitsRemainingBG, this.UnitsRemainingFill, this.UnitsRemainingText, this.rootMCOM,
-            this.Team1ScoreText, this.Team2ScoreText, this.Bar1BG, this.Bar2BG, this.Bar1Fill, this.Bar2Fill, this.WinTimerText,
-            this.rootCapture
-        ];
-
-        for (const widget of widgets) {
-            if (widget) {
-                mod.DeleteUIWidget(widget);
-            }
+    setUnitsRemaining(remaining: number, max: number): void {
+        if (this.UnitsRemainingText) {
+            this.UnitsRemainingText.label = mod.Message(mod.stringkeys.UnitsRemainingText, remaining);
+        }
+        if (this.UnitsRemainingFill) {
+            this.UnitsRemainingFill.width = Math.round((remaining / max) * UNITS_BAR_WIDTH);
         }
     }
 
+    destroy(): void {
+        this.rootCapture?.delete();
+        this.rootMCOM?.delete();
+        this.sectors.clear();
+        this.rootCapture = undefined;
+        this.WinTimerText = undefined;
+        this.rootMCOM = undefined;
+        this.UnitsRemainingFill = undefined;
+        this.UnitsRemainingText = undefined;
+    }
 }
