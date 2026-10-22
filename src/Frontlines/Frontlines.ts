@@ -90,8 +90,6 @@ interface IMCOM {
     sectorId: number,
     areaId: number,
     customMCOM: CustomMCOM;
-    playerIds: number[];
-    player2Ids: number[];
 }
 
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -105,7 +103,6 @@ let fUITeam1: FrontlinesUI | undefined;
 let fUITeam2: FrontlinesUI | undefined;
 
 let playerDataMap: Map<number, PlayerData> = new Map();
-let aiSoldierMap: Map<number, mod.Player> = new Map()
 let capturePointMap: Map<number, ICapturePoint> = new Map();
 
 let matchTimer: number = 2400;
@@ -133,16 +130,12 @@ let mComTeam1: IMCOM[] =
             sectorId: 10,
             areaId: 41,
             customMCOM: new CustomMCOM(601, 901, mod.GetTeam(1)),
-            playerIds: [],
-            player2Ids: [],
         },
         {
             letter: "B",
             sectorId: 10,
             areaId: 41,
             customMCOM: new CustomMCOM(602, 902, mod.GetTeam(1)),
-            playerIds: [],
-            player2Ids: [],
         },
     ];
 
@@ -153,16 +146,12 @@ let mComTeam2: IMCOM[] =
             sectorId: 20,
             areaId: 42,
             customMCOM: new CustomMCOM(603, 903, mod.GetTeam(2)),
-            playerIds: [],
-            player2Ids: [],
         },
         {
             letter: "B",
             sectorId: 20,
             areaId: 42,
             customMCOM: new CustomMCOM(604, 904, mod.GetTeam(2)),
-            playerIds: [],
-            player2Ids: [],
         },
     ];
 
@@ -282,16 +271,6 @@ function secondTimer(): void {
         }
         secondTimer();
     });
-}
-
-function findCapturePoint(capturePoint: mod.CapturePoint): ICapturePoint | undefined {
-    for (const sector of sectors) {
-        let point = sector.capturePoints.get(mod.GetObjId(capturePoint));
-        if (point) {
-            return point;
-        }
-    }
-    return undefined;
 }
 
 function getConquerMessageFromSector(): mod.Message {
@@ -795,12 +774,12 @@ function nextSector(team: mod.Team): void {
     }
 
     //ai behaviour
-    for (let [key, value] of aiSoldierMap) {
+    for (const aiSoldier of getAISoldiers()) {
         let points = Array.from(currentSector.capturePoints.keys());
 
         let goalPoint: mod.CapturePoint | undefined = mod.GetCapturePoint(points[getRandomInt(points.length - 1)]);
         if (goalPoint) {
-            mod.AIValidatedMoveToBehavior(value, mod.GetObjectPosition(goalPoint));
+            mod.AIValidatedMoveToBehavior(aiSoldier, mod.GetObjectPosition(goalPoint));
         }
     }
 
@@ -865,9 +844,8 @@ function nextSector(team: mod.Team): void {
             objectiveIcons = [];
 
             //ai behaviour
-            for (let [key, value] of aiSoldierMap) {
-
-                mod.AIBattlefieldBehavior(value);
+            for (const aiSoldier of getAISoldiers()) {
+                mod.AIBattlefieldBehavior(aiSoldier);
             }
 
             return;
@@ -876,6 +854,18 @@ function nextSector(team: mod.Team): void {
         mod.Wait(1).then(timer);
     }
 
+}
+
+function getAISoldiers(): mod.Player[] {
+    const aiSoldiers: mod.Player[] = [];
+    const players = mod.GetAllPlayers();
+    for (let i = 0; i < mod.CountOf(players); i++) {
+        const player = mod.ValueInArray(players, i) as mod.Player;
+        if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) {
+            aiSoldiers.push(player);
+        }
+    }
+    return aiSoldiers;
 }
 
 function createSectors(): void {
@@ -894,8 +884,6 @@ function createSectors(): void {
             if (capturePoint) {
                 capturePoints.set(cpId, {
                     letter: letters[cpId - baseId],
-                    playerIds: [],
-                    player2Ids: []
                 });
 
                 //  console.log("Sector: " + letters[sectorId - 101] + " CapturePoint: " + letters[cpId - baseId]);
@@ -1080,7 +1068,18 @@ function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
 }
 
 function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
-    if (mod.Equals(mod.GetCurrentOwnerTeam(eventCapturePoint), mod.GetTeam(1))) {
+    const capturingTeam = mod.GetCurrentOwnerTeam(eventCapturePoint);
+    const capturers = mod.GetPlayersOnPoint(eventCapturePoint);
+    for (let i = 0; i < mod.CountOf(capturers); i++) {
+        const player = mod.ValueInArray(capturers, i) as mod.Player;
+        if (!mod.Equals(mod.GetTeam(player), capturingTeam)) continue;
+
+        const playerData = getPlayerData(player);
+        playerData.stats.captures++;
+        updateScoreboard(player, playerData);
+    }
+
+    if (mod.Equals(capturingTeam, mod.GetTeam(1))) {
         let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
         let voiceFlag: mod.VoiceOverFlags = mod.VoiceOverFlags.Alpha;
         let letter = 'A';
@@ -1090,12 +1089,6 @@ function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
             if (point) {
                 if (mod.Equals(point, eventCapturePoint)) {
                     letter = capture[1].letter;
-
-                    for (const playerId of capture[1].playerIds) {
-                        const playerData = getPlayerData(playerId);
-                        playerData.stats.captures++;
-                        updateScoreboard(mod.GetPlayer(playerId), playerData);
-                    }
                 }
             }
         }
@@ -1131,12 +1124,6 @@ function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
             if (point) {
                 if (mod.Equals(point, eventCapturePoint)) {
                     letter = capture[1].letter;
-
-                    for (const playerId of capture[1].player2Ids) {
-                        const playerData = getPlayerData(playerId);
-                        playerData.stats.captures++;
-                        updateScoreboard(mod.GetPlayer(playerId), playerData);
-                    }
                 }
             }
         }
@@ -1175,47 +1162,6 @@ function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
             sectors[currentSectorIndex].ownerTeam = result.team;
             nextSector(result.team);
         }
-    }
-}
-
-function handlePlayerEnterCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {
-    const playerId = mod.GetObjId(eventPlayer);
-    let capturePoint = findCapturePoint(eventCapturePoint);
-
-    //add to capture data
-    if (capturePoint) {
-        if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1))) {
-            if (capturePoint.playerIds) {
-                capturePoint.playerIds.push(playerId);
-            }
-        }
-        else {
-            if (capturePoint.player2Ids) {
-                capturePoint.player2Ids.push(playerId);
-            }
-        }
-
-    }
-}
-
-
-function handlePlayerExitCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {
-    const playerId = mod.GetObjId(eventPlayer);
-    let capturePoint = findCapturePoint(eventCapturePoint);
-
-    //delete from capture data
-    if (capturePoint) {
-        if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1))) {
-            if (capturePoint.playerIds) {
-                capturePoint.playerIds = capturePoint.playerIds.filter(id => id !== playerId);
-            }
-        }
-        else {
-            if (capturePoint.player2Ids) {
-                capturePoint.player2Ids = capturePoint.player2Ids.filter(id => id !== playerId);
-            }
-        }
-
     }
 }
 
@@ -1355,10 +1301,6 @@ function handlePlayerJoinGame(eventPlayer: mod.Player): void {
         }
 
         mod.SetRedeployTime(eventPlayer, frontlinesSettings.redeployTime);
-
-        if (mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAISoldier)) {
-            aiSoldierMap.set(mod.GetObjId(eventPlayer), eventPlayer);
-        }
     });
 }
 
@@ -1431,7 +1373,6 @@ function handlePlayerUndeploy(eventPlayer: mod.Player): void {
 function handlePlayerLeaveGame(playerId: number): void {
     playerDataMap.get(playerId)?.ui?.destroy();
     playerDataMap.delete(playerId);
-    aiSoldierMap.delete(playerId);
 }
 
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -1488,8 +1429,6 @@ function registerEvents(): void {
     Events.OnPlayerEnterAreaTrigger.subscribe(handlePlayerEnterAreaTrigger);
     Events.OnMCOMDestroyed.subscribe(handleMCOMDestroyed);
     Events.OnCapturePointCaptured.subscribe(handleCapturePointCaptured);
-    Events.OnPlayerEnterCapturePoint.subscribe(handlePlayerEnterCapturePoint);
-    Events.OnPlayerExitCapturePoint.subscribe(handlePlayerExitCapturePoint);
     Events.OngoingCapturePoint.subscribe(handleOngoingCapturePoint);
     Events.OnPlayerEarnedKill.subscribe(handlePlayerEarnedKill);
     Events.OnPlayerEarnedKillAssist.subscribe(handlePlayerEarnedKillAssist);

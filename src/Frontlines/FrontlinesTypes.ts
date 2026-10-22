@@ -1,7 +1,5 @@
 export interface ICapturePoint {
     letter: string,
-    playerIds: number[];
-    player2Ids: number[];
 }
 
 export interface ICustomMcom {

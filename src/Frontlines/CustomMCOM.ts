@@ -1,5 +1,5 @@
 import { FrontlinesUI } from './FrontlinesUI.ts';
-import { ICustomMcom } from './FrontlinesTypes.ts';
+import type { ICustomMcom } from './FrontlinesTypes.ts';
 
 export class CustomMCOM {
     data: ICustomMcom = {
@@ -60,8 +60,8 @@ export class CustomMCOM {
         this.data.destroyed = true;
 
 
-        let mcomDestroyedMessage1: mod.Message = mod.Message(mod.stringkeys.youDestroyedMCOM);
-        let mcomDestroyedMessage2: mod.Message = mod.Message(mod.stringkeys.teamDestroyedMCOM);
+        let mcomDestroyedMessage1: mod.Message;
+        let mcomDestroyedMessage2: mod.Message;
 
         if (mod.Equals(this.data.ownerTeam, mod.GetTeam(1))) {
             let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
@@ -161,4 +161,5 @@ export class CustomMCOM {
             mod.EndGameMode(mod.GetTeam(1));
         }
     }
+
 }
