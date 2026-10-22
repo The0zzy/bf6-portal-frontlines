@@ -68,8 +68,8 @@ import { BLUE, RED, frontlinesSettings } from './FrontlinesConfig.ts';
 import type { UIText } from 'bf6-portal-utils/ui/components/text';
 import type { ICapturePoint, ISector } from './FrontlinesTypes.ts';
 import { FrontlinesUI } from './FrontlinesUI.ts';
+import { FrontlinesMcom } from './FrontlinesMcom.ts';
 import { BoundsOverlayUI } from '../utils/BoundsOverlayUI.ts';
-import { CustomMCOM } from './CustomMCOM.ts';
 
 //data structures
 interface PlayerData {
@@ -93,13 +93,6 @@ interface IPlayerStats {
     kills: number,
     deaths: number,
     assists: number
-}
-
-interface IMCOM {
-    letter: string,
-    sectorId: number,
-    areaId: number,
-    customMCOM: CustomMCOM;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -131,37 +124,19 @@ let isDay: boolean = true;
 ***************************** MCOM Setup *******************************************
 ***********************************************************************************/
 
-let mComTeam1: IMCOM[] =
-    [
-        {
-            letter: "A",
-            sectorId: 10,
-            areaId: 41,
-            customMCOM: new CustomMCOM(601, 901, mod.GetTeam(1)),
-        },
-        {
-            letter: "B",
-            sectorId: 10,
-            areaId: 41,
-            customMCOM: new CustomMCOM(602, 902, mod.GetTeam(1)),
-        },
-    ];
+const mcomTeam1SectorId: number = 10;
+const mcomTeam1AreaId: number = 41;
+const mcomTeam2SectorId: number = 20;
+const mcomTeam2AreaId: number = 42;
 
-let mComTeam2: IMCOM[] =
-    [
-        {
-            letter: "A",
-            sectorId: 20,
-            areaId: 42,
-            customMCOM: new CustomMCOM(603, 903, mod.GetTeam(2)),
-        },
-        {
-            letter: "B",
-            sectorId: 20,
-            areaId: 42,
-            customMCOM: new CustomMCOM(604, 904, mod.GetTeam(2)),
-        },
-    ];
+let mComTeam1: FrontlinesMcom[] = [
+    new FrontlinesMcom(601, mod.GetTeam(1), frontlinesSettings.mCOMFuseTime), 
+    new FrontlinesMcom(602, mod.GetTeam(1), frontlinesSettings.mCOMFuseTime)
+];
+let mComTeam2: FrontlinesMcom[] = [
+    new FrontlinesMcom(603, mod.GetTeam(2), frontlinesSettings.mCOMFuseTime), 
+    new FrontlinesMcom(604, mod.GetTeam(2), frontlinesSettings.mCOMFuseTime)
+];
 
 /***********************************************************************************
 ******************************Sector and Flag Setup*********************************   
@@ -375,14 +350,14 @@ function updateSectorsState(): void {
     }
 
     //disable mcom sectors
-    mod.EnableGameModeObjective(mod.GetSector(mComTeam1[0].sectorId), false);
-    mod.EnableGameModeObjective(mod.GetSector(mComTeam2[0].sectorId), false);
+    mod.EnableGameModeObjective(mod.GetSector(mcomTeam1SectorId), false);
+    mod.EnableGameModeObjective(mod.GetSector(mcomTeam2SectorId), false);
 
     for (const mcom of mComTeam1) {
-        mcom.customMCOM.activateMCOM(false);
+        mod.EnableGameModeObjective(mod.GetMCOM(mcom.id), false);
 
         //disable all areas
-        let area = mod.GetAreaTrigger(mcom.areaId);
+        let area = mod.GetAreaTrigger(mcomTeam1AreaId);
         if (area) {
             mod.EnableAreaTrigger(area, false);
         }
@@ -390,11 +365,10 @@ function updateSectorsState(): void {
     }
 
     for (const mcom of mComTeam2) {
-        mod.EnableGameModeObjective(mod.GetMCOM(mcom.customMCOM.data.id), false);
-        mcom.customMCOM.activateMCOM(false);
+        mod.EnableGameModeObjective(mod.GetMCOM(mcom.id), false);
 
         //disable all areas
-        let area = mod.GetAreaTrigger(mcom.areaId);
+        let area = mod.GetAreaTrigger(mcomTeam2AreaId);
         if (area) {
             mod.EnableAreaTrigger(area, false);
         }
@@ -428,17 +402,17 @@ function updateSectorsState(): void {
             }
         }
 
-        let sector = mod.GetSector(mComTeam1[0].sectorId);
+        let sector = mod.GetSector(mcomTeam1SectorId);
         if (sector) {
             mod.EnableGameModeObjective(sector, true);
         }
 
         for (const mcom of mComTeam1) {
-            mod.SetMCOMOwner(mod.GetMCOM(mcom.customMCOM.data.id), mod.GetTeam(1));
-            mcom.customMCOM.activateMCOM(true);
+            mod.SetMCOMOwner(mod.GetMCOM(mcom.id), mod.GetTeam(1));
+            mod.EnableGameModeObjective(mod.GetMCOM(mcom.id), true);
 
             //enable new area
-            let area = mod.GetAreaTrigger(mcom.areaId);
+            let area = mod.GetAreaTrigger(mcomTeam1AreaId);
             if (area) {
                 mod.EnableAreaTrigger(area, true);
             }
@@ -473,18 +447,18 @@ function updateSectorsState(): void {
             }
         }
 
-        let sector = mod.GetSector(mComTeam2[0].sectorId);
+        let sector = mod.GetSector(mcomTeam2SectorId);
         if (sector) {
             mod.EnableGameModeObjective(sector, true);
         }
 
         for (const mcom of mComTeam2) {
-            mod.SetMCOMOwner(mod.GetMCOM(mcom.customMCOM.data.id), mod.GetTeam(2));
-            mcom.customMCOM.activateMCOM(true);
-            console.log('mcom: ' + mcom.customMCOM.data.id + ' activated');
+            mod.SetMCOMOwner(mod.GetMCOM(mcom.id), mod.GetTeam(2));
+            mod.EnableGameModeObjective(mod.GetMCOM(mcom.id), true);
+            console.log('mcom: ' + mcom.id + ' activated');
 
             //enable new area
-            let area = mod.GetAreaTrigger(mcom.areaId);
+            let area = mod.GetAreaTrigger(mcomTeam2AreaId);
             if (area) {
                 mod.EnableAreaTrigger(area, true);
             }
@@ -864,14 +838,6 @@ function setModeSettings(): void {
             mod.SetAllObjectivesUIEnabled(true);
         }
     }
-
-    for (const mcom of mComTeam1) {
-        mod.SetMCOMFuseTime(mod.GetMCOM(mcom.customMCOM.data.id), frontlinesSettings.mCOMFuseTime);
-    }
-
-    for (const mcom of mComTeam2) {
-        mod.SetMCOMFuseTime(mod.GetMCOM(mcom.customMCOM.data.id), frontlinesSettings.mCOMFuseTime);
-    }
 }
 
 function enableOutOfBounds(player: mod.Player): void {
@@ -970,30 +936,25 @@ function handlePlayerEnterAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger:
 }
 
 function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
-    //Find destroyed MCOM
-    for (const mcom of mComTeam1) {
-        if (mcom.customMCOM.data.id === mod.GetObjId(eventMCOM)) {
-            mcom.customMCOM.data.destroyed = true;
-        }
-    }
+    const eventId = mod.GetObjId(eventMCOM);
 
-    for (const mcom of mComTeam2) {
-        if (mcom.customMCOM.data.id === mod.GetObjId(eventMCOM)) {
-            mcom.customMCOM.data.destroyed = true;
+    const team1Mcom = mComTeam1.find(m => m.id === eventId);
+    if (team1Mcom) {
+        team1Mcom.destroyMCOM();
+        if (mComTeam1.every(m => m.destroyed)) {
+            console.log('all team 1 MCOMs destroyed');
+            mod.EndGameMode(mod.GetTeam(2));
         }
-    }
-
-    //Check if all MCOMS destroyed
-    const allTeam1Destroyed = mComTeam1.every(m => m.customMCOM.data.destroyed === true);
-    if (allTeam1Destroyed) {
-        mod.EndGameMode(mod.GetTeam(2));
         return;
     }
 
-    const allTeam2Destroyed = mComTeam2.every(m => m.customMCOM.data.destroyed === true);
-    if (allTeam2Destroyed) {
-        mod.EndGameMode(mod.GetTeam(1));
-        return;
+    const team2Mcom = mComTeam2.find(m => m.id === eventId);
+    if (team2Mcom) {
+        team2Mcom.destroyMCOM();
+        if (mComTeam2.every(m => m.destroyed)) {
+            console.log('all team 2 MCOMs destroyed');
+            mod.EndGameMode(mod.GetTeam(1));
+        }
     }
 }
 
@@ -1224,16 +1185,12 @@ function handlePlayerEarnedKillAssist(eventPlayer: mod.Player, eventOtherPlayer:
 }
 
 function handlePlayerJoinGame(eventPlayer: mod.Player): void {
-    mod.Wait(2).then(() => {
-        if (!mod.IsPlayerValid(eventPlayer)) return;
-
         const data = getPlayerData(eventPlayer);
         if (!data.bounds) {
             data.bounds = new BoundsOverlayUI(eventPlayer);
         }
 
         mod.SetRedeployTime(eventPlayer, frontlinesSettings.redeployTime);
-    });
 }
 
 function handlePlayerDeployed(eventPlayer: mod.Player): void {

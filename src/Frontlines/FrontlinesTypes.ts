@@ -2,14 +2,6 @@ export interface ICapturePoint {
     letter: string,
 }
 
-export interface ICustomMcom {
-    id: number;
-    areaId: number;
-    ownerTeam: mod.Team;
-    active: boolean;
-    destroyed: boolean;
-}
-
 export interface ISector {
     letter: string;
     id: number;
