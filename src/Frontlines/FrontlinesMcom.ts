@@ -4,10 +4,10 @@ export class FrontlinesMcom {
     owner: mod.Team;
     mcom: mod.MCOM;
 
-    constructor(id: number, owner: mod.Team, fuseTime: number) {
-        this.id = id;
+    constructor(mcom: mod.MCOM, owner: mod.Team, fuseTime: number) {
+        this.id = mod.GetObjId(mcom);
         this.owner = owner;
-        this.mcom = mod.GetMCOM(this.id);
+        this.mcom = mcom;
         mod.SetMCOMOwner(this.mcom, this.owner);
         mod.SetMCOMArmType(this.mcom, mod.MCOMArmType.Default);
         mod.SetMCOMFuseTime(this.mcom, fuseTime);

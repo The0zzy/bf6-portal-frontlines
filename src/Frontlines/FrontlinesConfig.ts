@@ -30,3 +30,8 @@ export const RED = [0.89, 0.447, 0.333] as const;
 export const BLUE = [0.447, 0.796, 0.922] as const;
 
 export type Color = typeof RED | typeof BLUE;
+
+export const FIRST_SECTOR_ID = 101;
+export const LAST_SECTOR_ID = 109;
+export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+export const CAPTURE_POINTS_PER_SECTOR = 10;

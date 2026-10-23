@@ -3,7 +3,7 @@ import { UIContainer } from 'bf6-portal-utils/ui/components/container';
 import { UIImage } from 'bf6-portal-utils/ui/components/image';
 import { UIText } from 'bf6-portal-utils/ui/components/text';
 import type { Color } from './FrontlinesConfig.ts';
-import type { ISector } from './FrontlinesTypes.ts';
+import type { FrontlinesSector } from './FrontlinesSector.ts';
 
 /*-----------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------- Frontlines UI -----------------------------------------------------*/
@@ -34,7 +34,7 @@ export class FrontlinesUI {
         return this.sectors.get(letter);
     }
 
-    ShowCaptureUI(team: mod.Team, sectors: ISector[]) {
+    ShowCaptureUI(team: mod.Team, sectors: FrontlinesSector[]) {
         const root = new UIContainer({
             x: 0,
             y: 40,
