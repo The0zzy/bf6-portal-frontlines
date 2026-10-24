@@ -3,7 +3,7 @@
         {
             "name": "TEAM_1_HQ",
             "AltTeam": "TeamNeutral",
-            "ObjId": 1,
+            "ObjId": 100,
             "InfantrySpawns": [
                 "TEAM_1_HQ/SpawnPoint_1_1",
                 "TEAM_1_HQ/SpawnPoint_1_2",
@@ -170,7 +170,7 @@
             "name": "TEAM_2_HQ",
             "Team": "Team2",
             "AltTeam": "TeamNeutral",
-            "ObjId": 2,
+            "ObjId": 150,
             "InfantrySpawns": [
                 "TEAM_2_HQ/SpawnPoint_2_1",
                 "TEAM_2_HQ/SpawnPoint_2_2",
@@ -558,7 +558,7 @@
         },
         {
             "name": "Sector  T1Mcoms",
-            "ObjId": 10,
+            "ObjId": 201,
             "CapturePoints": [],
             "MCOMs": [
                 "Sector  T1Mcoms/MCOM",
@@ -648,7 +648,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 41,
+            "ObjId": 211,
             "Area": "Sector  T1Mcoms/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -678,7 +678,7 @@
         },
         {
             "name": "HQ1AreaTrigger",
-            "ObjId": 2001,
+            "ObjId": 101,
             "Area": "Sector  T1Mcoms/HQ1AreaTrigger/HQ1Area",
             "type": "AreaTrigger",
             "right": {
@@ -767,7 +767,7 @@
         },
         {
             "name": "MCOM",
-            "ObjId": 601,
+            "ObjId": 410,
             "type": "MCOM",
             "right": {
                 "x": -0.78830075,
@@ -792,67 +792,8 @@
             "id": "Sector  T1Mcoms/MCOM"
         },
         {
-            "name": "AreaTrigger",
-            "visible": false,
-            "ObjId": 851,
-            "Area": "Sector  T1Mcoms/MCOM/AreaTrigger/PolygonVolume",
-            "type": "AreaTrigger",
-            "right": {
-                "x": -0.78830075,
-                "y": 0,
-                "z": -0.6152898
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": 0.6152898,
-                "y": 0,
-                "z": -0.78830075
-            },
-            "position": {
-                "x": 133.980746,
-                "y": 101.917549,
-                "z": -144.487856
-            },
-            "id": "Sector  T1Mcoms/MCOM/AreaTrigger",
-            "linked": [
-                "Area"
-            ]
-        },
-        {
-            "name": "PolygonVolume",
-            "type": "PolygonVolume",
-            "id": "Sector  T1Mcoms/MCOM/AreaTrigger/PolygonVolume",
-            "height": 0,
-            "points": [
-                {
-                    "x": 136.6357557697114,
-                    "y": 101.917549,
-                    "z": -140.22810559091346
-                },
-                {
-                    "x": 142.12955492071094,
-                    "y": 101.917549,
-                    "z": -146.18508111760696
-                },
-                {
-                    "x": 134.80973293914047,
-                    "y": 101.917549,
-                    "z": -152.51974663232
-                },
-                {
-                    "x": 129.14262075069357,
-                    "y": 101.917549,
-                    "z": -146.37509887931586
-                }
-            ]
-        },
-        {
             "name": "MCOM2",
-            "ObjId": 602,
+            "ObjId": 411,
             "type": "MCOM",
             "right": {
                 "x": -0.9998884,
@@ -875,65 +816,6 @@
                 "z": -10.201326
             },
             "id": "Sector  T1Mcoms/MCOM2"
-        },
-        {
-            "name": "AreaTrigger",
-            "visible": false,
-            "ObjId": 852,
-            "Area": "Sector  T1Mcoms/MCOM2/AreaTrigger/PolygonVolume",
-            "type": "AreaTrigger",
-            "right": {
-                "x": -0.9998884,
-                "y": 0,
-                "z": 0.014939566
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": -0.014939566,
-                "y": 0,
-                "z": -0.9998884
-            },
-            "position": {
-                "x": 80.946795,
-                "y": 99.986635,
-                "z": -10.201326
-            },
-            "id": "Sector  T1Mcoms/MCOM2/AreaTrigger",
-            "linked": [
-                "Area"
-            ]
-        },
-        {
-            "name": "PolygonVolume",
-            "type": "PolygonVolume",
-            "id": "Sector  T1Mcoms/MCOM2/AreaTrigger/PolygonVolume",
-            "height": 0,
-            "points": [
-                {
-                    "x": 85.68595919188648,
-                    "y": 99.986635,
-                    "z": -8.547577808763807
-                },
-                {
-                    "x": 86.2307304172245,
-                    "y": 99.986635,
-                    "z": -16.632788791394237
-                },
-                {
-                    "x": 76.55661180252363,
-                    "y": 99.986635,
-                    "z": -16.97811016121926
-                },
-                {
-                    "x": 75.99449625318734,
-                    "y": 99.986635,
-                    "z": -8.638031617831317
-                }
-            ]
         },
         {
             "name": "UH60",
@@ -1216,7 +1098,7 @@
         },
         {
             "name": "Sector1",
-            "ObjId": 101,
+            "ObjId": 202,
             "CapturePoints": [
                 "Sector1/CapturePointA",
                 "Sector1/CapturePointB"
@@ -1329,7 +1211,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 301,
+            "ObjId": 212,
             "Area": "Sector1/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -1360,7 +1242,7 @@
         {
             "name": "CapturePointA",
             "InitialOwner": "Team1",
-            "ObjId": 1001,
+            "ObjId": 420,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector1/CapturePointA/Team1/SpawnPoint_1_1",
@@ -1654,7 +1536,7 @@
         {
             "name": "CapturePointB",
             "InitialOwner": "Team1",
-            "ObjId": 1002,
+            "ObjId": 421,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector1/CapturePointB/Team1/SpawnPoint_1_1",
@@ -1934,7 +1816,7 @@
             "name": "TEAM_1_HQ",
             "AltTeam": "TeamNeutral",
             "VehicleSpawnersEnabled": true,
-            "ObjId": 401,
+            "ObjId": 222,
             "InfantrySpawns": [
                 "Sector1/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector1/TEAM_1_HQ/SpawnPoint_1_2",
@@ -2099,7 +1981,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 501,
+            "ObjId": 320,
             "VehicleType": "RHIB",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -2128,7 +2010,7 @@
         },
         {
             "name": "Sector2 - Middle",
-            "ObjId": 102,
+            "ObjId": 203,
             "CapturePoints": [
                 "Sector2 - Middle/CapturePointA",
                 "Sector2 - Middle/CapturePointB"
@@ -2231,7 +2113,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 302,
+            "ObjId": 213,
             "Area": "Sector2 - Middle/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -2261,7 +2143,7 @@
         },
         {
             "name": "CapturePointA",
-            "ObjId": 1101,
+            "ObjId": 430,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector2 - Middle/CapturePointA/Team1/SpawnPoint_1_1",
@@ -2534,7 +2416,7 @@
         },
         {
             "name": "CapturePointB",
-            "ObjId": 1102,
+            "ObjId": 431,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector2 - Middle/CapturePointB/Team1/SpawnPoint_1_1",
@@ -2831,7 +2713,7 @@
             "AltTeam": "TeamNeutral",
             "HQEnabled": false,
             "VehicleSpawnersEnabled": true,
-            "ObjId": 402,
+            "ObjId": 223,
             "InfantrySpawns": [
                 "Sector2 - Middle/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector2 - Middle/TEAM_1_HQ/SpawnPoint_1_2",
@@ -2996,7 +2878,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 502,
+            "ObjId": 330,
             "VehicleType": "Marauder",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -3025,7 +2907,7 @@
         },
         {
             "name": "Sector3",
-            "ObjId": 103,
+            "ObjId": 204,
             "CapturePoints": [
                 "Sector3/CapturePointA",
                 "Sector3/CapturePointB"
@@ -3118,7 +3000,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 303,
+            "ObjId": 214,
             "Area": "Sector3/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -3149,7 +3031,7 @@
         {
             "name": "CapturePointA",
             "InitialOwner": "Team2",
-            "ObjId": 1201,
+            "ObjId": 440,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector3/CapturePointA/Team1/SpawnPoint_1_1",
@@ -3513,7 +3395,7 @@
         {
             "name": "CapturePointB",
             "InitialOwner": "Team2",
-            "ObjId": 1202,
+            "ObjId": 441,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector3/CapturePointB/Team1/SpawnPoint_1_1",
@@ -3789,7 +3671,7 @@
             "Team": "Team2",
             "AltTeam": "TeamNeutral",
             "VehicleSpawnersEnabled": true,
-            "ObjId": 403,
+            "ObjId": 224,
             "InfantrySpawns": [
                 "Sector3/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector3/TEAM_1_HQ/SpawnPoint_1_2",
@@ -3954,7 +3836,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 503,
+            "ObjId": 340,
             "VehicleType": "RHIB",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -3983,7 +3865,7 @@
         },
         {
             "name": "Sector T2Mcoms",
-            "ObjId": 20,
+            "ObjId": 205,
             "CapturePoints": [],
             "MCOMs": [
                 "Sector T2Mcoms/MCOM",
@@ -4078,7 +3960,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 42,
+            "ObjId": 215,
             "Area": "Sector T2Mcoms/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -4108,7 +3990,7 @@
         },
         {
             "name": "HQ1AreaTrigger",
-            "ObjId": 3001,
+            "ObjId": 151,
             "Area": "Sector T2Mcoms/HQ1AreaTrigger/HQ1Area",
             "type": "AreaTrigger",
             "right": {
@@ -4197,7 +4079,7 @@
         },
         {
             "name": "MCOM",
-            "ObjId": 603,
+            "ObjId": 450,
             "type": "MCOM",
             "right": {
                 "x": 0.924565,
@@ -4222,67 +4104,8 @@
             "id": "Sector T2Mcoms/MCOM"
         },
         {
-            "name": "AreaTrigger",
-            "visible": false,
-            "ObjId": 853,
-            "Area": "Sector T2Mcoms/MCOM/AreaTrigger/PolygonVolume",
-            "type": "AreaTrigger",
-            "right": {
-                "x": 0.924565,
-                "y": 0,
-                "z": -0.38102156
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": 0.38102156,
-                "y": 0,
-                "z": 0.924565
-            },
-            "position": {
-                "x": -99.91391,
-                "y": 99.798406,
-                "z": 115.98858
-            },
-            "id": "Sector T2Mcoms/MCOM/AreaTrigger",
-            "linked": [
-                "Area"
-            ]
-        },
-        {
-            "name": "PolygonVolume",
-            "type": "PolygonVolume",
-            "id": "Sector T2Mcoms/MCOM/AreaTrigger/PolygonVolume",
-            "height": 0,
-            "points": [
-                {
-                    "x": -104.92926389361381,
-                    "y": 99.798406,
-                    "z": 116.19040134981408
-                },
-                {
-                    "x": -102.46736698012745,
-                    "y": 99.798406,
-                    "z": 123.9109153048728
-                },
-                {
-                    "x": -93.34215534965956,
-                    "y": 99.798406,
-                    "z": 120.68010573403593
-                },
-                {
-                    "x": -95.88149818304757,
-                    "y": 99.798406,
-                    "z": 112.71615741557173
-                }
-            ]
-        },
-        {
             "name": "MCOM2",
-            "ObjId": 604,
+            "ObjId": 451,
             "type": "MCOM",
             "right": {
                 "x": 0.66905254,
@@ -4305,65 +4128,6 @@
                 "z": 245.805327
             },
             "id": "Sector T2Mcoms/MCOM2"
-        },
-        {
-            "name": "AreaTrigger",
-            "visible": false,
-            "ObjId": 854,
-            "Area": "Sector T2Mcoms/MCOM2/AreaTrigger/PolygonVolume",
-            "type": "AreaTrigger",
-            "right": {
-                "x": 0.66905254,
-                "y": 0,
-                "z": 0.7432147
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": -0.7432147,
-                "y": 0,
-                "z": 0.66905254
-            },
-            "position": {
-                "x": -133.306926,
-                "y": 98.73789,
-                "z": 245.805327
-            },
-            "id": "Sector T2Mcoms/MCOM2/AreaTrigger",
-            "linked": [
-                "Area"
-            ]
-        },
-        {
-            "name": "PolygonVolume",
-            "type": "PolygonVolume",
-            "id": "Sector T2Mcoms/MCOM2/AreaTrigger/PolygonVolume",
-            "height": 0,
-            "points": [
-                {
-                    "x": -135.17921899389137,
-                    "y": 98.73789,
-                    "z": 241.1481750961033
-                },
-                {
-                    "x": -141.62680170467377,
-                    "y": 98.73789,
-                    "z": 246.05694778924422
-                },
-                {
-                    "x": -135.52251599847742,
-                    "y": 98.73789,
-                    "z": 253.56996692495738
-                },
-                {
-                    "x": -128.87157522872397,
-                    "y": 98.73789,
-                    "z": 248.5065858263307
-                }
-            ]
         },
         {
             "name": "UH60",

@@ -31,7 +31,33 @@ export const BLUE = [0.447, 0.796, 0.922] as const;
 
 export type Color = typeof RED | typeof BLUE;
 
-export const FIRST_SECTOR_ID = 101;
-export const LAST_SECTOR_ID = 109;
+// ID scheme, see levels/MAP_REQUIREMENTS.md
+export const FIRST_SECTOR_ID = 201;
+export const LAST_SECTOR_ID = 209;
+export const MIN_SECTORS = 5;
+export const MAX_SECTORS = 7;
+export const MAX_CHILDREN_PER_SECTOR = 8;
+export const FIXED_HQ_TEAM1_ID = 100;
+export const FIXED_HQ_TEAM2_ID = 150;
 export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-export const CAPTURE_POINTS_PER_SECTOR = 10;
+
+export function sectorAreaTriggerId(sectorId: number): number {
+    return sectorId + 10;
+}
+
+export function sectorHqId(sectorId: number): number {
+    return sectorId + 20;
+}
+
+export function hqAreaTriggerId(hqId: number): number {
+    return hqId + 1;
+}
+
+// capture points and MCOMs share the block 400-497
+export function childBaseId(sectorId: number): number {
+    return 400 + (sectorId - 200) * 10;
+}
+
+export function vehicleSpawnerBaseId(sectorId: number): number {
+    return 300 + (sectorId - 200) * 10;
+}

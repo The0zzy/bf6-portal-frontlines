@@ -1,67 +1,17 @@
 /*
-    ============================
-    Godot Map Setup Requirements
-    ============================
+    Map IDs follow levels/MAP_REQUIREMENTS.md (scheme, required objects and failure rules).
+    Fixed HQs:        100 (Team 1), 150 (Team 2), area triggers 101 and 151.
+    Sectors:          201 to 20N, N = 5-7. First and last are MCOM sectors, the rest are capture sectors.
+    Sector parts:     area trigger sectorId + 10, sector HQ sectorId + 20 (capture sectors only).
+    Children:         capture points and MCOMs 400 + (sectorId - 200) * 10 + n (n = 0-7).
+    Vehicle spawners: 300 + (sectorId - 200) * 10 + n (optional).
 
-    Sectors, sector areas, HQs and capture points are discovered by ID number.
-    MCOM objects, MCOM sector/area triggers and HQ area triggers are HARDCODED in this
-    file (see "Hardcoded IDs" below) and must exist in the Godot map with exactly these IDs.
-
-    -------------------------
-    Sector and Object ID Rules
-    -------------------------
-
-    sectorIDs:        101 - 109        (createSectors stops at the first missing ID)
-    areaIDs:          301 - 309        (areaID = sectorID + 200)
-    hqIDs:            401 - 409        (hqID = sectorID + 300)
-
-    capturePointIDs per sector:
-        Sector 101  -  1001 - 1010
-        Sector 102  -  1101 - 1110
-        Sector 103  -  1201 - 1210
-        ...
-        Formula:
-            baseID = 1001 + (sectorID - 101) * 100
-            capturePointIDs = baseID ... baseID + 9
-
-    -------------------------
-    Hardcoded IDs (not derived from the scheme)
-    -------------------------
-
-        MCOM objects:              601, 602 (Team 1)      603, 604 (Team 2)
-        MCOM sector objects:       10 (Team 1)            20 (Team 2)
-        MCOM area triggers:        41 (Team 1)            42 (Team 2)
-        HQ area triggers:          2001 (hq1AreaId)       3001 (hq2AreaId)
-
-    -------------------------
-    Example Configurations
-    -------------------------
-
-    Sector 1 (sectorID 101):
-        sectorID:       101
-        areaID:         301
-        hqID:           401
-        capturePoints:  1001, 1002, ...
-
-    Sector 2 (sectorID 102):
-        sectorID:       102
-        areaID:         302
-        hqID:           402
-        capturePoints:  1101, 1102, ...
-
-    -------------------------
-    Important Notes
-    -------------------------
-
-    - All IDs must be assigned correctly in the Godot map.
-    - If an ID is missing or incorrect, the corresponding object will not be detected.
-    - The code automatically loads:
-        - Sectors, Capture Points, MCOMs, area triggers and HQs via mod.GetAllX(), matched by ID
+    init() validates the map once. A missing, duplicate or non-contiguous ID is logged and the match ends as a draw.
 */
 
 import { Events } from 'bf6-portal-utils/events';
 import { UI } from 'bf6-portal-utils/ui';
-import { BLUE, CAPTURE_POINTS_PER_SECTOR, FIRST_SECTOR_ID, LAST_SECTOR_ID, RED, frontlinesSettings } from './FrontlinesConfig.ts';
+import { BLUE, FIRST_SECTOR_ID, FIXED_HQ_TEAM1_ID, FIXED_HQ_TEAM2_ID, LAST_SECTOR_ID, MAX_CHILDREN_PER_SECTOR, MAX_SECTORS, MIN_SECTORS, RED, childBaseId, frontlinesSettings, hqAreaTriggerId, sectorAreaTriggerId, sectorHqId, vehicleSpawnerBaseId } from './FrontlinesConfig.ts';
 import type { UIText } from 'bf6-portal-utils/ui/components/text';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 import { FrontlinesUI } from './FrontlinesUI.ts';
@@ -94,12 +44,18 @@ export namespace Frontlines {
         assists: number
     }
 
+    interface McomSector {
+        sector: mod.Sector;
+        areaTrigger: mod.AreaTrigger;
+        mcoms: FrontlinesMcom[];
+    }
+
     /*-----------------------------------------------------------------------------------------------------------------*/
     /*--------------------------------------------- Global Variables --------------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------------*/
 
-    let hq1AreaId: number = 2001;
-    let hq2AreaId: number = 3001;
+    const hq1AreaId: number = hqAreaTriggerId(FIXED_HQ_TEAM1_ID);
+    const hq2AreaId: number = hqAreaTriggerId(FIXED_HQ_TEAM2_ID);
 
     let fUITeam1: FrontlinesUI | undefined;
     let fUITeam2: FrontlinesUI | undefined;
@@ -119,6 +75,8 @@ export namespace Frontlines {
     let hqsById: Map<number, mod.HQ> = new Map();
     let areaTriggersById: Map<number, mod.AreaTrigger> = new Map();
     let mcomsById: Map<number, mod.MCOM> = new Map();
+    let capturePointsById: Map<number, mod.CapturePoint> = new Map();
+    const vehicleSpawnerIds: Set<number> = new Set();
 
     /***********************************************************************************
     ***************************** Frontlines Setup *************************************
@@ -128,16 +86,8 @@ export namespace Frontlines {
     ***************************** MCOM Setup *******************************************
     ***********************************************************************************/
 
-    const mcomTeam1SectorId: number = 10;
-    const mcomTeam1AreaId: number = 41;
-    const mcomTeam2SectorId: number = 20;
-    const mcomTeam2AreaId: number = 42;
-
-    const mcomTeam1Ids: number[] = [601, 602];
-    const mcomTeam2Ids: number[] = [603, 604];
-
-    let mComTeam1: FrontlinesMcom[] = [];
-    let mComTeam2: FrontlinesMcom[] = [];
+    let mcomSectorTeam1: McomSector | undefined;
+    let mcomSectorTeam2: McomSector | undefined;
 
     /***********************************************************************************
     ******************************Sector and Flag Setup*********************************   
@@ -336,35 +286,8 @@ export namespace Frontlines {
         }
 
         //disable mcom sectors
-        const mcomSector1 = sectorsById.get(mcomTeam1SectorId);
-        if (mcomSector1) {
-            mod.EnableGameModeObjective(mcomSector1, false);
-        }
-        const mcomSector2 = sectorsById.get(mcomTeam2SectorId);
-        if (mcomSector2) {
-            mod.EnableGameModeObjective(mcomSector2, false);
-        }
-
-        for (const mcom of mComTeam1) {
-            mod.EnableGameModeObjective(mcom.mcom, false);
-
-            //disable all areas
-            let area = areaTriggersById.get(mcomTeam1AreaId);
-            if (area) {
-                mod.EnableAreaTrigger(area, false);
-            }
-
-        }
-
-        for (const mcom of mComTeam2) {
-            mod.EnableGameModeObjective(mcom.mcom, false);
-
-            //disable all areas
-            let area = areaTriggersById.get(mcomTeam2AreaId);
-            if (area) {
-                mod.EnableAreaTrigger(area, false);
-            }
-        }
+        deactivateMcomSector(mcomSectorTeam1);
+        deactivateMcomSector(mcomSectorTeam2);
 
         //hq mcoms reached
         if (currentSectorIndex == -1) {
@@ -394,21 +317,7 @@ export namespace Frontlines {
                 }
             }
 
-            let sector = sectorsById.get(mcomTeam1SectorId);
-            if (sector) {
-                mod.EnableGameModeObjective(sector, true);
-            }
-
-            for (const mcom of mComTeam1) {
-                mod.SetMCOMOwner(mcom.mcom, mod.GetTeam(1));
-                mod.EnableGameModeObjective(mcom.mcom, true);
-
-                //enable new area
-                let area = areaTriggersById.get(mcomTeam1AreaId);
-                if (area) {
-                    mod.EnableAreaTrigger(area, true);
-                }
-            }
+            activateMcomSector(mcomSectorTeam1, mod.GetTeam(1));
 
             return;
         }
@@ -439,22 +348,7 @@ export namespace Frontlines {
                 }
             }
 
-            let sector = sectorsById.get(mcomTeam2SectorId);
-            if (sector) {
-                mod.EnableGameModeObjective(sector, true);
-            }
-
-            for (const mcom of mComTeam2) {
-                mod.SetMCOMOwner(mcom.mcom, mod.GetTeam(2));
-                mod.EnableGameModeObjective(mcom.mcom, true);
-                console.log('mcom: ' + mcom.id + ' activated');
-
-                //enable new area
-                let area = areaTriggersById.get(mcomTeam2AreaId);
-                if (area) {
-                    mod.EnableAreaTrigger(area, true);
-                }
-            }
+            activateMcomSector(mcomSectorTeam2, mod.GetTeam(2));
 
             return;
         }
@@ -480,10 +374,7 @@ export namespace Frontlines {
             }
 
             //enable new area
-            let area = areaTriggersById.get(currentSector.areaId);
-            if (area) {
-                mod.EnableAreaTrigger(area, true);
-            }
+            mod.EnableAreaTrigger(currentSector.areaTrigger, true);
 
             for (const [id, point] of currentSector.capturePoints) {
                 mod.EnableGameModeObjective(point, true);
@@ -495,32 +386,53 @@ export namespace Frontlines {
         }
     }
 
+    function deactivateMcomSector(mcomSector: McomSector | undefined): void {
+        if (!mcomSector) {
+            return;
+        }
+
+        mod.EnableGameModeObjective(mcomSector.sector, false);
+        mod.EnableAreaTrigger(mcomSector.areaTrigger, false);
+        for (const mcom of mcomSector.mcoms) {
+            mod.EnableGameModeObjective(mcom.mcom, false);
+        }
+    }
+
+    function activateMcomSector(mcomSector: McomSector | undefined, owner: mod.Team): void {
+        if (!mcomSector) {
+            return;
+        }
+
+        mod.EnableGameModeObjective(mcomSector.sector, true);
+        mod.EnableAreaTrigger(mcomSector.areaTrigger, true);
+        for (const mcom of mcomSector.mcoms) {
+            mod.SetMCOMOwner(mcom.mcom, owner);
+            mod.EnableGameModeObjective(mcom.mcom, true);
+        }
+    }
+
+    function setSectorHQ(sector: FrontlinesSector | undefined, team: mod.Team): void {
+        if (!sector) {
+            return;
+        }
+
+        mod.SetHQTeam(sector.hq, team);
+        mod.EnableHQ(sector.hq, true);
+    }
+
     function startCapture(): void {
-        let middleSectorIndex = Math.ceil(sectors.length / 2) - 1;
+        const middleSectorIndex = Math.ceil(sectors.length / 2) - 1;
 
         currentSectorIndex = middleSectorIndex;
         // currentSectorIndex = 3;
 
+        //disable all HQs
         for (const sector of sectors) {
-            //disable all HQs
-            let hq = hqsById.get(sector.hqId);
-            if (hq) {
-                mod.EnableHQ(hq, false);
-            }
+            mod.EnableHQ(sector.hq, false);
         }
 
-        let hq1 = getSectorHQ(sectors[currentSectorIndex - 1]);
-        if (hq1) {
-            mod.SetHQTeam(hq1, mod.GetTeam(1));
-            mod.EnableHQ(hq1, true);
-
-        }
-
-        let hq2 = getSectorHQ(sectors[currentSectorIndex + 1]);
-        if (hq2) {
-            mod.SetHQTeam(hq2, mod.GetTeam(2));
-            mod.EnableHQ(hq2, true);
-        }
+        setSectorHQ(sectors[currentSectorIndex - 1], mod.GetTeam(1));
+        setSectorHQ(sectors[currentSectorIndex + 1], mod.GetTeam(2));
 
         updateSectorsState();
     }
@@ -559,12 +471,9 @@ export namespace Frontlines {
             mod.UnloadMusic(mod.MusicPackages.Core);
         })
 
+        //disable all HQs
         for (const sector of sectors) {
-            //disable all HQs
-            let hq = hqsById.get(sector.hqId);
-            if (hq) {
-                mod.EnableHQ(hq, false);
-            }
+            mod.EnableHQ(sector.hq, false);
         }
 
         const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
@@ -605,44 +514,20 @@ export namespace Frontlines {
         updateSectorsState();
 
         //enable new HQ for pusher
-        let lastSector = sectors[currentSectorIndex - 1];
-
-        let hq1 = getSectorHQ(lastSector);
-        if (hq1) {
-            mod.SetHQTeam(hq1, mod.GetTeam(1));
-            mod.EnableHQ(hq1, true);
-
-            console.log("PusherHQ:" + lastSector.hqId);
-        }
+        const lastSector = sectors[currentSectorIndex - 1];
+        setSectorHQ(lastSector, mod.GetTeam(1));
 
         //backup
-        mod.Wait(3).then(() => {
-            if (hq1) {
-                mod.SetHQTeam(hq1, mod.GetTeam(1));
-                mod.EnableHQ(hq1, true);
-            }
-        })
+        mod.Wait(3).then(() => setSectorHQ(lastSector, mod.GetTeam(1)));
 
         //enable new HQ for defender
         // let defenderTeam = mod.Equals(team, mod.GetTeam(1))? mod.GetTeam(2): mod.GetTeam(1);
 
-        let lastDefenderSector = sectors[currentSectorIndex + 1];
-
-        let hq2 = getSectorHQ(lastDefenderSector);
-        if (hq2) {
-            mod.SetHQTeam(hq2, mod.GetTeam(2));
-            mod.EnableHQ(hq2, true);
-
-            console.log("DefenderHQ:" + lastDefenderSector.hqId);
-        }
+        const lastDefenderSector = sectors[currentSectorIndex + 1];
+        setSectorHQ(lastDefenderSector, mod.GetTeam(2));
 
         //backup
-        mod.Wait(3).then(() => {
-            if (hq2) {
-                mod.SetHQTeam(hq2, mod.GetTeam(2));
-                mod.EnableHQ(hq2, true);
-            }
-        })
+        mod.Wait(3).then(() => setSectorHQ(lastDefenderSector, mod.GetTeam(2)));
 
 
         //deactivate objectives and spawn icons
@@ -755,126 +640,214 @@ export namespace Frontlines {
         return aiSoldiers;
     }
 
-    function getAllSectors(): Map<number, mod.Sector> {
-        const result = new Map<number, mod.Sector>();
-        const list = mod.GetAllSectors();
+    // Indexes a mod list by object ID. Repeated IDs are recorded in duplicateIds.
+    function indexById<T>(list: mod.Array, seenIds: Set<number>, duplicateIds: number[]): Map<number, T> {
+        const result = new Map<number, T>();
         for (let i = 0; i < mod.CountOf(list); i++) {
-            const sector = mod.ValueInArray(list, i) as mod.Sector;
-            result.set(mod.GetObjId(sector), sector);
+            const obj = mod.ValueInArray(list, i);
+            const id = mod.GetObjId(obj);
+            if (seenIds.has(id)) {
+                duplicateIds.push(id);
+            }
+            seenIds.add(id);
+            result.set(id, obj as T);
         }
         return result;
     }
 
-    function getAllHQs(): Map<number, mod.HQ> {
-        const result = new Map<number, mod.HQ>();
-        const list = mod.GetAllHQs();
-        for (let i = 0; i < mod.CountOf(list); i++) {
-            const hq = mod.ValueInArray(list, i) as mod.HQ;
-            result.set(mod.GetObjId(hq), hq);
+    function loadMapObjects(): string | undefined {
+        const seenIds = new Set<number>();
+        const duplicateIds: number[] = [];
+        sectorsById = indexById<mod.Sector>(mod.GetAllSectors(), seenIds, duplicateIds);
+        hqsById = indexById<mod.HQ>(mod.GetAllHQs(), seenIds, duplicateIds);
+        areaTriggersById = indexById<mod.AreaTrigger>(mod.GetAllAreaTriggers(), seenIds, duplicateIds);
+        mcomsById = indexById<mod.MCOM>(mod.GetAllMCOMs(), seenIds, duplicateIds);
+        capturePointsById = indexById<mod.CapturePoint>(mod.GetAllCapturePoints(), seenIds, duplicateIds);
+
+        if (duplicateIds.length > 0) {
+            return 'duplicate ID ' + duplicateIds.join(', ');
         }
-        return result;
-    }
 
-    function getAllAreaTriggers(): Map<number, mod.AreaTrigger> {
-        const result = new Map<number, mod.AreaTrigger>();
-        const list = mod.GetAllAreaTriggers();
-        for (let i = 0; i < mod.CountOf(list); i++) {
-            const areaTrigger = mod.ValueInArray(list, i) as mod.AreaTrigger;
-            result.set(mod.GetObjId(areaTrigger), areaTrigger);
+        // spawners are not checked for duplicates, unplaced vehicles may share a default ID
+        vehicleSpawnerIds.clear();
+        const spawners = mod.GetAllVehicleSpawners();
+        for (let i = 0; i < mod.CountOf(spawners); i++) {
+            vehicleSpawnerIds.add(mod.GetObjId(mod.ValueInArray(spawners, i)));
         }
-        return result;
+
+        return undefined;
     }
 
-    function getAllMCOMs(): Map<number, mod.MCOM> {
-        const result = new Map<number, mod.MCOM>();
-        const list = mod.GetAllMCOMs();
-        for (let i = 0; i < mod.CountOf(list); i++) {
-            const mcom = mod.ValueInArray(list, i) as mod.MCOM;
-            result.set(mod.GetObjId(mcom), mcom);
-        }
-        return result;
-    }
-
-    function loadMapObjects(): void {
-        sectorsById = getAllSectors();
-        hqsById = getAllHQs();
-        areaTriggersById = getAllAreaTriggers();
-        mcomsById = getAllMCOMs();
-    }
-
-    function getSectorHQ(sector: FrontlinesSector | undefined): mod.HQ | undefined {
-        return sector ? hqsById.get(sector.hqId) : undefined;
-    }
-
-    function getAllCapturePoints(): Map<number, mod.CapturePoint> {
-        const allCapturePoints = new Map<number, mod.CapturePoint>();
-        const capturePointList = mod.GetAllCapturePoints();
-        for (let i = 0; i < mod.CountOf(capturePointList); i++) {
-            const capturePoint = mod.ValueInArray(capturePointList, i) as mod.CapturePoint;
-            allCapturePoints.set(mod.GetObjId(capturePoint), capturePoint);
-        }
-        return allCapturePoints;
-    }
-
-    function getCapturePointsForSector(sectorId: number, allCapturePoints: Map<number, mod.CapturePoint>): Map<number, mod.CapturePoint> {
-        const capturePoints = new Map<number, mod.CapturePoint>();
-        const baseId = 1001 + (sectorId - FIRST_SECTOR_ID) * 100;
-
-        for (let cpId = baseId; cpId < baseId + CAPTURE_POINTS_PER_SECTOR; cpId++) {
-            const capturePoint = allCapturePoints.get(cpId);
-            if (capturePoint) {
-                capturePoints.set(cpId, capturePoint);
+    function validateFixedObjects(): string | undefined {
+        for (const hqId of [FIXED_HQ_TEAM1_ID, FIXED_HQ_TEAM2_ID]) {
+            if (!hqsById.has(hqId)) {
+                return 'missing fixed HQ ' + hqId;
+            }
+            if (!areaTriggersById.has(hqAreaTriggerId(hqId))) {
+                return 'missing HQ area trigger ' + hqAreaTriggerId(hqId);
             }
         }
-
-        return capturePoints;
+        return undefined;
     }
 
-    function createSectors(): void {
-        const allCapturePoints = getAllCapturePoints();
+    // Returns the objects of a block (n = 0-7) keyed by ID.
+    function getBlockObjects<T>(objects: Map<number, T>, baseId: number): Map<number, T> {
+        const result = new Map<number, T>();
+        for (let n = 0; n < MAX_CHILDREN_PER_SECTOR; n++) {
+            const obj = objects.get(baseId + n);
+            if (obj) {
+                result.set(baseId + n, obj);
+            }
+        }
+        return result;
+    }
+
+    // Returns the first ID after a missing index in a block (n = 0-7), or undefined when contiguous.
+    function findBlockGap(baseId: number, exists: (id: number) => boolean): number | undefined {
+        let missingSeen = false;
+        for (let n = 0; n < MAX_CHILDREN_PER_SECTOR; n++) {
+            const id = baseId + n;
+            if (!exists(id)) {
+                missingSeen = true;
+            } else if (missingSeen) {
+                return id;
+            }
+        }
+        return undefined;
+    }
+
+    function getAllMcoms(): FrontlinesMcom[] {
+        return [...(mcomSectorTeam1?.mcoms ?? []), ...(mcomSectorTeam2?.mcoms ?? [])];
+    }
+
+    function createMcomSector(sectorId: number, owner: mod.Team): McomSector | string {
+        const sector = sectorsById.get(sectorId);
+        if (!sector) {
+            return 'missing sector ' + sectorId;
+        }
+
+        const areaTrigger = areaTriggersById.get(sectorAreaTriggerId(sectorId));
+        if (!areaTrigger) {
+            return 'missing area trigger ' + sectorAreaTriggerId(sectorId);
+        }
+
+        if (hqsById.has(sectorHqId(sectorId))) {
+            return 'sector HQ ' + sectorHqId(sectorId) + ' is not allowed on MCOM sector ' + sectorId;
+        }
+
+        const baseId = childBaseId(sectorId);
+        const gapId = findBlockGap(baseId, id => mcomsById.has(id));
+        if (gapId !== undefined) {
+            return 'MCOM ' + gapId + ' has a gap before it';
+        }
+
+        const mcomObjects = getBlockObjects(mcomsById, baseId);
+        if (mcomObjects.size === 0) {
+            return 'missing MCOM ' + baseId;
+        }
+
+        const mcoms: FrontlinesMcom[] = [];
+        for (const mcom of mcomObjects.values()) {
+            mcoms.push(new FrontlinesMcom(mcom, owner, frontlinesSettings.mCOMFuseTime));
+        }
+
+        return { sector, areaTrigger, mcoms };
+    }
+
+    function createCaptureSector(sectorId: number): FrontlinesSector | string {
+        const sector = sectorsById.get(sectorId);
+        if (!sector) {
+            return 'missing sector ' + sectorId;
+        }
+
+        const areaTrigger = areaTriggersById.get(sectorAreaTriggerId(sectorId));
+        if (!areaTrigger) {
+            return 'missing area trigger ' + sectorAreaTriggerId(sectorId);
+        }
+
+        const hq = hqsById.get(sectorHqId(sectorId));
+        if (!hq) {
+            return 'missing sector HQ ' + sectorHqId(sectorId);
+        }
+
+        const baseId = childBaseId(sectorId);
+        const gapId = findBlockGap(baseId, id => capturePointsById.has(id));
+        if (gapId !== undefined) {
+            return 'capture point ' + gapId + ' has a gap before it';
+        }
+
+        const capturePoints = getBlockObjects(capturePointsById, baseId);
+        if (capturePoints.size === 0) {
+            return 'missing capture point ' + baseId;
+        }
+
+        return new FrontlinesSector(sector, sectorId, areaTrigger, hq, capturePoints);
+    }
+
+    // Builds the MCOM sectors and capture sectors. Returns an error message for the first invalid ID.
+    function createSectors(): string | undefined {
+        // disable all sectors in case they are not meant for the frontlines game mode
         for (const sector of sectorsById.values()) {
-            // disable all sectors in case they are not meant for the frontlines game mode
             mod.EnableGameModeObjective(sector, false);
         }
 
-        // sector IDs must be consecutive, so the list ends at the first missing ID
-        const frontlinesSectors: FrontlinesSector[] = [];
-        for (let sectorId = FIRST_SECTOR_ID; sectorId <= LAST_SECTOR_ID; sectorId++) {
-            const sector = sectorsById.get(sectorId);
-            if (!sector) break;
+        let sectorCount = 0;
+        while (FIRST_SECTOR_ID + sectorCount <= LAST_SECTOR_ID && sectorsById.has(FIRST_SECTOR_ID + sectorCount)) {
+            sectorCount++;
+        }
+        if (sectorCount < MIN_SECTORS) {
+            return 'missing sector ' + (FIRST_SECTOR_ID + sectorCount) + ' (need ' + MIN_SECTORS + '-' + MAX_SECTORS + ' sectors)';
+        }
+        for (let sectorId = FIRST_SECTOR_ID + sectorCount; sectorId <= LAST_SECTOR_ID; sectorId++) {
+            if (sectorsById.has(sectorId)) {
+                return 'sector ' + sectorId + ' has a gap before it';
+            }
+        }
+        if (sectorCount > MAX_SECTORS) {
+            return 'sector count ' + sectorCount + ' exceeds ' + MAX_SECTORS;
+        }
 
-            frontlinesSectors.push(new FrontlinesSector(sector, sectorId, getCapturePointsForSector(sectorId, allCapturePoints)));
+        const lastSectorId = FIRST_SECTOR_ID + sectorCount - 1;
+
+        for (let sectorId = FIRST_SECTOR_ID; sectorId <= lastSectorId; sectorId++) {
+            const spawnerGapId = findBlockGap(vehicleSpawnerBaseId(sectorId), id => vehicleSpawnerIds.has(id));
+            if (spawnerGapId !== undefined) {
+                return 'vehicle spawner ' + spawnerGapId + ' has a gap before it';
+            }
+        }
+
+        const team1McomSector = createMcomSector(FIRST_SECTOR_ID, mod.GetTeam(1));
+        if (typeof team1McomSector === 'string') {
+            return team1McomSector;
+        }
+        const team2McomSector = createMcomSector(lastSectorId, mod.GetTeam(2));
+        if (typeof team2McomSector === 'string') {
+            return team2McomSector;
+        }
+        mcomSectorTeam1 = team1McomSector;
+        mcomSectorTeam2 = team2McomSector;
+
+        const captureSectors: FrontlinesSector[] = [];
+        for (let sectorId = FIRST_SECTOR_ID + 1; sectorId < lastSectorId; sectorId++) {
+            const captureSector = createCaptureSector(sectorId);
+            if (typeof captureSector === 'string') {
+                return captureSector;
+            }
+            captureSectors.push(captureSector);
         }
 
         // left half belongs to team 1, right half to team 2, the middle sector (odd count) stays neutral
-        const middleIndex = Math.floor(frontlinesSectors.length / 2);
-        for (let i = 0; i < frontlinesSectors.length; i++) {
+        const middleIndex = Math.floor(captureSectors.length / 2);
+        for (let i = 0; i < captureSectors.length; i++) {
             if (i < middleIndex) {
-                frontlinesSectors[i].ownerTeam = mod.GetTeam(1);
+                captureSectors[i].ownerTeam = mod.GetTeam(1);
             } else if (i > middleIndex) {
-                frontlinesSectors[i].ownerTeam = mod.GetTeam(2);
+                captureSectors[i].ownerTeam = mod.GetTeam(2);
             }
         }
 
-        sectors = frontlinesSectors;
-    }
-
-    function createTeamMcoms(ids: number[], owner: mod.Team): FrontlinesMcom[] {
-        const teamMcoms: FrontlinesMcom[] = [];
-        for (const id of ids) {
-            const mcom = mcomsById.get(id);
-            if (!mcom) {
-                console.log('MCOM not found: ' + id);
-                continue;
-            }
-            teamMcoms.push(new FrontlinesMcom(mcom, owner, frontlinesSettings.mCOMFuseTime));
-        }
-        return teamMcoms;
-    }
-
-    function createMcoms(): void {
-        mComTeam1 = createTeamMcoms(mcomTeam1Ids, mod.GetTeam(1));
-        mComTeam2 = createTeamMcoms(mcomTeam2Ids, mod.GetTeam(2));
+        sectors = captureSectors;
+        return undefined;
     }
 
     function updateScoreboard(player: mod.Player, data: PlayerData): void {
@@ -959,7 +932,7 @@ export namespace Frontlines {
         }
 
         for (const sector of sectors) {
-            if (sector.areaId == mod.GetObjId(eventAreaTrigger)) {
+            if (mod.GetObjId(sector.areaTrigger) == mod.GetObjId(eventAreaTrigger)) {
                 //neutral sector
                 if (sector.ownerTeam == undefined) {
                     console.log('neutral sector');
@@ -993,20 +966,22 @@ export namespace Frontlines {
     function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
         const eventId = mod.GetObjId(eventMCOM);
 
-        const team1Mcom = mComTeam1.find(m => m.id === eventId);
+        const team1Mcoms = mcomSectorTeam1?.mcoms ?? [];
+        const team1Mcom = team1Mcoms.find(m => m.id === eventId);
         if (team1Mcom) {
             team1Mcom.destroyMCOM();
-            if (mComTeam1.every(m => m.destroyed)) {
+            if (team1Mcoms.every(m => m.destroyed)) {
                 console.log('all team 1 MCOMs destroyed');
                 mod.EndGameMode(mod.GetTeam(2));
             }
             return;
         }
 
-        const team2Mcom = mComTeam2.find(m => m.id === eventId);
+        const team2Mcoms = mcomSectorTeam2?.mcoms ?? [];
+        const team2Mcom = team2Mcoms.find(m => m.id === eventId);
         if (team2Mcom) {
             team2Mcom.destroyMCOM();
-            if (mComTeam2.every(m => m.destroyed)) {
+            if (team2Mcoms.every(m => m.destroyed)) {
                 console.log('all team 2 MCOMs destroyed');
                 mod.EndGameMode(mod.GetTeam(1));
             }
@@ -1280,9 +1255,13 @@ export namespace Frontlines {
          * Sets up the match. Call from the OnGameModeStarted handler in index.ts.
          */
     export function init(): void {
-        loadMapObjects();
-        createSectors();
-        createMcoms();
+        const setupError = loadMapObjects() ?? validateFixedObjects() ?? createSectors();
+        if (setupError) {
+            console.log('Frontlines setup failed: ' + setupError);
+            mod.EndGameMode(mod.GetTeam(0));
+            return;
+        }
+
         setModeSettings();
         mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
         mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
@@ -1299,7 +1278,7 @@ export namespace Frontlines {
 
         startCapture();
 
-        for (const mcom of [...mComTeam1, ...mComTeam2]) {
+        for (const mcom of getAllMcoms()) {
             mod.EnableGameModeObjective(mcom.mcom, false);
             mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Default);
         }
