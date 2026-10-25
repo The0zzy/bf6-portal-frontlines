@@ -39,7 +39,21 @@ export const MAX_SECTORS = 7;
 export const MAX_CHILDREN_PER_SECTOR = 8;
 export const FIXED_HQ_TEAM1_ID = 100;
 export const FIXED_HQ_TEAM2_ID = 150;
-export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
+
+// Neutral owner of capture points and sectors. Team 3 is a workaround until the in-game team 0 bug is fixed; then return mod.GetTeam(0).
+export function neutralTeam(): mod.Team {
+    return mod.GetTeam(3);
+}
+
+export function getEnemyTeam(team: mod.Team): mod.Team {
+    if (mod.Equals(team, mod.GetTeam(1))) {
+        return mod.GetTeam(2);
+    } else if (mod.Equals(team, mod.GetTeam(2))) {
+        return mod.GetTeam(1);
+    }
+    throw new Error("GetEnemyTeam: Invalid team provided (" + mod.GetObjId(team) + ")");
+}
 
 export function sectorAreaTriggerId(sectorId: number): number {
     return sectorId + 10;

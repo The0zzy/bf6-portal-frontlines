@@ -44,3 +44,8 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
 - area field should be properly named areaTrigger for clarity.
 - move the check "if a sector is captured" inside the sector class and simplify code regarding references
 - apply such class-based encapsulation for objects where there is benefit (this may also mainly apply to the UI)
+- There should only be a single UI instance handling both team aspects isntead of 2 instances.
+  - the class should provide methods to update the UI state instead of outer code directly manipulating the UI.
+- sector state update should do minimal changes instead of always disabling everything and re-enabling it.
+- there should be a gamestate element that is passed or referenced instead of multiple single pieces of state being managed independently.
+  - the state is mainly controlled by frontlines and others should only read or react to it, not modify it directly.

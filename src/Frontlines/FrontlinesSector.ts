@@ -1,20 +1,27 @@
-import { FIRST_SECTOR_ID, LETTERS } from './FrontlinesConfig.ts';
+import { neutralTeam } from './FrontlinesConfig.ts';
 
-export class FrontlinesSector {
+export abstract class FrontlinesSector {
     readonly sector: mod.Sector;
     readonly id: number;
-    readonly letter: string;
     readonly areaTrigger: mod.AreaTrigger;
-    readonly hq: mod.HQ;
-    readonly capturePoints: Map<number, mod.CapturePoint>;
-    ownerTeam: mod.Team | undefined = undefined;
+    ownerTeam: mod.Team = neutralTeam();
 
-    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ, capturePoints: Map<number, mod.CapturePoint>) {
+    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger) {
         this.sector = sector;
         this.id = id;
-        this.letter = LETTERS[id - FIRST_SECTOR_ID];
         this.areaTrigger = areaTrigger;
-        this.hq = hq;
-        this.capturePoints = capturePoints;
     }
+
+    setOwner(team: mod.Team): void {
+        this.ownerTeam = team;
+    }
+
+    enableSectorAndArea(): void {
+        mod.EnableGameModeObjective(this.sector, true);
+        mod.EnableAreaTrigger(this.areaTrigger, true);
+    }
+
+    abstract activate(): void;
+    abstract deactivate(): void;
+    abstract isCaptured(): boolean;
 }
