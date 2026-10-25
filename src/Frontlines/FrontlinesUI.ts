@@ -297,6 +297,28 @@ export class FrontlinesUI {
         this.sectorElementSpace += 60;
     }
 
+    setTimer(seconds: number): void {
+        if (!this.WinTimerText) {
+            return;
+        }
+
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        if (minutes < 10 && remainingSeconds < 10) {
+            this.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, remainingSeconds);
+        }
+        else if (minutes < 10) {
+            this.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, remainingSeconds);
+        }
+        else if (remainingSeconds < 10) {
+            this.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, remainingSeconds);
+        }
+        else {
+            this.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, remainingSeconds);
+        }
+    }
+
     setUnitsRemaining(remaining: number, max: number): void {
         if (this.UnitsRemainingText) {
             this.UnitsRemainingText.label = mod.Message(mod.stringkeys.UnitsRemainingText, remaining);

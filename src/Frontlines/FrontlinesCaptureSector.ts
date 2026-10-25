@@ -1,14 +1,12 @@
-import { FIRST_SECTOR_ID, LETTERS, neutralTeam } from './FrontlinesConfig.ts';
+import { neutralTeam } from './FrontlinesConfig.ts';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 
 export class FrontlinesCaptureSector extends FrontlinesSector {
-    readonly letter: string;
     readonly hq: mod.HQ;
     readonly capturePoints: Map<number, mod.CapturePoint>;
 
     constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ, capturePoints: Map<number, mod.CapturePoint>) {
         super(sector, id, areaTrigger);
-        this.letter = LETTERS[id - FIRST_SECTOR_ID];
         this.hq = hq;
         this.capturePoints = capturePoints;
     }

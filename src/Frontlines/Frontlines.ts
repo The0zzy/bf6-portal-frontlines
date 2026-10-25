@@ -93,37 +93,9 @@ export namespace Frontlines {
     let sectors: FrontlinesSector[] = [];
     let captureSectors: FrontlinesCaptureSector[] = [];
 
-    /*----------------------------------------------------------------------------------------------------*/
-
-    let team1PlayersCount: number = 0;
-    let team2PlayersCount: number = 0;
-
     /*-----------------------------------------------------------------------------------------------------------------*/
     /*--------------------------------------------- Helper Functions ------------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------------*/
-
-    function updateTimerUI(ui: FrontlinesUI): void {
-        const minutes = Math.floor(matchTimer / 60);
-        const seconds = matchTimer % 60;
-
-        if (!ui.WinTimerText) {
-            return;
-        }
-
-        if (minutes < 10 && seconds < 10) {
-            ui.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, seconds);
-        }
-        else if (minutes < 10) {
-            ui.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, seconds);
-        }
-        else if (seconds < 10) {
-            ui.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, seconds);
-        }
-        else {
-            ui.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, seconds);
-
-        }
-    }
 
     function getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
@@ -157,8 +129,8 @@ export namespace Frontlines {
             // Timer update
             matchTimer--;
             if (fUITeam1 && fUITeam2) {
-                updateTimerUI(fUITeam1);
-                updateTimerUI(fUITeam2);
+                fUITeam1.setTimer(matchTimer);
+                fUITeam2.setTimer(matchTimer);
             }
             if (matchTimer == 0) {
                 // Time over
@@ -201,70 +173,6 @@ export namespace Frontlines {
             }
             secondTimer();
         });
-    }
-
-    function getConquerMessageFromSector(sector: FrontlinesSector): mod.Message {
-        let result = mod.Message(mod.stringkeys.conquerSectorAMSG);
-
-        if (sector instanceof FrontlinesCaptureSector) {
-            switch (sector.letter) {
-                case "A":
-                    result = mod.Message(mod.stringkeys.conquerSectorAMSG);
-                    break;
-                case "B":
-                    result = mod.Message(mod.stringkeys.conquerSectorBMSG);
-                    break;
-                case "C":
-                    result = mod.Message(mod.stringkeys.conquerSectorCMSG);
-                    break;
-                case "D":
-                    result = mod.Message(mod.stringkeys.conquerSectorDMSG);
-                    break;
-                case "E":
-                    result = mod.Message(mod.stringkeys.conquerSectorEMSG);
-                    break;
-                case "F":
-                    result = mod.Message(mod.stringkeys.conquerSectorFMSG);
-                    break;
-                case "G":
-                    result = mod.Message(mod.stringkeys.conquerSectorGMSG);
-                    break;
-            }
-        }
-
-        return result;
-    }
-
-    function getLooseMessageFromSector(sector: FrontlinesSector): mod.Message {
-        let result = mod.Message(mod.stringkeys.looseSectorAMSG);
-
-        if (sector instanceof FrontlinesCaptureSector) {
-            switch (sector.letter) {
-                case "A":
-                    result = mod.Message(mod.stringkeys.looseSectorAMSG);
-                    break;
-                case "B":
-                    result = mod.Message(mod.stringkeys.looseSectorBMSG);
-                    break;
-                case "C":
-                    result = mod.Message(mod.stringkeys.looseSectorCMSG);
-                    break;
-                case "D":
-                    result = mod.Message(mod.stringkeys.looseSectorDMSG);
-                    break;
-                case "E":
-                    result = mod.Message(mod.stringkeys.looseSectorEMSG);
-                    break;
-                case "F":
-                    result = mod.Message(mod.stringkeys.looseSectorFMSG);
-                    break;
-                case "G":
-                    result = mod.Message(mod.stringkeys.looseSectorGMSG);
-                    break;
-            }
-        }
-
-        return result;
     }
 
     /*-----------------------------------------------------------------------------------------------------------------*/
@@ -378,8 +286,8 @@ export namespace Frontlines {
 
         const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
         const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.defendNextSectorMSG);
-        const sectorConquerMessage: mod.Message = getConquerMessageFromSector(sectors[currentSectorIndex]);
-        const sectorLooseMessage: mod.Message = getLooseMessageFromSector(sectors[currentSectorIndex]);
+        const sectorConquerMessage: mod.Message = sectors[currentSectorIndex].getConquerMessage();
+        const sectorLooseMessage: mod.Message = sectors[currentSectorIndex].getLooseMessage();
         let sectorConqueredNotification = mod.CreateGameEventNotificationData();
         mod.SetIconForGameEventNotificationData(sectorConqueredNotification, mod.WorldIconImages.Flag);
         mod.SetSizeForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationSizes.Large);
