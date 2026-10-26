@@ -624,11 +624,9 @@ export namespace Frontlines {
         }
     }
 
-    function handleOngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
+    function handleOngoingGlobal(): void {
         const currentSector = sectors[currentSectorIndex];
         if (!(currentSector instanceof FrontlinesCaptureSector)) return;
-        const point = currentSector.capturePoints.get(mod.GetObjId(eventCapturePoint));
-        if (!point) return;
 
         ui?.updateSectorProgress(currentSector);
     }
@@ -708,7 +706,7 @@ export namespace Frontlines {
         Events.OnPlayerEnterAreaTrigger.subscribe(handlePlayerEnterAreaTrigger);
         Events.OnMCOMDestroyed.subscribe(handleMCOMDestroyed);
         Events.OnCapturePointCaptured.subscribe(handleCapturePointCaptured);
-        Events.OngoingCapturePoint.subscribe(handleOngoingCapturePoint);
+        Events.OngoingGlobal.subscribe(handleOngoingGlobal);
         Events.OnPlayerEarnedKill.subscribe(handlePlayerEarnedKill);
         Events.OnPlayerEarnedKillAssist.subscribe(handlePlayerEarnedKillAssist);
         Events.OnPlayerJoinGame.subscribe(handlePlayerJoinGame);
