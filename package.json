@@ -29,25 +29,26 @@
         "battlefield-6",
         "bf6"
     ],
-    "author": "TheOzzy, Andy6170, Mancour",
+    "author": "TheOzzy, Andy6170, Mancour, Markebarca",
     "license": "MIT",
     "devDependencies": {
-        "@bf6mods/portal": "^1.1.0",
-        "@clack/prompts": "^1.6.0",
-        "@typescript-eslint/eslint-plugin": "^8.62.0",
-        "@typescript-eslint/parser": "^8.62.0",
+        "@bf6mods/portal": "^1.2.0",
+        "@clack/prompts": "^1.8.1",
+        "@eslint/js": "^10.0.1",
+        "@typescript-eslint/eslint-plugin": "^8.72.0",
+        "@typescript-eslint/parser": "^8.72.0",
         "bf6-portal-bundler": "^1.4.1",
-        "bf6-portal-mod-types": "^3.1.0",
-        "bf6-portal-utils": "^9.2.0",
+        "bf6-portal-mod-types": "^5.1.0",
+        "bf6-portal-utils": "^10.0.0",
         "dotenv": "^17.4.2",
-        "eslint": "^10.5.0",
+        "eslint": "^10.13.0",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.6",
-        "prettier": "^3.8.4",
-        "sharp": "^0.35.2",
+        "eslint-plugin-prettier": "^5.5.7",
+        "prettier": "^3.9.10",
+        "sharp": "^0.35.5",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.62.0"
+        "typescript-eslint": "^8.72.0"
     },
     "templateVersion": "0.0.1"
 }
