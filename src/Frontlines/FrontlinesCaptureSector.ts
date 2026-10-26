@@ -54,4 +54,15 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
         }
         return seenOwner;
     }
+
+    // Average progress over all capture points the team is currently progressing on.
+    getCaptureProgress(team: mod.Team): number {
+        let progressSum = 0;
+        for (const point of this.capturePoints.values()) {
+            if (mod.Equals(mod.GetOwnerProgressTeam(point), team)) {
+                progressSum += mod.GetCaptureProgress(point);
+            }
+        }
+        return progressSum / this.capturePoints.size;
+    }
 }

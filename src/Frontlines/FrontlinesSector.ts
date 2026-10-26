@@ -23,41 +23,64 @@ export abstract class FrontlinesSector {
         mod.EnableAreaTrigger(this.areaTrigger, enable);
     }
 
+    getLabel(): mod.Message {
+        switch (this.letter) {
+            case "B":
+                return mod.Message(mod.stringkeys.frontlines.b);
+            case "C":
+                return mod.Message(mod.stringkeys.frontlines.c);
+            case "D":
+                return mod.Message(mod.stringkeys.frontlines.d);
+            case "E":
+                return mod.Message(mod.stringkeys.frontlines.e);
+            case "F":
+                return mod.Message(mod.stringkeys.frontlines.f);
+            case "G":
+                return mod.Message(mod.stringkeys.frontlines.g);
+            case "H":
+                return mod.Message(mod.stringkeys.frontlines.h);
+            case "I":
+                return mod.Message(mod.stringkeys.frontlines.i);
+            default:
+                return mod.Message(mod.stringkeys.frontlines.a);
+        }
+    }
+
     getConquerMessage(): mod.Message {
         switch (this.letter) {
             case "B":
-                return mod.Message(mod.stringkeys.conquerSectorBMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorBMSG);
             case "C":
-                return mod.Message(mod.stringkeys.conquerSectorCMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorCMSG);
             case "D":
-                return mod.Message(mod.stringkeys.conquerSectorDMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorDMSG);
             case "E":
-                return mod.Message(mod.stringkeys.conquerSectorEMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorEMSG);
             case "F":
-                return mod.Message(mod.stringkeys.conquerSectorFMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorFMSG);
             case "G":
-                return mod.Message(mod.stringkeys.conquerSectorGMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorGMSG);
             default:
-                return mod.Message(mod.stringkeys.conquerSectorAMSG);
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorAMSG);
         }
     }
 
     getLooseMessage(): mod.Message {
         switch (this.letter) {
             case "B":
-                return mod.Message(mod.stringkeys.looseSectorBMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorBMSG);
             case "C":
-                return mod.Message(mod.stringkeys.looseSectorCMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorCMSG);
             case "D":
-                return mod.Message(mod.stringkeys.looseSectorDMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorDMSG);
             case "E":
-                return mod.Message(mod.stringkeys.looseSectorEMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorEMSG);
             case "F":
-                return mod.Message(mod.stringkeys.looseSectorFMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorFMSG);
             case "G":
-                return mod.Message(mod.stringkeys.looseSectorGMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorGMSG);
             default:
-                return mod.Message(mod.stringkeys.looseSectorAMSG);
+                return mod.Message(mod.stringkeys.frontlines.looseSectorAMSG);
         }
     }
 
@@ -76,4 +99,9 @@ export abstract class FrontlinesSector {
      * Returns the team owning all capture points, or the neutral team if it hasn't been fully captured.
      */
     abstract isCapturedByTeam(): mod.Team;
+
+    /**
+     * Returns the capture progress (0-1) of the given team on this sector.
+     */
+    abstract getCaptureProgress(team: mod.Team): number;
 }

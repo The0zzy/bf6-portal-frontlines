@@ -26,11 +26,6 @@ export const frontlinesSettings: FrontlineSettings = {
     nighttime: 10, //minutes
 };
 
-export const RED = [0.89, 0.447, 0.333] as const;
-export const BLUE = [0.447, 0.796, 0.922] as const;
-
-export type Color = typeof RED | typeof BLUE;
-
 // ID scheme, see levels/MAP_REQUIREMENTS.md
 export const FIRST_SECTOR_ID = 201;
 export const LAST_SECTOR_ID = 209;

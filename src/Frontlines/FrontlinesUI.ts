@@ -1,360 +1,297 @@
 import { UI } from 'bf6-portal-utils/ui';
 import { UIContainer } from 'bf6-portal-utils/ui/components/container';
-import { UIImage } from 'bf6-portal-utils/ui/components/image';
 import { UIText } from 'bf6-portal-utils/ui/components/text';
-import type { Color } from './FrontlinesConfig.ts';
-import type { FrontlinesCaptureSector } from './FrontlinesCaptureSector.ts';
+import { getEnemyTeam } from './FrontlinesConfig.ts';
+import type { FrontlinesSector } from './FrontlinesSector.ts';
 
 /*-----------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------- Frontlines UI -----------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------------*/
 
-export interface SectorWidgets {
-    fill1: UIContainer; // bottom (blue)
-    fill2: UIContainer; // top (red)
-    line: UIContainer;
-    text: UIText;
-    timer: UIText;
+const FRIENDLY_COLOR = UI.COLORS.BF_BLUE_BRIGHT;
+const ENEMY_COLOR = UI.COLORS.BF_RED_BRIGHT;
+
+const ROOT_Y = 40;
+const SECTOR_SIZE = 40;
+const SECTOR_GAP = 20;
+const CONNECTOR_HEIGHT = 5;
+const ELEMENT_SPACING = 8;
+const TIMER_WIDTH = 75;
+const TIMER_HEIGHT = 20;
+const UNITS_BAR_WIDTH = 80;
+const UNITS_BAR_HEIGHT = 20;
+
+interface SectorWidgets {
+    outline: UIContainer;
+    friendlyFill: UIContainer; // grows from the bottom
+    enemyFill: UIContainer; // grows from the top
 }
 
-const UNITS_BAR_WIDTH = 80;
+// Widgets of one team. Colors are relative to that team: friendly is blue, enemy is red.
+interface TeamView {
+    team: mod.Team;
+    root: UIContainer;
+    timer: UIText;
+    sectors: Map<number, SectorWidgets>;
+    unitsRoot: UIContainer;
+    unitsFill: UIContainer;
+    unitsText: UIText;
+}
 
+/**
+ * Displays the frontline (all sectors), the match timer and the remaining units for both teams.
+ * Reads state from the sectors; the game mode only calls the update methods.
+ */
 export class FrontlinesUI {
-    private readonly sectors = new Map<string, SectorWidgets>();
-    private sectorElementSpace: number = 0;
+    private readonly sectors: FrontlinesSector[];
+    private readonly views: TeamView[];
 
-    rootCapture: UIContainer | undefined;
-    WinTimerText: UIText | undefined;
-
-    rootMCOM: UIContainer | undefined;
-    UnitsRemainingFill: UIContainer | undefined;
-    UnitsRemainingText: UIText | undefined;
-
-    getSector(letter: string): SectorWidgets | undefined {
-        return this.sectors.get(letter);
+    constructor(sectors: FrontlinesSector[]) {
+        this.sectors = sectors;
+        this.views = [this.createView(mod.GetTeam(1)), this.createView(mod.GetTeam(2))];
     }
 
-    ShowCaptureUI(team: mod.Team, sectors: FrontlinesCaptureSector[]) {
-        const root = new UIContainer({
-            x: 0,
-            y: 40,
-            width: 300,
-            height: 100,
-            anchor: UI.Anchor.TopCenter,
-            bgFill: UI.BgFill.Solid,
-            receiver: team,
-        });
-        this.rootCapture = root;
-
-        this.WinTimerText = new UIText({
-            parent: root,
-            x: 0,
-            y: 100,
-            width: 75,
-            height: 20,
-            anchor: UI.Anchor.TopCenter,
-            padding: 8,
-            bgColor: { r: 0.2, g: 0.2, b: 1 },
-            bgFill: UI.BgFill.Solid,
-            label: mod.Message(mod.stringkeys.time1MSG, 4, 0),
-            textSize: 18,
-            textColor: UI.COLORS.WHITE,
-            textAnchor: UI.Anchor.Center,
-            receiver: team,
-        });
-
-        this.sectorElementSpace = 240 - sectors.length * 60;
-
-        new UIImage({
-            parent: root,
-            x: this.sectorElementSpace - 60,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.BottomLeft,
-            imageType: UI.ImageType.CrownOutline,
-            imageColor: UI.COLORS.BF_BLUE_BRIGHT,
-            receiver: team,
-        });
-
-        for (const sector of sectors) {
-            let message: mod.Message;
-            switch (sector.letter) {
-                case "B":
-                    message = mod.Message(mod.stringkeys.b);
-                    break;
-                case "C":
-                    message = mod.Message(mod.stringkeys.c);
-                    break;
-                case "D":
-                    message = mod.Message(mod.stringkeys.d);
-                    break;
-                case "E":
-                    message = mod.Message(mod.stringkeys.e);
-                    break;
-                case "F":
-                    message = mod.Message(mod.stringkeys.f);
-                    break;
-                case "G":
-                    message = mod.Message(mod.stringkeys.g);
-                    break;
-                case "H":
-                    message = mod.Message(mod.stringkeys.h);
-                    break;
-                case "I":
-                    message = mod.Message(mod.stringkeys.i);
-                    break;
-                default:
-                    message = mod.Message(mod.stringkeys.a);
-                    break;
-            }
-            this.AddSectorUIElement(sector.letter, message, team);
-        }
-
-        new UIContainer({
-            parent: root,
-            x: this.sectorElementSpace - 20,
-            y: 15,
-            width: 23,
-            height: 5,
-            anchor: UI.Anchor.BottomLeft,
-            bgColor: UI.COLORS.BLACK,
-            bgAlpha: 0.8,
-            bgFill: UI.BgFill.Solid,
-            receiver: team,
-        });
-    }
-
-    ShowMCOMUI(team: mod.Team, color: Color, show: boolean) {
-        if (this.rootMCOM) {
-            this.rootMCOM.visible = show;
-            return;
-        }
-        if (!show) {
-            return;
-        }
-
-        const root = new UIContainer({
-            x: 756,
-            y: 54,
-            width: 408,
-            height: 88,
-            anchor: UI.Anchor.TopLeft,
-            bgColor: UI.COLORS.BF_BLUE_BRIGHT,
-            bgAlpha: 1,
-            receiver: team,
-        });
-        this.rootMCOM = root;
-
-        const unitsBG = new UIContainer({
-            parent: root,
-            x: 80,
-            y: 10,
-            width: UNITS_BAR_WIDTH,
-            height: 20,
-            anchor: UI.Anchor.TopLeft,
-            bgColor: { r: 0.1, g: 0.1, b: 0.1 },
-            bgAlpha: 0.6,
-            bgFill: UI.BgFill.Solid,
-        });
-
-        this.UnitsRemainingFill = new UIContainer({
-            parent: unitsBG,
-            x: 0,
-            y: 0,
-            width: 1,
-            height: 20,
-            anchor: UI.Anchor.CenterRight,
-            bgColor: { r: color[0], g: color[1], b: color[2] },
-            bgFill: UI.BgFill.Solid,
-        });
-
-        this.UnitsRemainingText = new UIText({
-            parent: unitsBG,
-            x: -10,
-            y: 0,
-            width: 102,
-            height: 55,
-            anchor: UI.Anchor.Center,
-            label: mod.Message(mod.stringkeys.UnitsRemainingText),
-            textSize: 23,
-            textColor: UI.COLORS.WHITE,
-            textAnchor: UI.Anchor.Center,
-        });
-
-        new UIImage({
-            parent: root,
-            x: 0,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.TopLeft,
-            imageType: UI.ImageType.CrownOutline,
-            imageColor: UI.COLORS.BF_BLUE_BRIGHT,
-        });
-
-        new UIImage({
-            parent: root,
-            x: 60,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.TopRight,
-            imageType: UI.ImageType.CrownOutline,
-            imageColor: UI.COLORS.BF_RED_BRIGHT,
-        });
-    }
-
-    showMcomPhase(team: mod.Team, color: Color, unitsRemaining: number, maxUnitsRemaining: number): void {
-        this.setCaptureVisible(false);
-        this.ShowMCOMUI(team, color, true);
-        this.setUnitsRemaining(unitsRemaining, maxUnitsRemaining);
-    }
-
-    showCapturePhase(): void {
-        this.setCaptureVisible(true);
-        if (this.rootMCOM) {
-            this.rootMCOM.visible = false;
+    /**
+     * Refreshes all sectors. Non-active sectors are filled in their owner's color, the active one shows its progress.
+     */
+    updateSectors(activeSector: FrontlinesSector): void {
+        for (const sector of this.sectors) {
+            this.updateSector(sector, sector === activeSector);
         }
     }
 
-    private setCaptureVisible(visible: boolean): void {
-        if (this.rootCapture) {
-            this.rootCapture.visible = visible;
-        }
-    }
-
-    private AddSectorUIElement(letter: string, message: mod.Message, team: mod.Team) {
-        const root = this.rootCapture;
-        if (!root) {
-            return;
-        }
-
-        const x = this.sectorElementSpace;
-
-        new UIContainer({
-            parent: root,
-            x,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.BottomLeft,
-            bgColor: UI.COLORS.BLACK,
-            bgAlpha: 1,
-            bgFill: UI.BgFill.OutlineThin,
-            receiver: team,
-        });
-
-        const fill1 = new UIContainer({
-            parent: root,
-            x,
-            y: 0,
-            width: 40,
-            height: 0,
-            anchor: UI.Anchor.BottomLeft,
-            bgColor: UI.COLORS.BF_BLUE_BRIGHT,
-            bgAlpha: 0.8,
-            bgFill: UI.BgFill.Solid,
-            receiver: team,
-        });
-
-        const fill2 = new UIContainer({
-            parent: root,
-            x,
-            y: 60,
-            width: 40,
-            height: 0,
-            anchor: UI.Anchor.TopLeft,
-            bgColor: UI.COLORS.BF_RED_BRIGHT,
-            bgAlpha: 0.8,
-            bgFill: UI.BgFill.Solid,
-            receiver: team,
-        });
-
-        const text = new UIText({
-            parent: root,
-            x,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.BottomLeft,
-            label: message,
-            textSize: 30,
-            textColor: UI.COLORS.WHITE,
-            textAnchor: UI.Anchor.Center,
-            receiver: team,
-        });
-
-        const timer = new UIText({
-            parent: root,
-            x,
-            y: 0,
-            width: 40,
-            height: 40,
-            anchor: UI.Anchor.BottomLeft,
-            label: message,
-            textSize: 30,
-            textColor: UI.COLORS.WHITE,
-            textAnchor: UI.Anchor.Center,
-            receiver: team,
-        });
-
-        const line = new UIContainer({
-            parent: root,
-            x: x - 21,
-            y: 15,
-            width: 23,
-            height: 5,
-            anchor: UI.Anchor.BottomLeft,
-            bgColor: UI.COLORS.BLACK,
-            bgAlpha: 1,
-            bgFill: UI.BgFill.Solid,
-            receiver: team,
-        });
-
-        this.sectors.set(letter, { fill1, fill2, line, text, timer });
-        this.sectorElementSpace += 60;
+    /**
+     * Refreshes the capture progress of the active sector only.
+     */
+    updateSectorProgress(activeSector: FrontlinesSector): void {
+        this.updateSector(activeSector, true);
     }
 
     setTimer(seconds: number): void {
-        if (!this.WinTimerText) {
-            return;
-        }
-
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
 
+        let label: mod.Message;
         if (minutes < 10 && remainingSeconds < 10) {
-            this.WinTimerText.label = mod.Message(mod.stringkeys.time1MSG, minutes, remainingSeconds);
+            label = mod.Message(mod.stringkeys.frontlines.time1MSG, minutes, remainingSeconds);
+        } else if (minutes < 10) {
+            label = mod.Message(mod.stringkeys.frontlines.time2MSG, minutes, remainingSeconds);
+        } else if (remainingSeconds < 10) {
+            label = mod.Message(mod.stringkeys.frontlines.time3MSG, minutes, remainingSeconds);
+        } else {
+            label = mod.Message(mod.stringkeys.frontlines.time4MSG, minutes, remainingSeconds);
         }
-        else if (minutes < 10) {
-            this.WinTimerText.label = mod.Message(mod.stringkeys.time2MSG, minutes, remainingSeconds);
+
+        for (const view of this.views) {
+            view.timer.label = label;
         }
-        else if (remainingSeconds < 10) {
-            this.WinTimerText.label = mod.Message(mod.stringkeys.time3MSG, minutes, remainingSeconds);
+    }
+
+    /**
+     * Shows the remaining units of the team attacking an MCOM sector.
+     */
+    showUnitsRemaining(attackingTeam: mod.Team, remaining: number, max: number): void {
+        for (const view of this.views) {
+            view.unitsFill.bgColor = mod.Equals(view.team, attackingTeam) ? FRIENDLY_COLOR : ENEMY_COLOR;
+            view.unitsRoot.visible = true;
         }
-        else {
-            this.WinTimerText.label = mod.Message(mod.stringkeys.time4MSG, minutes, remainingSeconds);
+        this.setUnitsRemaining(remaining, max);
+    }
+
+    hideUnitsRemaining(): void {
+        for (const view of this.views) {
+            view.unitsRoot.visible = false;
         }
     }
 
     setUnitsRemaining(remaining: number, max: number): void {
-        if (this.UnitsRemainingText) {
-            this.UnitsRemainingText.label = mod.Message(mod.stringkeys.UnitsRemainingText, remaining);
-        }
-        if (this.UnitsRemainingFill) {
-            this.UnitsRemainingFill.width = Math.round((remaining / max) * UNITS_BAR_WIDTH);
+        const width = Math.round((remaining / max) * UNITS_BAR_WIDTH);
+        for (const view of this.views) {
+            view.unitsText.label = mod.Message(mod.stringkeys.frontlines.UnitsRemainingText, remaining);
+            view.unitsFill.width = width;
         }
     }
 
     destroy(): void {
-        this.rootCapture?.delete();
-        this.rootMCOM?.delete();
-        this.sectors.clear();
-        this.rootCapture = undefined;
-        this.WinTimerText = undefined;
-        this.rootMCOM = undefined;
-        this.UnitsRemainingFill = undefined;
-        this.UnitsRemainingText = undefined;
+        for (const view of this.views) {
+            view.root.delete();
+            view.unitsRoot.delete();
+            view.sectors.clear();
+        }
+        this.views.length = 0;
+    }
+
+    private updateSector(sector: FrontlinesSector, active: boolean): void {
+        for (const view of this.views) {
+            const widgets = view.sectors.get(sector.id);
+            if (!widgets) {
+                continue;
+            }
+
+            const enemyTeam = getEnemyTeam(view.team);
+            let friendlyProgress: number;
+            let enemyProgress: number;
+            if (active) {
+                friendlyProgress = sector.getCaptureProgress(view.team);
+                enemyProgress = sector.getCaptureProgress(enemyTeam);
+            } else {
+                friendlyProgress = mod.Equals(sector.ownerTeam, view.team) ? 1 : 0;
+                enemyProgress = mod.Equals(sector.ownerTeam, enemyTeam) ? 1 : 0;
+            }
+
+            widgets.friendlyFill.height = Math.round(friendlyProgress * SECTOR_SIZE);
+            widgets.enemyFill.height = Math.round(enemyProgress * SECTOR_SIZE);
+            widgets.outline.bgColor = active ? UI.COLORS.WHITE : UI.COLORS.BLACK;
+        }
+    }
+
+    private createView(team: mod.Team): TeamView {
+        // the bar grows with the number of sectors
+        const barWidth = this.sectors.length * SECTOR_SIZE + (this.sectors.length - 1) * SECTOR_GAP;
+        const rootHeight = SECTOR_SIZE + ELEMENT_SPACING + TIMER_HEIGHT;
+
+        const root = new UIContainer({
+            x: 0,
+            y: ROOT_Y,
+            width: barWidth,
+            height: rootHeight,
+            anchor: UI.Anchor.TopCenter,
+            receiver: team,
+        });
+
+        const bar = new UIContainer({
+            parent: root,
+            x: 0,
+            y: 0,
+            width: barWidth,
+            height: SECTOR_SIZE,
+            anchor: UI.Anchor.TopLeft,
+        });
+
+        const sectors = new Map<number, SectorWidgets>();
+        for (let i = 0; i < this.sectors.length; i++) {
+            const sector = this.sectors[i];
+            const x = i * (SECTOR_SIZE + SECTOR_GAP);
+
+            if (i > 0) {
+                new UIContainer({
+                    parent: bar,
+                    x: x - SECTOR_GAP,
+                    y: 0,
+                    width: SECTOR_GAP,
+                    height: CONNECTOR_HEIGHT,
+                    anchor: UI.Anchor.CenterLeft,
+                    bgColor: UI.COLORS.BLACK,
+                    bgAlpha: 0.8,
+                    bgFill: UI.BgFill.Solid,
+                });
+            }
+
+            const outline = new UIContainer({
+                parent: bar,
+                x,
+                y: 0,
+                width: SECTOR_SIZE,
+                height: SECTOR_SIZE,
+                anchor: UI.Anchor.TopLeft,
+                bgColor: UI.COLORS.BLACK,
+                bgAlpha: 1,
+                bgFill: UI.BgFill.OutlineThin,
+            });
+
+            const friendlyFill = new UIContainer({
+                parent: bar,
+                x,
+                y: 0,
+                width: SECTOR_SIZE,
+                height: 0,
+                anchor: UI.Anchor.BottomLeft,
+                bgColor: FRIENDLY_COLOR,
+                bgAlpha: 0.8,
+                bgFill: UI.BgFill.Solid,
+            });
+
+            const enemyFill = new UIContainer({
+                parent: bar,
+                x,
+                y: 0,
+                width: SECTOR_SIZE,
+                height: 0,
+                anchor: UI.Anchor.TopLeft,
+                bgColor: ENEMY_COLOR,
+                bgAlpha: 0.8,
+                bgFill: UI.BgFill.Solid,
+            });
+
+            new UIText({
+                parent: bar,
+                x,
+                y: 0,
+                width: SECTOR_SIZE,
+                height: SECTOR_SIZE,
+                anchor: UI.Anchor.TopLeft,
+                label: sector.getLabel(),
+                textSize: 30,
+                textColor: UI.COLORS.WHITE,
+                textAnchor: UI.Anchor.Center,
+            });
+
+            sectors.set(sector.id, { outline, friendlyFill, enemyFill });
+        }
+
+        const timer = new UIText({
+            parent: root,
+            x: 0,
+            y: 0,
+            width: TIMER_WIDTH,
+            height: TIMER_HEIGHT,
+            anchor: UI.Anchor.BottomCenter,
+            padding: 8,
+            bgColor: { r: 0.2, g: 0.2, b: 1 },
+            bgFill: UI.BgFill.Solid,
+            label: mod.Message(mod.stringkeys.frontlines.time1MSG, 0, 0),
+            textSize: 18,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+        });
+
+        const unitsRoot = new UIContainer({
+            x: 0,
+            y: ROOT_Y + rootHeight + ELEMENT_SPACING,
+            width: UNITS_BAR_WIDTH,
+            height: UNITS_BAR_HEIGHT,
+            anchor: UI.Anchor.TopCenter,
+            bgColor: { r: 0.1, g: 0.1, b: 0.1 },
+            bgAlpha: 0.6,
+            bgFill: UI.BgFill.Solid,
+            visible: false,
+            receiver: team,
+        });
+
+        const unitsFill = new UIContainer({
+            parent: unitsRoot,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: UNITS_BAR_HEIGHT,
+            anchor: UI.Anchor.CenterLeft,
+            bgColor: FRIENDLY_COLOR,
+            bgFill: UI.BgFill.Solid,
+        });
+
+        const unitsText = new UIText({
+            parent: unitsRoot,
+            x: 0,
+            y: 0,
+            width: UNITS_BAR_WIDTH,
+            height: UNITS_BAR_HEIGHT,
+            anchor: UI.Anchor.Center,
+            label: mod.Message(mod.stringkeys.frontlines.UnitsRemainingText, 0),
+            textSize: 18,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+        });
+
+        return { team, root, timer, sectors, unitsRoot, unitsFill, unitsText };
     }
 }

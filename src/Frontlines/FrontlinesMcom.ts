@@ -23,7 +23,7 @@ export class FrontlinesMcom {
         mod.SetSizeForGameEventNotificationData(mcomDestroyedNotification, mod.GameEventNotificationSizes.Large);
         mod.SetColorForGameEventNotificationData(mcomDestroyedNotification, mod.GameEventNotificationColors.Friendly);
         mod.SetStyleForGameEventNotificationData(mcomDestroyedNotification, mod.GameEventNotificationStyles.Normal);
-        mod.SetMessageForGameEventNotificationData(mcomDestroyedNotification, mod.Message(mod.stringkeys.youDestroyedMCOM));
+        mod.SetMessageForGameEventNotificationData(mcomDestroyedNotification, mod.Message(mod.stringkeys.frontlines.youDestroyedMCOM));
         mod.SetObjectiveForGameEventNotificationData(mcomDestroyedNotification, this.mcom);
 
         const mcomLostNotification = mod.CreateGameEventNotificationData();
@@ -31,7 +31,7 @@ export class FrontlinesMcom {
         mod.SetSizeForGameEventNotificationData(mcomLostNotification, mod.GameEventNotificationSizes.Large);
         mod.SetColorForGameEventNotificationData(mcomLostNotification, mod.GameEventNotificationColors.Enemy);
         mod.SetStyleForGameEventNotificationData(mcomLostNotification, mod.GameEventNotificationStyles.Normal);
-        mod.SetMessageForGameEventNotificationData(mcomLostNotification, mod.Message(mod.stringkeys.teamDestroyedMCOM));
+        mod.SetMessageForGameEventNotificationData(mcomLostNotification, mod.Message(mod.stringkeys.frontlines.teamDestroyedMCOM));
         mod.SetObjectiveForGameEventNotificationData(mcomLostNotification, this.mcom);
 
         mod.SendGameEventNotification(mcomLostNotification, this.owner);
