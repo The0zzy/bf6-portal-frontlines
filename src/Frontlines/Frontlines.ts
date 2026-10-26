@@ -87,7 +87,7 @@ export namespace Frontlines {
 
     function getCapturePointVoiceFlag(capturePoint: mod.CapturePoint): mod.VoiceOverFlags {
         const voiceFlags = [mod.VoiceOverFlags.Alpha, mod.VoiceOverFlags.Bravo, mod.VoiceOverFlags.Charlie];
-        const currentSector = sectors[currentSectorIndex];
+        const currentSector = getCurrentSector();
         if (!(currentSector instanceof FrontlinesCaptureSector)) {
             return mod.VoiceOverFlags.Alpha;
         }
@@ -175,7 +175,7 @@ export namespace Frontlines {
             }
         }
 
-        const current = sectors[currentSectorIndex];
+        const current = getCurrentSector();
 
         if (current instanceof FrontlinesMcomSector) {
             mod.LoadMusic(mod.MusicPackages.Core);
@@ -192,6 +192,10 @@ export namespace Frontlines {
         ui?.updateSectors(current);
     }
 
+    function getCurrentSector(): FrontlinesSector {
+        return sectors[currentSectorIndex];
+    }
+
     function startCapture(): void {
         currentSectorIndex = Math.floor(sectors.length / 2);
         updateSectorsState();
@@ -206,8 +210,8 @@ export namespace Frontlines {
 
         const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.frontlines.conquerNextSectorMSG);
         const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.frontlines.defendNextSectorMSG);
-        const sectorConquerMessage: mod.Message = sectors[currentSectorIndex].getConquerMessage();
-        const sectorLooseMessage: mod.Message = sectors[currentSectorIndex].getLooseMessage();
+        const sectorConquerMessage: mod.Message = getCurrentSector().getConquerMessage();
+        const sectorLooseMessage: mod.Message = getCurrentSector().getLooseMessage();
         const sectorConqueredNotification = mod.CreateGameEventNotificationData();
         mod.SetIconForGameEventNotificationData(sectorConqueredNotification, mod.WorldIconImages.Flag);
         mod.SetSizeForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationSizes.Large);
@@ -555,7 +559,7 @@ export namespace Frontlines {
                     return;
                 }
                 //current objective sector
-                if (sectors[currentSectorIndex].id == sector.id) {
+                if (getCurrentSector().id == sector.id) {
                     console.log('current objective sector');
                     return;
                 }
@@ -577,7 +581,7 @@ export namespace Frontlines {
 
     function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
         const eventId = mod.GetObjId(eventMCOM);
-        const currentSector = sectors[currentSectorIndex];
+        const currentSector = getCurrentSector();
         if (currentSector instanceof FrontlinesMcomSector) {
             currentSector.destroyMcom(eventId);
             ui?.updateSectorProgress(currentSector);
@@ -591,7 +595,7 @@ export namespace Frontlines {
     }
 
     function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
-        const currentSector = sectors[currentSectorIndex];
+        const currentSector = getCurrentSector();
         if (!(currentSector instanceof FrontlinesCaptureSector)) {
             console.log(`ERROR: handleCapturePointCaptured() - Current sector is not a FrontlinesCaptureSector!`);
             return;
@@ -625,7 +629,7 @@ export namespace Frontlines {
     }
 
     function handleOngoingGlobal(): void {
-        const currentSector = sectors[currentSectorIndex];
+        const currentSector = getCurrentSector();
         if (!(currentSector instanceof FrontlinesCaptureSector)) return;
 
         ui?.updateSectorProgress(currentSector);
