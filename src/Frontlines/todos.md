@@ -49,3 +49,5 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
 - sector state update should do minimal changes instead of always disabling everything and re-enabling it.
 - there should be a gamestate element that is passed or referenced instead of multiple single pieces of state being managed independently.
   - the state is mainly controlled by frontlines and others should only read or react to it, not modify it directly.
+- currentSector is a global/state variable next to currentSectorIndex and should be updated consistently whenever the sector changes.
+- create completely isolated OutOfBounds module that gets initialized with the necessary parameters and handles all out-of-bounds logic independently based on its own player tracking and areaTrigger information.

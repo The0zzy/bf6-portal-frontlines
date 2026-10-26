@@ -18,9 +18,9 @@ export abstract class FrontlinesSector {
         this.ownerTeam = team;
     }
 
-    enableSectorAndArea(): void {
-        mod.EnableGameModeObjective(this.sector, true);
-        mod.EnableAreaTrigger(this.areaTrigger, true);
+    enableSectorAndArea(enable: boolean): void {
+        mod.EnableGameModeObjective(this.sector, enable);
+        mod.EnableAreaTrigger(this.areaTrigger, enable);
     }
 
     getConquerMessage(): mod.Message {
@@ -61,7 +61,19 @@ export abstract class FrontlinesSector {
         }
     }
 
+    /**
+     * Sets this sector as the current one to be captured.
+     */
     abstract activate(): void;
+
+    /**
+     * Deactivates this sector, disabling it for the whole game mode (shouldn't be needed).
+     */
     abstract deactivate(): void;
-    abstract isCaptured(): boolean;
+
+    /**
+     * Returns whether this sector has been fully captured by a team. 
+     * Returns the team owning all capture points, or the neutral team if it hasn't been fully captured.
+     */
+    abstract isCapturedByTeam(): mod.Team;
 }

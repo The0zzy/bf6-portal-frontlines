@@ -9,33 +9,25 @@
     init() validates the map once. A missing, duplicate or non-contiguous ID is logged and the match ends as a draw.
 */
 
+//#region Imports
 import { Events } from 'bf6-portal-utils/events';
 import { UI } from 'bf6-portal-utils/ui';
-import { BLUE, FIRST_SECTOR_ID, FIXED_HQ_TEAM1_ID, FIXED_HQ_TEAM2_ID, LAST_SECTOR_ID, MAX_CHILDREN_PER_SECTOR, MAX_SECTORS, MIN_SECTORS, RED, childBaseId, frontlinesSettings, hqAreaTriggerId, neutralTeam, sectorAreaTriggerId, sectorHqId, vehicleSpawnerBaseId } from './FrontlinesConfig.ts';
-import type { UIText } from 'bf6-portal-utils/ui/components/text';
+import { BLUE, FIRST_SECTOR_ID, FIXED_HQ_TEAM1_ID, FIXED_HQ_TEAM2_ID, LAST_SECTOR_ID, MAX_CHILDREN_PER_SECTOR, MAX_SECTORS, MIN_SECTORS, RED, childBaseId, frontlinesSettings, getEnemyTeam, hqAreaTriggerId, neutralTeam, sectorAreaTriggerId, sectorHqId, vehicleSpawnerBaseId } from './FrontlinesConfig.ts';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 import { FrontlinesCaptureSector } from './FrontlinesCaptureSector.ts';
 import { FrontlinesMcomSector } from './FrontlinesMcomSector.ts';
 import { FrontlinesUI } from './FrontlinesUI.ts';
 import { FrontlinesMcom } from './FrontlinesMcom.ts';
 import { BoundsOverlayUI } from '../utils/BoundsOverlayUI.ts';
+//#endregion
 
 export namespace Frontlines {
 
-    //data structures
+    //#region Data Structures
     interface PlayerData {
         bounds: BoundsOverlayUI | undefined;
         stats: IPlayerStats;
-        currentCapturePointOd: number;
         inBounds: boolean;
-        isCrouching: boolean;
-        wasCrouching: boolean;
-        isProne: boolean;
-        wasProne: boolean;
-        isInteracting: boolean;
-        wasInteracting: boolean;
-        isZooming: boolean;
-        wasZooming: boolean;
     }
 
     interface IPlayerStats {
@@ -46,9 +38,9 @@ export namespace Frontlines {
         assists: number
     }
 
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Global Variables --------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
+    //#endregion
+
+    //#region Global Variables
 
     const hq1AreaId: number = hqAreaTriggerId(FIXED_HQ_TEAM1_ID);
     const hq2AreaId: number = hqAreaTriggerId(FIXED_HQ_TEAM2_ID);
@@ -56,7 +48,7 @@ export namespace Frontlines {
     let fUITeam1: FrontlinesUI | undefined;
     let fUITeam2: FrontlinesUI | undefined;
 
-    let playerDataMap: Map<number, PlayerData> = new Map();
+    const playerDataMap: Map<number, PlayerData> = new Map();
 
     let matchTimer: number = 2400;
 
@@ -74,31 +66,39 @@ export namespace Frontlines {
     let capturePointsById: Map<number, mod.CapturePoint> = new Map();
     const vehicleSpawnerIds: Set<number> = new Set();
 
-    /***********************************************************************************
-    ***************************** Frontlines Setup *************************************
-    ***********************************************************************************/
-
-    /***********************************************************************************
-    ***************************** MCOM Setup *******************************************
-    ***********************************************************************************/
-
-    let mcomSectorTeam1!: FrontlinesMcomSector;
-    let mcomSectorTeam2!: FrontlinesMcomSector;
-
-    /***********************************************************************************
-    ******************************Sector and Flag Setup*********************************   
-    ***********************************************************************************/
-
-    // Index 0 is the team 1 MCOM sector, the last index is the team 2 MCOM sector, the capture sectors are in between.
     let sectors: FrontlinesSector[] = [];
-    let captureSectors: FrontlinesCaptureSector[] = [];
 
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Helper Functions ------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
+    //#endregion
 
-    function getRandomInt(max: number) {
-        return Math.floor(Math.random() * max);
+    //#region Helper Functions
+
+    // Indexes a mod list by object ID. Optionally tracks duplicate IDs based on seen IDs.
+    function indexById<T>(list: mod.Array, seenIds?: Set<number>, duplicateIds?: number[]): Map<number, T> {
+        const result = new Map<number, T>();
+        for (let i = 0; i < mod.CountOf(list); i++) {
+            const obj = mod.ValueInArray(list, i);
+            const id = mod.GetObjId(obj);
+            if (seenIds?.has(id)) {
+                duplicateIds?.push(id);
+            }
+            seenIds?.add(id);
+            result.set(id, obj as T);
+        }
+        return result;
+    }
+
+    function getCapturePointVoiceFlag(capturePoint: mod.CapturePoint): mod.VoiceOverFlags {
+        const voiceFlags = [mod.VoiceOverFlags.Alpha, mod.VoiceOverFlags.Bravo, mod.VoiceOverFlags.Charlie];
+        const currentSector = sectors[currentSectorIndex];
+        if (!(currentSector instanceof FrontlinesCaptureSector)) {
+            return mod.VoiceOverFlags.Alpha;
+        }
+        // voice flags follow the capture point order of the current sector (ID order)
+        const index = Array.from(currentSector.capturePoints.values()).findIndex(point => mod.Equals(point, capturePoint));
+        if (index < 0 || index >= voiceFlags.length) {
+            return mod.VoiceOverFlags.Alpha;
+        }
+        return voiceFlags[index];
     }
 
     function getPlayerData(player: mod.Player | number): PlayerData {
@@ -108,16 +108,7 @@ export namespace Frontlines {
             data = {
                 bounds: undefined,
                 stats: { captures: 0, kd: 0, kills: 0, deaths: 0, assists: 0 },
-                currentCapturePointOd: -1,
-                inBounds: true,
-                isCrouching: false,
-                wasCrouching: false,
-                isProne: false,
-                wasProne: false,
-                isInteracting: false,
-                wasInteracting: false,
-                isZooming: false,
-                wasZooming: false
+                inBounds: true
             };
             playerDataMap.set(playerId, data);
         }
@@ -175,13 +166,18 @@ export namespace Frontlines {
         });
     }
 
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Gameplay Functions ------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
+    //#endregion
 
+    //#region Gameplay Functions
     function updateSectorsState(): void {
-        for (const sector of sectors) {
-            sector.deactivate();
+        for (let i = 0; i < sectors.length; i++) {
+            const sector = sectors[i];
+            const team = i < currentSectorIndex ? mod.GetTeam(1) : mod.GetTeam(2);
+            if (i !== currentSectorIndex) {
+                sector.setOwner(team);
+            } else {
+                sector.activate();
+            }
         }
 
         const current = sectors[currentSectorIndex];
@@ -193,279 +189,110 @@ export namespace Frontlines {
             unitsRemainingTeam1 = frontlinesSettings.maxUnitsRemaining;
             unitsRemainingTeam2 = frontlinesSettings.maxUnitsRemaining;
 
-            if (fUITeam1 && fUITeam2) {
-                if (fUITeam1.rootCapture) {
-                    fUITeam1.rootCapture.visible = false;
-                }
-                if (fUITeam2.rootCapture) {
-                    fUITeam2.rootCapture.visible = false;
-                }
-
-                fUITeam1.ShowMCOMUI(mod.GetTeam(1), RED, true);
-                fUITeam2.ShowMCOMUI(mod.GetTeam(2), BLUE, true);
-
-                if (fUITeam1.UnitsRemainingText && fUITeam1.UnitsRemainingFill) {
-                    fUITeam1.setUnitsRemaining(unitsRemainingTeam1, frontlinesSettings.maxUnitsRemaining);
-                }
-
-                if (fUITeam2.UnitsRemainingText && fUITeam2.UnitsRemainingFill) {
-                    fUITeam2.setUnitsRemaining(unitsRemainingTeam2, frontlinesSettings.maxUnitsRemaining);
-                }
-            }
+            fUITeam1?.showMcomPhase(mod.GetTeam(1), RED, unitsRemainingTeam1, frontlinesSettings.maxUnitsRemaining);
+            fUITeam2?.showMcomPhase(mod.GetTeam(2), BLUE, unitsRemainingTeam2, frontlinesSettings.maxUnitsRemaining);
         }
         else {
-            if (fUITeam1 && fUITeam2) {
-                if (fUITeam1.rootCapture) {
-                    fUITeam1.rootCapture.visible = true;
-                }
-                if (fUITeam2.rootCapture) {
-                    fUITeam2.rootCapture.visible = true;
-                }
-                if (fUITeam1.rootMCOM) {
-                    fUITeam1.rootMCOM.visible = false;
-                }
-                if (fUITeam2.rootMCOM) {
-                    fUITeam2.rootMCOM.visible = false;
-                }
-            }
+            fUITeam1?.showCapturePhase();
+            fUITeam2?.showCapturePhase();
         }
-
-        current.activate();
     }
 
     function startCapture(): void {
-        // the first capture sector is at index 1, so the middle capture sector of an odd or even count is at ceil(count / 2)
-        currentSectorIndex = Math.ceil(captureSectors.length / 2);
-
-        for (const sector of captureSectors) {
-            mod.EnableHQ(sector.hq, false);
-        }
-
-        setCaptureOwner(sectors[currentSectorIndex - 1], mod.GetTeam(1));
-        setCaptureOwner(sectors[currentSectorIndex + 1], mod.GetTeam(2));
-
+        currentSectorIndex = Math.floor(sectors.length / 2);
         updateSectorsState();
-    }
-
-    // Only capture sectors have an HQ and a capture owner, MCOM sectors are skipped.
-    function setCaptureOwner(sector: FrontlinesSector, team: mod.Team): void {
-        if (sector instanceof FrontlinesCaptureSector) {
-            sector.setOwner(team);
-        }
-    }
-
-    // Returns the team that holds every capture point of the sector, or the neutral team when they are not all held by one team.
-    function getFullyCapturingTeam(sector: FrontlinesCaptureSector): mod.Team {
-        const neutral = neutralTeam();
-        const points = Array.from(sector.capturePoints.values());
-        const owner = mod.GetCurrentOwnerTeam(points[0]);
-        if (mod.Equals(owner, neutral)) {
-            return neutral;
-        }
-
-        for (const point of points) {
-            if (!mod.Equals(mod.GetCurrentOwnerTeam(point), owner)) {
-                return neutral;
-            }
-        }
-        return owner;
     }
 
     function nextSector(team: mod.Team): void {
         mod.LoadMusic(mod.MusicPackages.Core);
         mod.PlayMusic(mod.MusicEvents.Core_PhaseBegin);
-
         mod.Wait(5).then(() => {
             mod.UnloadMusic(mod.MusicPackages.Core);
-        })
-
-        //disable all HQs
-        for (const sector of captureSectors) {
-            mod.EnableHQ(sector.hq, false);
-        }
+        });
 
         const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
         const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.defendNextSectorMSG);
         const sectorConquerMessage: mod.Message = sectors[currentSectorIndex].getConquerMessage();
         const sectorLooseMessage: mod.Message = sectors[currentSectorIndex].getLooseMessage();
-        let sectorConqueredNotification = mod.CreateGameEventNotificationData();
+        const sectorConqueredNotification = mod.CreateGameEventNotificationData();
         mod.SetIconForGameEventNotificationData(sectorConqueredNotification, mod.WorldIconImages.Flag);
         mod.SetSizeForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationSizes.Large);
         mod.SetColorForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationColors.Friendly)
         mod.SetStyleForGameEventNotificationData(sectorConqueredNotification, mod.GameEventNotificationStyles.Normal);
         mod.SetMessageForGameEventNotificationData(sectorConqueredNotification, sectorConquerMessage, conquerNextSectorMessage);
+        mod.SendGameEventNotification(sectorConqueredNotification, team);
 
-        let sectorLostNotification = mod.CreateGameEventNotificationData();
+        const sectorLostNotification = mod.CreateGameEventNotificationData();
         mod.SetIconForGameEventNotificationData(sectorLostNotification, mod.WorldIconImages.Flag);
         mod.SetSizeForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationSizes.Large);
         mod.SetColorForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationColors.Enemy)
         mod.SetStyleForGameEventNotificationData(sectorLostNotification, mod.GameEventNotificationStyles.Normal);
         mod.SetMessageForGameEventNotificationData(sectorLostNotification, sectorLooseMessage, defendNextSectorMessage);
+        mod.SendGameEventNotification(sectorLostNotification, getEnemyTeam(team));
 
         const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-        if (mod.Equals(team, mod.GetTeam(1))) {
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
-            mod.SendGameEventNotification(sectorConqueredNotification, team);
-            currentSectorIndex++;
-        }
-        else {
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
-            mod.SendGameEventNotification(sectorLostNotification, mod.GetTeam(2));
-            currentSectorIndex--;
-        }
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenDefender, mod.VoiceOverFlags.Alpha, getEnemyTeam(team));
         mod.Wait(6).then(() => {
             if (vo) {
                 mod.UnspawnObject(vo);
             }
         });
 
-        updateSectorsState();
+        if (mod.Equals(team, mod.GetTeam(1))) {
+            currentSectorIndex++;
+        }
+        else {
+            currentSectorIndex--;
+        }
 
-        //enable new HQ for pusher, the index is always in range because captures only happen between the two MCOM sectors
-        const lastSector = sectors[currentSectorIndex - 1];
-        setCaptureOwner(lastSector, mod.GetTeam(1));
+        //removed next sector preparation timer
+    }
+    //#endregion
 
-        //backup
-        mod.Wait(3).then(() => setCaptureOwner(lastSector, mod.GetTeam(1)));
-
-        //enable new HQ for defender
-        // let defenderTeam = mod.Equals(team, mod.GetTeam(1))? mod.GetTeam(2): mod.GetTeam(1);
-
-        const lastDefenderSector = sectors[currentSectorIndex + 1];
-        setCaptureOwner(lastDefenderSector, mod.GetTeam(2));
-
-        //backup
-        mod.Wait(3).then(() => setCaptureOwner(lastDefenderSector, mod.GetTeam(2)));
-
-        // MCOM phases have no capture points, so the rest of this function only applies to capture sectors
-        const current = sectors[currentSectorIndex];
-        if (!(current instanceof FrontlinesCaptureSector)) {
+    //#region Initialization
+    /**
+    * Sets up the match. Call from the OnGameModeStarted handler in index.ts.
+    */
+    export function init(): void {
+        const setupError = loadMapObjects() ?? validateFixedObjects() ?? createSectors();
+        if (setupError) {
+            console.log('Frontlines setup failed: ' + setupError);
+            mod.SendPortalLogToAdmin();
+            mod.EndGameMode(mod.GetTeam(0));
             return;
         }
-        const currentSector: FrontlinesCaptureSector = current;
 
-        //deactivate objectives and spawn icons
-        let objectiveIcons: mod.WorldIcon[] = [];
+        matchTimer = frontlinesSettings.timeLimit * 60;
+        mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
+        mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
+        mod.SetScoreboardColumnNames(
+            mod.Message(mod.stringkeys.captures),
+            mod.Message(mod.stringkeys.kd),
+            mod.Message(mod.stringkeys.kills),
+            mod.Message(mod.stringkeys.deaths),
+            mod.Message(mod.stringkeys.assists)
+        );
+        mod.SetScoreboardColumnWidths(40, 40, 40, 40, 40);
 
-        for (const point of currentSector.capturePoints.values()) {
-            mod.EnableGameModeObjective(point, false);
+        const captureSectors = sectors.filter(sector => sector instanceof FrontlinesCaptureSector) as FrontlinesCaptureSector[];
+        fUITeam1 = new FrontlinesUI();
+        fUITeam1.ShowCaptureUI(mod.GetTeam(1), captureSectors);
 
-            //spawn objective Icons
-            objectiveIcons.push(mod.SpawnObject(mod.RuntimeSpawn_Common.WorldIcon, mod.GetObjectPosition(point), mod.CreateVector(0, 0, 0), mod.CreateVector(1, 1, 1)));
-            for (const icon of objectiveIcons) {
-                mod.EnableWorldIconImage(icon, true);
-                mod.SetWorldIconImage(icon, mod.WorldIconImages.Flag);
-                mod.SetWorldIconColor(icon, mod.CreateVector(1, 1, 1));
-            }
+        fUITeam2 = new FrontlinesUI();
+        fUITeam2.ShowCaptureUI(mod.GetTeam(2), captureSectors);
+
+        startCapture();
+
+        registerEvents();
+
+        // Players who joined before init never fire OnPlayerJoinGame.
+        const existingPlayers = mod.GetAllPlayers();
+        for (let i = 0; i < mod.CountOf(existingPlayers); i++) {
+            handlePlayerJoinGame(mod.ValueInArray(existingPlayers, i) as mod.Player);
         }
 
-        //ai behaviour
-        for (const aiSoldier of getAISoldiers()) {
-            const points = Array.from(currentSector.capturePoints.values());
-
-            const goalPoint = points[getRandomInt(points.length - 1)];
-            if (goalPoint) {
-                mod.AIValidatedMoveToBehavior(aiSoldier, mod.GetObjectPosition(goalPoint));
-            }
-        }
-
-        //next sector timer
-        let sectorTimer = frontlinesSettings.sectorTimer;
-
-        let timer1: UIText | undefined;
-        let timer2: UIText | undefined;
-        let text1: UIText | undefined;
-        let text2: UIText | undefined;
-
-        const sectorWidgets1 = fUITeam1?.getSector(currentSector.letter);
-        if (fUITeam1 && fUITeam1.rootCapture && sectorWidgets1) {
-            text1 = sectorWidgets1.text;
-            timer1 = sectorWidgets1.timer;
-            text1.visible = false;
-            timer1.visible = true;
-        }
-
-        const sectorWidgets2 = fUITeam2?.getSector(currentSector.letter);
-        if (fUITeam2 && fUITeam2.rootCapture && sectorWidgets2) {
-            text2 = sectorWidgets2.text;
-            timer2 = sectorWidgets2.timer;
-            text2.visible = false;
-            timer2.visible = true;
-        }
-
-        timer();
-
-        function timer() {
-
-            sectorTimer--;
-
-            if (timer1) {
-                timer1.label = mod.Message(mod.stringkeys.sectorTimer, sectorTimer);
-            }
-
-            if (timer2) {
-                timer2.label = mod.Message(mod.stringkeys.sectorTimer, sectorTimer);
-            }
-
-            if (sectorTimer <= 0) {
-
-                if (text1) text1.visible = true;
-                if (text2) text2.visible = true;
-
-                if (timer1) timer1.visible = false;
-                if (timer2) timer2.visible = false;
-
-                //activate capture points
-                for (const point of currentSector.capturePoints.values()) {
-                    mod.EnableGameModeObjective(point, true);
-                }
-
-                //clear world icons
-                for (const icon of objectiveIcons) {
-                    mod.EnableWorldIconImage(icon, false);
-                    mod.UnspawnObject(icon);
-                }
-
-                objectiveIcons = [];
-
-                //ai behaviour
-                for (const aiSoldier of getAISoldiers()) {
-                    mod.AIBattlefieldBehavior(aiSoldier);
-                }
-
-                return;
-            }
-
-            mod.Wait(1).then(timer);
-        }
-
-    }
-
-    function getAISoldiers(): mod.Player[] {
-        const aiSoldiers: mod.Player[] = [];
-        const players = mod.GetAllPlayers();
-        for (let i = 0; i < mod.CountOf(players); i++) {
-            const player = mod.ValueInArray(players, i) as mod.Player;
-            if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) {
-                aiSoldiers.push(player);
-            }
-        }
-        return aiSoldiers;
-    }
-
-    // Indexes a mod list by object ID. Repeated IDs are recorded in duplicateIds.
-    function indexById<T>(list: mod.Array, seenIds: Set<number>, duplicateIds: number[]): Map<number, T> {
-        const result = new Map<number, T>();
-        for (let i = 0; i < mod.CountOf(list); i++) {
-            const obj = mod.ValueInArray(list, i);
-            const id = mod.GetObjId(obj);
-            if (seenIds.has(id)) {
-                duplicateIds.push(id);
-            }
-            seenIds.add(id);
-            result.set(id, obj as T);
-        }
-        return result;
+        secondTimer();
     }
 
     function loadMapObjects(): string | undefined {
@@ -527,10 +354,6 @@ export namespace Frontlines {
             }
         }
         return undefined;
-    }
-
-    function getAllMcoms(): FrontlinesMcom[] {
-        return [...mcomSectorTeam1.mcoms, ...mcomSectorTeam2.mcoms];
     }
 
     function createMcomSector(sectorId: number, owner: mod.Team): FrontlinesMcomSector | string {
@@ -637,8 +460,6 @@ export namespace Frontlines {
         if (typeof team2McomSector === 'string') {
             return team2McomSector;
         }
-        mcomSectorTeam1 = team1McomSector;
-        mcomSectorTeam2 = team2McomSector;
 
         const captures: FrontlinesCaptureSector[] = [];
         for (let sectorId = FIRST_SECTOR_ID + 1; sectorId < lastSectorId; sectorId++) {
@@ -659,13 +480,11 @@ export namespace Frontlines {
             }
         }
 
-        // index 0 and the last index are the MCOM sectors, so the index can only leave the array through a capture sector
-        captureSectors = captures;
-        sectors = [mcomSectorTeam1, ...captures, mcomSectorTeam2];
+        sectors = [team1McomSector, ...captures, team2McomSector];
 
         // every sector stays visible and walkable for the whole match
         for (const sector of sectors) {
-            sector.enableSectorAndArea();
+            sector.enableSectorAndArea(true);
         }
         return undefined;
     }
@@ -674,24 +493,10 @@ export namespace Frontlines {
         mod.SetScoreboardPlayerValues(player, data.stats.captures, data.stats.kd, data.stats.kills, data.stats.deaths, data.stats.assists);
     }
 
-    function setModeSettings(): void {
-        matchTimer = frontlinesSettings.timeLimit * 60;
-
-        for (const sector of captureSectors) {
-            for (const point of sector.capturePoints.values()) {
-                mod.EnableCapturePointDeploying(point, false);
-                mod.SetCapturePointCapturingTime(point, frontlinesSettings.captureTime);
-                mod.SetCapturePointNeutralizationTime(point, frontlinesSettings.captureNeutralizationTime);
-
-                mod.SetAllObjectivesUIEnabled(true);
-            }
-        }
-    }
-
     function enableOutOfBounds(player: mod.Player): void {
         let timer: number = 10;
 
-        let playerData = getPlayerData(player);
+        const playerData = getPlayerData(player);
         if (playerData.bounds) {
             playerData.inBounds = false;
             playerData.bounds.show(mod.Message(mod.stringkeys.boundsMSG, timer));
@@ -726,7 +531,7 @@ export namespace Frontlines {
     function checkPlayerEnteredAllowedZone(player: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
         console.log('EventAreaTrigger Id: ' + mod.GetObjId(eventAreaTrigger));
         //disable outofbounds
-        let playerData = getPlayerData(player);
+        const playerData = getPlayerData(player);
         if (playerData.bounds) {
             playerData.inBounds = true;
             playerData.bounds.hide();
@@ -774,55 +579,31 @@ export namespace Frontlines {
         }
     }
 
-
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Events ------------------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
-
+    //#region Event Handlers
     function handlePlayerEnterAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
         checkPlayerEnteredAllowedZone(eventPlayer, eventAreaTrigger);
     }
 
     function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
         const eventId = mod.GetObjId(eventMCOM);
-
-        const team1Mcoms = mcomSectorTeam1.mcoms;
-        const team1Mcom = team1Mcoms.find(m => m.id === eventId);
-        if (team1Mcom) {
-            team1Mcom.destroyMCOM();
-            if (team1Mcoms.every(m => m.destroyed)) {
-                console.log('all team 1 MCOMs destroyed');
-                mod.EndGameMode(mod.GetTeam(2));
-            }
-            return;
-        }
-
-        const team2Mcoms = mcomSectorTeam2.mcoms;
-        const team2Mcom = team2Mcoms.find(m => m.id === eventId);
-        if (team2Mcom) {
-            team2Mcom.destroyMCOM();
-            if (team2Mcoms.every(m => m.destroyed)) {
-                console.log('all team 2 MCOMs destroyed');
-                mod.EndGameMode(mod.GetTeam(1));
-            }
-        }
-    }
-
-    function getCapturePointVoiceFlag(capturePoint: mod.CapturePoint): mod.VoiceOverFlags {
-        const voiceFlags = [mod.VoiceOverFlags.Alpha, mod.VoiceOverFlags.Bravo, mod.VoiceOverFlags.Charlie];
         const currentSector = sectors[currentSectorIndex];
-        if (!(currentSector instanceof FrontlinesCaptureSector)) {
-            return mod.VoiceOverFlags.Alpha;
+        if (currentSector instanceof FrontlinesMcomSector) {
+            currentSector.destroyMcom(eventId);
+            if (mod.Equals(currentSector.isCapturedByTeam(), getEnemyTeam(currentSector.ownerTeam))) {
+                console.log('MCOM sector has been captured by the enemy!');
+                mod.EndGameMode(getEnemyTeam(currentSector.ownerTeam));
+            }
+        } else {
+            console.log(`ERROR: handleMCOMDestroyed() - Current sector is not a FrontlinesMcomSector!`);
         }
-        // voice flags follow the capture point order of the current sector (ID order)
-        const index = Array.from(currentSector.capturePoints.values()).findIndex(point => mod.Equals(point, capturePoint));
-        if (index < 0 || index >= voiceFlags.length) {
-            return mod.VoiceOverFlags.Alpha;
-        }
-        return voiceFlags[index];
     }
 
     function handleCapturePointCaptured(eventCapturePoint: mod.CapturePoint): void {
+        const currentSector = sectors[currentSectorIndex];
+        if (!(currentSector instanceof FrontlinesCaptureSector)) {
+            console.log(`ERROR: handleCapturePointCaptured() - Current sector is not a FrontlinesCaptureSector!`);
+            return;
+        }
         const capturingTeam = mod.GetCurrentOwnerTeam(eventCapturePoint);
         const capturers = mod.GetPlayersOnPoint(eventCapturePoint);
         for (let i = 0; i < mod.CountOf(capturers); i++) {
@@ -834,142 +615,112 @@ export namespace Frontlines {
             updateScoreboard(player, playerData);
         }
 
-        if (mod.Equals(capturingTeam, mod.GetTeam(1))) {
-            let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-            const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, mod.GetTeam(1));
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, mod.GetTeam(2));
-
-            mod.Wait(6).then(() => {
-                if (vo) {
-                    mod.UnspawnObject(vo);
-                }
-            })
+        const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
+        const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, capturingTeam);
+        mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, getEnemyTeam(capturingTeam));
+        mod.Wait(6).then(() => {
+            if (vo) {
+                mod.UnspawnObject(vo);
+            }
+        });
+        if (mod.Equals(capturingTeam, currentSector.isCapturedByTeam())) {
+            currentSector.setOwner(capturingTeam);
+            nextSector(capturingTeam);
+        } else {
+            mod.EnableCapturePointDeploying(eventCapturePoint, true);
         }
-        else {
-            let vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-            const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, mod.GetTeam(2));
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, mod.GetTeam(1));
-
-            mod.Wait(6).then(() => {
-                if (vo) {
-                    mod.UnspawnObject(vo);
-                }
-            })
-        }
-
-        const currentSector = sectors[currentSectorIndex];
-        if (!(currentSector instanceof FrontlinesCaptureSector)) {
-            return;
-        }
-
-        const fullyCapturingTeam = getFullyCapturingTeam(currentSector);
-        if (mod.Equals(fullyCapturingTeam, neutralTeam())) {
-            return;
-        }
-
-        currentSector.ownerTeam = fullyCapturingTeam;
     }
 
     function handleOngoingCapturePoint(eventCapturePoint: mod.CapturePoint): void {
-        for (const sector of captureSectors) {
+        const currentSector = sectors[currentSectorIndex];
+        if (!(currentSector instanceof FrontlinesCaptureSector)) return;
+        const point = currentSector.capturePoints.get(mod.GetObjId(eventCapturePoint));
+        if (!point) return;
 
-            let point = sector.capturePoints.get(mod.GetObjId(eventCapturePoint));
-            if (!point) continue;
+        let team1ProgressSum = 0;
+        let team2ProgressSum = 0;
+        let activePoints = 0;
 
-            let team1ProgressSum = 0;
-            let team2ProgressSum = 0;
-            let activePoints = 0;
+        // Progress pro Capture Point sammeln
+        for (const cp of currentSector.capturePoints.values()) {
+            activePoints++;
 
-            // Progress pro Capture Point sammeln
-            for (const cp of sector.capturePoints.values()) {
-                activePoints++;
+            const progress = mod.GetCaptureProgress(cp); // 0 - 1
+            const owner = mod.GetOwnerProgressTeam(cp);
 
-                let progress = mod.GetCaptureProgress(cp); // 0 - 1
-                let owner = mod.GetOwnerProgressTeam(cp);
+            if (mod.Equals(owner, mod.GetTeam(1))) {
+                team1ProgressSum += progress;
+            } else if (mod.Equals(owner, mod.GetTeam(2))) {
+                team2ProgressSum += progress;
+            }
+        }
 
-                if (mod.Equals(owner, mod.GetTeam(1))) {
-                    team1ProgressSum += progress;
-                } else if (mod.Equals(owner, mod.GetTeam(2))) {
-                    team2ProgressSum += progress;
-                }
+        // Fraktionen berechnen
+        const fracTeam1 = team1ProgressSum / activePoints;
+        const fracTeam2 = team2ProgressSum / activePoints;
+
+        //
+        // TEAM 1 UI
+        //
+        if (fUITeam1 && fUITeam1.rootCapture) {
+
+            const sectorWidgets1 = fUITeam1.getSector(currentSector.letter);
+            const fill1 = sectorWidgets1?.fill1; // bottom (blue)
+            const fill2 = sectorWidgets1?.fill2; // top (red)
+            const line = sectorWidgets1?.line;
+
+            if (fill1 && fill2) {
+
+                // Blau unten
+                fill1.size = { width: 40, height: Math.round(fracTeam1 * 40) };
+                fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
+
+                // Rot oben
+                fill2.size = { width: 40, height: Math.round(fracTeam2 * 40) };
+                fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
+
+                // Neutraler Bereich liegt automatisch zwischen Fill1 und Fill2,
+                // weil Fill1 von unten wÃ¤chst und Fill2 von oben.
+                //  -  Kein extra UIâElement nÃ¶tig.
             }
 
-            if (activePoints === 0) continue;
-
-            let neutralProgressSum = activePoints - (team1ProgressSum + team2ProgressSum);
-
-            // clamp
-            if (neutralProgressSum < 0) neutralProgressSum = 0;
-
-            // Fraktionen berechnen
-            let fracTeam1 = team1ProgressSum / activePoints;
-            let fracTeam2 = team2ProgressSum / activePoints;
-            let fracNeutral = neutralProgressSum / activePoints;
-
-            //
-            // TEAM 1 UI
-            //
-            if (fUITeam1 && fUITeam1.rootCapture) {
-
-                let sectorWidgets1 = fUITeam1.getSector(sector.letter);
-                let fill1 = sectorWidgets1?.fill1; // bottom (blue)
-                let fill2 = sectorWidgets1?.fill2; // top (red)
-                let line = sectorWidgets1?.line;
-
-                if (fill1 && fill2) {
-
-                    // Blau unten
-                    fill1.size = { width: 40, height: Math.round(fracTeam1 * 40) };
-                    fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
-
-                    // Rot oben
-                    fill2.size = { width: 40, height: Math.round(fracTeam2 * 40) };
-                    fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
-
-                    // Neutraler Bereich liegt automatisch zwischen Fill1 und Fill2,
-                    // weil Fill1 von unten wÃ¤chst und Fill2 von oben.
-                    //  -  Kein extra UIâElement nÃ¶tig.
-                }
-
-                // Line = Ownership
-                if (line) {
-                    if (mod.Equals(sector.ownerTeam, mod.GetTeam(1))) {
-                        line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
-                    } else {
-                        line.bgColor = UI.COLORS.BF_RED_BRIGHT;
-                    }
+            // Line = Ownership
+            if (line) {
+                if (mod.Equals(currentSector.ownerTeam, mod.GetTeam(1))) {
+                    line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
+                } else {
+                    line.bgColor = UI.COLORS.BF_RED_BRIGHT;
                 }
             }
+        }
 
-            //
-            // TEAM 2 UI (gespiegelt)
-            //
-            if (fUITeam2 && fUITeam2.rootCapture) {
+        //
+        // TEAM 2 UI (gespiegelt)
+        //
+        if (fUITeam2 && fUITeam2.rootCapture) {
 
-                let sectorWidgets2 = fUITeam2.getSector(sector.letter);
-                let fill1 = sectorWidgets2?.fill1; // bottom (blue)
-                let fill2 = sectorWidgets2?.fill2; // top (red)
-                let line = sectorWidgets2?.line;
+            const sectorWidgets2 = fUITeam2.getSector(currentSector.letter);
+            const fill1 = sectorWidgets2?.fill1; // bottom (blue)
+            const fill2 = sectorWidgets2?.fill2; // top (red)
+            const line = sectorWidgets2?.line;
 
-                if (fill1 && fill2) {
+            if (fill1 && fill2) {
 
-                    // Team 2 sieht Blau = Team2, Rot = Team1
-                    fill1.size = { width: 40, height: Math.round(fracTeam2 * 40) };
-                    fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
+                // Team 2 sieht Blau = Team2, Rot = Team1
+                fill1.size = { width: 40, height: Math.round(fracTeam2 * 40) };
+                fill1.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
 
-                    fill2.size = { width: 40, height: Math.round(fracTeam1 * 40) };
-                    fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
-                }
+                fill2.size = { width: 40, height: Math.round(fracTeam1 * 40) };
+                fill2.bgColor = UI.COLORS.BF_RED_BRIGHT;
+            }
 
-                // Line = Ownership (gespiegelt)
-                if (line) {
-                    if (mod.Equals(sector.ownerTeam, mod.GetTeam(2))) {
-                        line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
-                    } else {
-                        line.bgColor = UI.COLORS.BF_RED_BRIGHT;
-                    }
+            // Line = Ownership (gespiegelt)
+            if (line) {
+                if (mod.Equals(currentSector.ownerTeam, mod.GetTeam(2))) {
+                    line.bgColor = UI.COLORS.BF_BLUE_BRIGHT;
+                } else {
+                    line.bgColor = UI.COLORS.BF_RED_BRIGHT;
                 }
             }
         }
@@ -1068,57 +819,6 @@ export namespace Frontlines {
         playerDataMap.get(playerId)?.bounds?.destroy();
         playerDataMap.delete(playerId);
     }
-
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Public API --------------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
-
-    /**
-         * Sets up the match. Call from the OnGameModeStarted handler in index.ts.
-         */
-    export function init(): void {
-        const setupError = loadMapObjects() ?? validateFixedObjects() ?? createSectors();
-        if (setupError) {
-            console.log('Frontlines setup failed: ' + setupError);
-            mod.EndGameMode(mod.GetTeam(0));
-            return;
-        }
-
-        setModeSettings();
-        mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
-        mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
-        mod.SetScoreboardColumnNames(mod.Message(mod.stringkeys.captures), mod.Message(mod.stringkeys.kd), mod.Message(mod.stringkeys.kills), mod.Message(mod.stringkeys.deaths), mod.Message(mod.stringkeys.assists));
-        mod.SetScoreboardColumnWidths(40, 40, 40, 40, 40);
-
-        mod.SetAllObjectivesUIEnabled(true);
-
-        fUITeam1 = new FrontlinesUI();
-        fUITeam1.ShowCaptureUI(mod.GetTeam(1), captureSectors);
-
-        fUITeam2 = new FrontlinesUI();
-        fUITeam2.ShowCaptureUI(mod.GetTeam(2), captureSectors);
-
-        startCapture();
-
-        for (const mcom of getAllMcoms()) {
-            mod.EnableGameModeObjective(mcom.mcom, false);
-            mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Default);
-        }
-
-        registerEvents();
-
-        // Players who joined before init never fire OnPlayerJoinGame.
-        const existingPlayers = mod.GetAllPlayers();
-        for (let i = 0; i < mod.CountOf(existingPlayers); i++) {
-            handlePlayerJoinGame(mod.ValueInArray(existingPlayers, i) as mod.Player);
-        }
-
-        secondTimer();
-    }
-
-    /*-----------------------------------------------------------------------------------------------------------------*/
-    /*--------------------------------------------- Event Wiring ------------------------------------------------------*/
-    /*-----------------------------------------------------------------------------------------------------------------*/
 
     function registerEvents(): void {
         Events.OnPlayerEnterAreaTrigger.subscribe(handlePlayerEnterAreaTrigger);

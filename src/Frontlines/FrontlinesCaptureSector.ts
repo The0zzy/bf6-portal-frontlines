@@ -1,4 +1,4 @@
-import { neutralTeam } from './FrontlinesConfig.ts';
+import { frontlinesSettings, neutralTeam } from './FrontlinesConfig.ts';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 
 export class FrontlinesCaptureSector extends FrontlinesSector {
@@ -15,13 +15,26 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
         super.setOwner(team);
         mod.SetHQTeam(this.hq, team);
         mod.EnableHQ(this.hq, true);
+        for (const point of this.capturePoints.values()) {
+            mod.EnableGameModeObjective(point, true);
+            mod.SetCapturePointOwner(point, team);
+            mod.EnableCapturePointDeploying(point, true);
+            mod.SetCapturePointCapturingTime(point, 9999);
+            mod.SetCapturePointNeutralizationTime(point, 9999);
+            mod.SetMaxCaptureMultiplier(point, 0.1);
+        }
     }
 
     activate(): void {
-        for (const [id, point] of this.capturePoints) {
+        this.ownerTeam = neutralTeam();
+        for (const point of this.capturePoints.values()) {
             mod.EnableGameModeObjective(point, true);
             mod.SetCapturePointOwner(point, neutralTeam());
-            console.log("CurrentSector: " + this.letter + " ObjectiveEnabled: " + id);
+            mod.EnableCapturePointDeploying(point, false);
+            mod.SetCapturePointCapturingTime(point, frontlinesSettings.captureTime);
+            mod.SetCapturePointNeutralizationTime(point, frontlinesSettings.captureNeutralizationTime);
+            mod.SetMaxCaptureMultiplier(point, 1);
+            mod.SetAllObjectivesUIEnabled(true);
         }
     }
 
@@ -29,5 +42,16 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
         for (const point of this.capturePoints.values()) {
             mod.EnableGameModeObjective(point, false);
         }
+    }
+
+    isCapturedByTeam(): mod.Team {
+        const seenOwner = mod.GetCurrentOwnerTeam(this.capturePoints.values().next().value!);
+        for (const point of this.capturePoints.values()) {
+            const owner = mod.GetCurrentOwnerTeam(point);
+            if (!mod.Equals(seenOwner, owner)) {
+                return neutralTeam();
+            }
+        }
+        return seenOwner;
     }
 }

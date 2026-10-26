@@ -205,6 +205,25 @@ export class FrontlinesUI {
         });
     }
 
+    showMcomPhase(team: mod.Team, color: Color, unitsRemaining: number, maxUnitsRemaining: number): void {
+        this.setCaptureVisible(false);
+        this.ShowMCOMUI(team, color, true);
+        this.setUnitsRemaining(unitsRemaining, maxUnitsRemaining);
+    }
+
+    showCapturePhase(): void {
+        this.setCaptureVisible(true);
+        if (this.rootMCOM) {
+            this.rootMCOM.visible = false;
+        }
+    }
+
+    private setCaptureVisible(visible: boolean): void {
+        if (this.rootCapture) {
+            this.rootCapture.visible = visible;
+        }
+    }
+
     private AddSectorUIElement(letter: string, message: mod.Message, team: mod.Team) {
         const root = this.rootCapture;
         if (!root) {

@@ -1,3 +1,5 @@
+import { getEnemyTeam } from "./FrontlinesConfig";
+
 export class FrontlinesMcom {
     id: number;
     destroyed: boolean = false;
@@ -32,11 +34,7 @@ export class FrontlinesMcom {
         mod.SetMessageForGameEventNotificationData(mcomLostNotification, mod.Message(mod.stringkeys.teamDestroyedMCOM));
         mod.SetObjectiveForGameEventNotificationData(mcomLostNotification, this.mcom);
 
-        const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.MComDestroyedEnemy, mod.VoiceOverFlags.Alpha, this.owner);
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.MComDestroyedFriendly, mod.VoiceOverFlags.Alpha, mod.Equals(this.owner, mod.GetTeam(1)) ? mod.GetTeam(2) : mod.GetTeam(1));
         mod.SendGameEventNotification(mcomLostNotification, this.owner);
-        mod.SendGameEventNotification(mcomDestroyedNotification, mod.Equals(this.owner, mod.GetTeam(1)) ? mod.GetTeam(2) : mod.GetTeam(1));
-        mod.Wait(8).then(() => mod.UnspawnObject(vo));
+        mod.SendGameEventNotification(mcomDestroyedNotification, getEnemyTeam(this.owner));
     }
 }

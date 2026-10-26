@@ -1,3 +1,4 @@
+import { neutralTeam, getEnemyTeam } from './FrontlinesConfig.ts';
 import { FrontlinesMcom } from './FrontlinesMcom.ts';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 
@@ -10,9 +11,25 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         this.mcoms = mcoms;
     }
 
+    isCapturedByTeam(): mod.Team {
+        for (const mcom of this.mcoms) {
+            if (!mcom.destroyed) {
+                return neutralTeam();
+            }
+        }
+        return getEnemyTeam(this.ownerTeam);
+    }
+
+    override setOwner(team: mod.Team): void {
+        this.ownerTeam = team;
+        for (const mcom of this.mcoms) {
+            mod.SetMCOMOwner(mcom.mcom, team);
+            mod.EnableGameModeObjective(mcom.mcom, false);
+        }
+    }
+
     activate(): void {
         for (const mcom of this.mcoms) {
-            mod.SetMCOMOwner(mcom.mcom, this.ownerTeam);
             mod.EnableGameModeObjective(mcom.mcom, true);
         }
     }
@@ -20,6 +37,15 @@ export class FrontlinesMcomSector extends FrontlinesSector {
     deactivate(): void {
         for (const mcom of this.mcoms) {
             mod.EnableGameModeObjective(mcom.mcom, false);
+        }
+    }
+
+    destroyMcom(mcomId: number): void {
+        const mcom = this.mcoms.find(m => mod.GetObjId(m.mcom) === mcomId);
+        if (mcom) {
+            mcom.destroyMCOM();
+        }else{
+            console.log(`ERROR: destroyMcom() - MCOM with ID ${mcomId} not found in this sector!`);
         }
     }
 }
