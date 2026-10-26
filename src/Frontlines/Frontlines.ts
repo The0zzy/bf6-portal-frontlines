@@ -203,8 +203,8 @@ export namespace Frontlines {
             mod.UnloadMusic(mod.MusicPackages.Core);
         });
 
-        const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.conquerNextSectorMSG);
-        const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.defendNextSectorMSG);
+        const conquerNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.frontlines.conquerNextSectorMSG);
+        const defendNextSectorMessage: mod.Message = mod.Message(mod.stringkeys.frontlines.defendNextSectorMSG);
         const sectorConquerMessage: mod.Message = sectors[currentSectorIndex].getConquerMessage();
         const sectorLooseMessage: mod.Message = sectors[currentSectorIndex].getLooseMessage();
         const sectorConqueredNotification = mod.CreateGameEventNotificationData();
@@ -260,17 +260,16 @@ export namespace Frontlines {
         mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
         mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
         mod.SetScoreboardColumnNames(
-            mod.Message(mod.stringkeys.captures),
-            mod.Message(mod.stringkeys.kd),
-            mod.Message(mod.stringkeys.kills),
-            mod.Message(mod.stringkeys.deaths),
-            mod.Message(mod.stringkeys.assists)
+            mod.Message(mod.stringkeys.frontlines.captures),
+            mod.Message(mod.stringkeys.frontlines.kd),
+            mod.Message(mod.stringkeys.frontlines.kills),
+            mod.Message(mod.stringkeys.frontlines.deaths),
+            mod.Message(mod.stringkeys.frontlines.assists)
         );
         mod.SetScoreboardColumnWidths(40, 40, 40, 40, 40);
 
-        const captureSectors = sectors.filter(sector => sector instanceof FrontlinesCaptureSector) as FrontlinesCaptureSector[];
         ui = new FrontlinesUI();
-        ui.show(captureSectors);
+        ui.show(sectors);
 
         startCapture();
 
@@ -489,7 +488,7 @@ export namespace Frontlines {
         const playerData = getPlayerData(player);
         if (playerData.bounds) {
             playerData.inBounds = false;
-            playerData.bounds.show(mod.Message(mod.stringkeys.boundsMSG, timer));
+            playerData.bounds.show(mod.Message(mod.stringkeys.frontlines.boundsMSG, timer));
         }
 
         function loop() {
@@ -499,7 +498,7 @@ export namespace Frontlines {
             timer--;
 
             if (playerData.bounds) {
-                playerData.bounds.show(mod.Message(mod.stringkeys.boundsMSG, timer));
+                playerData.bounds.show(mod.Message(mod.stringkeys.frontlines.boundsMSG, timer));
             }
 
             if (timer <= 0) {

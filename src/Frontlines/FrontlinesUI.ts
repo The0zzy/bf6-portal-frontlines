@@ -4,7 +4,7 @@ import { UIImage } from 'bf6-portal-utils/ui/components/image';
 import { UIText } from 'bf6-portal-utils/ui/components/text';
 import { BLUE, RED } from './FrontlinesConfig.ts';
 import type { Color } from './FrontlinesConfig.ts';
-import type { FrontlinesCaptureSector } from './FrontlinesCaptureSector.ts';
+import type { FrontlinesSector } from './FrontlinesSector.ts';
 
 /*-----------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------- Frontlines UI -----------------------------------------------------*/
@@ -20,7 +20,7 @@ export interface SectorWidgets {
 
 interface TeamWidgets {
     team: mod.Team;
-    sectors: Map<FrontlinesCaptureSector, SectorWidgets>;
+    sectors: Map<FrontlinesSector, SectorWidgets>;
     rootCapture: UIContainer | undefined;
     winTimerText: UIText | undefined;
     rootMCOM: UIContainer | undefined;
@@ -39,7 +39,7 @@ export class FrontlinesUI {
     private static createTeamWidgets(team: mod.Team): TeamWidgets {
         return {
             team,
-            sectors: new Map<FrontlinesCaptureSector, SectorWidgets>(),
+            sectors: new Map<FrontlinesSector, SectorWidgets>(),
             rootCapture: undefined,
             winTimerText: undefined,
             rootMCOM: undefined,
@@ -53,11 +53,11 @@ export class FrontlinesUI {
         callback(this.teams[2]);
     }
 
-    show(captureSectors: FrontlinesCaptureSector[]): void {
-        this.forEachTeam(widgets => this.showCaptureUI(widgets, captureSectors));
+    show(sectors: FrontlinesSector[]): void {
+        this.forEachTeam(widgets => this.showSectorsUI(widgets, sectors));
     }
 
-    private showCaptureUI(widgets: TeamWidgets, sectors: FrontlinesCaptureSector[]): void {
+    private showSectorsUI(widgets: TeamWidgets, sectors: FrontlinesSector[]): void {
         const team = widgets.team;
         const root = new UIContainer({
             x: 0,
@@ -80,7 +80,7 @@ export class FrontlinesUI {
             padding: 8,
             bgColor: { r: 0.2, g: 0.2, b: 1 },
             bgFill: UI.BgFill.Solid,
-            label: mod.Message(mod.stringkeys.time1MSG, 4, 0),
+            label: mod.Message(mod.stringkeys.frontlines.time1MSG, 4, 0),
             textSize: 18,
             textColor: UI.COLORS.WHITE,
             textAnchor: UI.Anchor.Center,
@@ -172,7 +172,7 @@ export class FrontlinesUI {
             width: 102,
             height: 55,
             anchor: UI.Anchor.Center,
-            label: mod.Message(mod.stringkeys.UnitsRemainingText),
+            label: mod.Message(mod.stringkeys.frontlines.UnitsRemainingText),
             textSize: 23,
             textColor: UI.COLORS.WHITE,
             textAnchor: UI.Anchor.Center,
@@ -223,7 +223,7 @@ export class FrontlinesUI {
         });
     }
 
-    private addSectorUIElement(widgets: TeamWidgets, sector: FrontlinesCaptureSector, message: mod.Message, x: number): void {
+    private addSectorUIElement(widgets: TeamWidgets, sector: FrontlinesSector, message: mod.Message, x: number): void {
         const root = widgets.rootCapture;
         if (!root) {
             return;
@@ -320,16 +320,16 @@ export class FrontlinesUI {
 
         let label: mod.Message;
         if (minutes < 10 && remainingSeconds < 10) {
-            label = mod.Message(mod.stringkeys.time1MSG, minutes, remainingSeconds);
+            label = mod.Message(mod.stringkeys.frontlines.time1MSG, minutes, remainingSeconds);
         }
         else if (minutes < 10) {
-            label = mod.Message(mod.stringkeys.time2MSG, minutes, remainingSeconds);
+            label = mod.Message(mod.stringkeys.frontlines.time2MSG, minutes, remainingSeconds);
         }
         else if (remainingSeconds < 10) {
-            label = mod.Message(mod.stringkeys.time3MSG, minutes, remainingSeconds);
+            label = mod.Message(mod.stringkeys.frontlines.time3MSG, minutes, remainingSeconds);
         }
         else {
-            label = mod.Message(mod.stringkeys.time4MSG, minutes, remainingSeconds);
+            label = mod.Message(mod.stringkeys.frontlines.time4MSG, minutes, remainingSeconds);
         }
 
         this.forEachTeam(widgets => {
@@ -344,7 +344,7 @@ export class FrontlinesUI {
         const remaining = Math.min(team1Remaining, team2Remaining);
         this.forEachTeam(widgets => {
             if (widgets.unitsRemainingText) {
-                widgets.unitsRemainingText.label = mod.Message(mod.stringkeys.UnitsRemainingText, remaining);
+                widgets.unitsRemainingText.label = mod.Message(mod.stringkeys.frontlines.UnitsRemainingText, remaining);
             }
             if (widgets.unitsRemainingFill) {
                 widgets.unitsRemainingFill.width = Math.round((remaining / maxUnits) * UNITS_BAR_WIDTH);
@@ -352,13 +352,13 @@ export class FrontlinesUI {
         });
     }
 
-    updateSector(sector: FrontlinesCaptureSector, fracTeam1: number, fracTeam2: number): void {
+    updateSector(sector: FrontlinesSector, fracTeam1: number, fracTeam2: number): void {
         this.updateSectorForTeam(this.teams[1], sector, fracTeam1, fracTeam2);
         // Team 2 sees blue = team 2, red = team 1 (mirrored)
         this.updateSectorForTeam(this.teams[2], sector, fracTeam2, fracTeam1);
     }
 
-    private updateSectorForTeam(widgets: TeamWidgets, sector: FrontlinesCaptureSector, fracOwn: number, fracEnemy: number): void {
+    private updateSectorForTeam(widgets: TeamWidgets, sector: FrontlinesSector, fracOwn: number, fracEnemy: number): void {
         const sectorWidgets = widgets.sectors.get(sector);
         if (!widgets.rootCapture || !sectorWidgets) {
             return;

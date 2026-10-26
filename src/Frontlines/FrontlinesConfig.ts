@@ -42,15 +42,15 @@ export const FIXED_HQ_TEAM2_ID = 150;
 export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
 export interface SectorMessageKeys {
-    label: string; // mod.stringkeys key of the sector letter
-    conquer: string; // mod.stringkeys key of the sector taken message
-    loose: string; // mod.stringkeys key of the sector lost message
+    label: string; // mod.stringkeys.frontlines key of the sector letter
+    conquer: string; // mod.stringkeys.frontlines key of the sector taken message
+    loose: string; // mod.stringkeys.frontlines key of the sector lost message
 }
 
 // Single letter-to-message mapping. Resolved at call time since mod.stringkeys is only available at runtime. Unknown letters fall back to "A".
 export function sectorMessageKeys(letter: string): SectorMessageKeys {
     const l = LETTERS.includes(letter) ? letter : LETTERS[0];
-    const keys = mod.stringkeys;
+    const keys = mod.stringkeys.frontlines;
     return {
         label: keys[l.toLowerCase()],
         conquer: keys["conquerSector" + l + "MSG"],
