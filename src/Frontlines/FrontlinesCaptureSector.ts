@@ -32,7 +32,7 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
             mod.SetCapturePointOwner(point, neutralTeam());
             mod.EnableCapturePointDeploying(point, false);
             mod.SetCapturePointCapturingTime(point, frontlinesSettings.captureTime);
-            mod.SetCapturePointNeutralizationTime(point, frontlinesSettings.captureNeutralizationTime);
+            mod.SetCapturePointNeutralizationTime(point, frontlinesSettings.neutralCaptureNeutralizationTime);
             mod.SetMaxCaptureMultiplier(point, 1);
             mod.SetAllObjectivesUIEnabled(true);
         }

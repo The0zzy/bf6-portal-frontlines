@@ -6,6 +6,7 @@ export interface FrontlineSettings {
     timeLimit: number,
     captureTime: number,
     captureNeutralizationTime: number,
+    neutralCaptureNeutralizationTime: number,
     mCOMFuseTime: number,
     maxUnitsRemaining: number,
     redeployTime: number,
@@ -18,6 +19,7 @@ export const frontlinesSettings: FrontlineSettings = {
     timeLimit: 60, //minutes
     captureTime: 40, //seconds
     captureNeutralizationTime: 30, //seconds
+    neutralCaptureNeutralizationTime: 1, //seconds
     mCOMFuseTime: 40, //seconds
     maxUnitsRemaining: 100,
     redeployTime: 15, //seconds

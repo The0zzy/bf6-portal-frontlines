@@ -65,10 +65,7 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
         - B) only show for current sector (use HQ instead of capture points (disable capture points for non-current
           sectors))
         - C) use objectives UI and draw sector boundaries around native game objectivesUI elements
-- neutralization time for team3 owned capture points should be very short
-- overhaul day/night switch (errors reported if player not alive or not having equipment)
-- spot enemies in an owned sector
-- after starting a sector capture, when a team 3 owned capture point is not entirely neutralized and recovers to full
-  control, the sector gets moved again (as if owned by team 2 !?)
+- overhaul day/night switch (duplicate code and errors reported if player not alive or not having equipment)
 - create completely isolated OutOfBounds module that gets initialized with the necessary parameters and handles all
   out-of-bounds logic independently based on its own player tracking and areaTrigger information.
+  - spot enemies in an owned sector

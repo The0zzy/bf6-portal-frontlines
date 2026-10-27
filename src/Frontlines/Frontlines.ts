@@ -601,7 +601,9 @@ export namespace Frontlines {
             return;
         }
         const capturingTeam = mod.GetCurrentOwnerTeam(eventCapturePoint);
-        if (!mod.Equals(capturingTeam, neutralTeam)) {
+        if (!mod.Equals(capturingTeam, neutralTeam())) {
+            mod.SetCapturePointNeutralizationTime(eventCapturePoint, frontlinesSettings.captureNeutralizationTime);
+
             const capturers = mod.GetPlayersOnPoint(eventCapturePoint);
             for (let i = 0; i < mod.CountOf(capturers); i++) {
                 const player = mod.ValueInArray(capturers, i) as mod.Player;
@@ -622,7 +624,7 @@ export namespace Frontlines {
                 }
             });
 
-            if (!mod.Equals(neutralTeam, currentSector.isCapturedByTeam())) {
+            if (!mod.Equals(neutralTeam(), currentSector.isCapturedByTeam())) {
                 currentSector.setOwner(capturingTeam);
                 nextSector(capturingTeam);
             } else {
