@@ -10,12 +10,22 @@ export interface FrontlineSettings {
     mCOMFuseTime: number,
     maxUnitsRemaining: number,
     redeployTime: number,
-    sectorTimer: number,
     daytime: number,
     nighttime: number
 }
 
-export const frontlinesSettings: FrontlineSettings = {
+export const debugSettings: FrontlineSettings = {
+    timeLimit: 60, //minutes
+    captureTime: 10, //seconds
+    captureNeutralizationTime: 10, //seconds
+    neutralCaptureNeutralizationTime: 1, //seconds
+    mCOMFuseTime: 10, //seconds
+    maxUnitsRemaining: 20,
+    redeployTime: 5, //seconds
+    daytime: 5, //minutes
+    nighttime: 5, //minutes
+};
+export const defaultSettings: FrontlineSettings = {
     timeLimit: 60, //minutes
     captureTime: 40, //seconds
     captureNeutralizationTime: 30, //seconds
@@ -23,10 +33,10 @@ export const frontlinesSettings: FrontlineSettings = {
     mCOMFuseTime: 40, //seconds
     maxUnitsRemaining: 100,
     redeployTime: 15, //seconds
-    sectorTimer: 30, //seconds
     daytime: 14, //minutes
     nighttime: 10, //minutes
 };
+export const frontlinesSettings = debugSettings;
 
 // ID scheme, see levels/MAP_REQUIREMENTS.md
 export const FIRST_SECTOR_ID = 201;
