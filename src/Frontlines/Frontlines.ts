@@ -99,6 +99,19 @@ export namespace Frontlines {
         return voiceFlags[index];
     }
 
+    // Applies the current day/night state to one player; skips players that are invalid or dead.
+    function applyDayNightState(player: mod.Player): void {
+        if (!mod.IsPlayerValid(player) || !mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
+
+        const hasNvg = mod.HasEquipment(player, mod.Gadgets.Mask_NVG);
+        mod.EnableScreenEffect(player, mod.ScreenEffects.Night, !isDay);
+        if (isDay && hasNvg) {
+            mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
+        } else if (!isDay && !hasNvg) {
+            mod.AddEquipment(player, mod.Gadgets.Mask_NVG);
+        }
+    }
+
     function getPlayerData(player: mod.Player | number): PlayerData {
         const playerId = typeof player === 'number' ? player : mod.GetObjId(player);
         let data = playerDataMap.get(playerId);
@@ -131,30 +144,13 @@ export namespace Frontlines {
             // Day/Night cycle
             const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
             const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
-            const allPlayers = mod.GetAllPlayers();
-            if (minutesPassed < frontlinesSettings.daytime) {
-                if (!isDay) {
-                    console.log("Transitioning to day.");
-                    for (let i = 0; i < mod.CountOf(allPlayers); i++) {
-                        const player = mod.ValueInArray(allPlayers, i);
-                        mod.EnableScreenEffect(player, mod.ScreenEffects.Night, false);
-                        if (mod.HasEquipment(player, mod.Gadgets.Mask_NVG)) {
-                            mod.RemoveEquipment(player, mod.Gadgets.Mask_NVG);
-                        }
-                    }
-
-                    isDay = true;
-                }
-            } else {
-                if (isDay) {
-                    console.log("Transitioning to night.");
-                    for (let i = 0; i < mod.CountOf(allPlayers); i++) {
-                        const player = mod.ValueInArray(allPlayers, i);
-                        mod.EnableScreenEffect(player, mod.ScreenEffects.Night, true);
-                        mod.AddEquipment(player, mod.Gadgets.Mask_NVG);
-                    }
-
-                    isDay = false;
+            const shouldBeDay = minutesPassed < frontlinesSettings.daytime;
+            if (shouldBeDay !== isDay) {
+                isDay = shouldBeDay;
+                console.log(isDay ? "Transitioning to day." : "Transitioning to night.");
+                const allPlayers = mod.GetAllPlayers();
+                for (let i = 0; i < mod.CountOf(allPlayers); i++) {
+                    applyDayNightState(mod.ValueInArray(allPlayers, i) as mod.Player);
                 }
             }
             secondTimer();
@@ -672,15 +668,7 @@ export namespace Frontlines {
     }
 
     function handlePlayerDeployed(eventPlayer: mod.Player): void {
-        //day/night
-        if (isDay) {
-            mod.EnableScreenEffect(eventPlayer, mod.ScreenEffects.Night, false);
-            mod.RemoveEquipment(eventPlayer, mod.Gadgets.Mask_NVG);
-        }
-        else {
-            mod.EnableScreenEffect(eventPlayer, mod.ScreenEffects.Night, true);
-            mod.AddEquipment(eventPlayer, mod.Gadgets.Mask_NVG);
-        }
+        applyDayNightState(eventPlayer);
 
         if (mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1))) {
 
