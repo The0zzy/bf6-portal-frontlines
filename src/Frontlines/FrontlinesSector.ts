@@ -60,6 +60,10 @@ export abstract class FrontlinesSector {
                 return mod.Message(mod.stringkeys.frontlines.conquerSectorFMSG);
             case "G":
                 return mod.Message(mod.stringkeys.frontlines.conquerSectorGMSG);
+            case "H":
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorHMSG);
+            case "I":
+                return mod.Message(mod.stringkeys.frontlines.conquerSectorIMSG);
             default:
                 return mod.Message(mod.stringkeys.frontlines.conquerSectorAMSG);
         }
@@ -79,6 +83,10 @@ export abstract class FrontlinesSector {
                 return mod.Message(mod.stringkeys.frontlines.looseSectorFMSG);
             case "G":
                 return mod.Message(mod.stringkeys.frontlines.looseSectorGMSG);
+            case "H":
+                return mod.Message(mod.stringkeys.frontlines.looseSectorHMSG);
+            case "I":
+                return mod.Message(mod.stringkeys.frontlines.looseSectorIMSG);
             default:
                 return mod.Message(mod.stringkeys.frontlines.looseSectorAMSG);
         }
