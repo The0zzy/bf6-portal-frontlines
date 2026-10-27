@@ -57,7 +57,6 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
 - UI
     - white outline of sector is not really an outline (gets covered by fill)
     - black connectors intended between sector widgets?
-    - mcom sector should be visually distinct from capture sectors (add crown icon in some way (crowns per mcom?)
     - remaining units display centered (intended?)
         - there is no colored background fill (should be an emptying progress bar)
     - ObjectivesUI currently overlays the sector widgets
@@ -65,7 +64,16 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
         - B) only show for current sector (use HQ instead of capture points (disable capture points for non-current
           sectors))
         - C) use objectives UI and draw sector boundaries around native game objectivesUI elements
+            - game objectives are around an y offset of 50
+            - capture points are shown in sector ID order and have an equal spacing horizontally, mcoms are inlined
+              accordingly when activated
+            - draw sectors with dynamic width according to the number of capture points and MCOMs within them
+            - current sector size holds about 2 capture points or MCOMs
+            - the sector widgets sit underneath the game objectives UI elements
+            - add a gradient filled box on top of each sector widget where the top 2/3rd are transparent and the bottom
+              1/3rd fills with a color (solid fill near the top of the sector widget) representing the current owner of
+              the sector (white in case of neutral/active sector). The vertical lines of the box should be
 - overhaul day/night switch (duplicate code and errors reported if player not alive or not having equipment)
 - create completely isolated OutOfBounds module that gets initialized with the necessary parameters and handles all
   out-of-bounds logic independently based on its own player tracking and areaTrigger information.
-  - spot enemies in an owned sector
+    - spot enemies in an owned sector
