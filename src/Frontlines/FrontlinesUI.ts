@@ -298,10 +298,11 @@ export class FrontlinesUI {
             parent: unitsRoot,
             x: 0,
             y: 0,
-            width: 0,
+            width: UNITS_BAR_WIDTH,
             height: UNITS_BAR_HEIGHT,
             anchor: UI.Anchor.CenterLeft,
             bgColor: FRIENDLY_COLOR,
+            bgAlpha: 0.8,
             bgFill: UI.BgFill.Solid,
         });
 
