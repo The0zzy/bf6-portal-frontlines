@@ -197,6 +197,25 @@ export namespace Frontlines {
         updateSectorsState();
     }
 
+    // Arrow notification for the MCOM sector in play; each team gets its own sub-message.
+    function sendLastStandNotification(sector: FrontlinesMcomSector, attacker: mod.Team): void {
+        const activeMcom = sector.mcoms.find(mcom => !mcom.destroyed);
+        const sendTo = (receiver: mod.Team, subMessage: mod.Message): void => {
+            const notification = mod.CreateGameEventNotificationData();
+            mod.SetIconForGameEventNotificationData(notification, mod.WorldIconImages.BombArmed);
+            mod.SetSizeForGameEventNotificationData(notification, mod.GameEventNotificationSizes.XLarge);
+            mod.SetColorForGameEventNotificationData(notification, mod.GameEventNotificationColors.Friendly);
+            mod.SetStyleForGameEventNotificationData(notification, mod.GameEventNotificationStyles.Arrows);
+            if (activeMcom) {
+                mod.SetObjectiveForGameEventNotificationData(notification, activeMcom.mcom);
+            }
+            mod.SetMessageForGameEventNotificationData(notification, mod.Message(mod.stringkeys.frontlines.lastStandMSG), subMessage);
+            mod.SendGameEventNotification(notification, receiver);
+        };
+        sendTo(attacker, mod.Message(mod.stringkeys.frontlines.lastStandAttackMSG));
+        sendTo(getEnemyTeam(attacker), mod.Message(mod.stringkeys.frontlines.lastStandDefendMSG));
+    }
+
     function nextSector(team: mod.Team): void {
         mod.LoadMusic(mod.MusicPackages.Core);
         mod.PlayMusic(mod.MusicEvents.Core_PhaseBegin);
@@ -242,6 +261,16 @@ export namespace Frontlines {
 
         //removed next sector preparation timer
         updateSectorsState();
+
+        const newSector = getCurrentSector();
+        if (newSector instanceof FrontlinesMcomSector) {
+            // shown 5 seconds after the sector captured notification
+            mod.Wait(5).then(() => {
+                if (getCurrentSector().id === newSector.id) {
+                    sendLastStandNotification(newSector, team);
+                }
+            });
+        }
     }
     //#endregion
 
