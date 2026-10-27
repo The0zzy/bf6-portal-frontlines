@@ -55,23 +55,23 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
 ## Others
 
 - UI
-    - white outline of sector is not really an outline (gets covered by fill)
-    - remaining units display centered
-      - there is no colored background fill (should be an emptying progress bar)
     - ObjectivesUI currently overlays the sector widgets
         - A) increase root y position of sector widgets
         - B) only show for current sector (use HQ instead of capture points (disable capture points for non-current
           sectors))
-        - C) use objectives UI and draw sector boundaries around native game objectivesUI elements
+        - C) use objectives UI and draw sector boundaries around native game objectivesUI elements (implemented;
+          calibrate `OBJECTIVE_WIDTH` in FrontlinesUI.ts in-game, verify MCOM Bomb arm type blocks arming)
             - game objectives are around an y offset of 50
             - capture points are shown in sector ID order and have an equal spacing horizontally, mcoms are inlined
               accordingly when activated
             - draw sectors with dynamic width according to the number of capture points and MCOMs within them
             - current sector size holds about 2 capture points or MCOMs
-            - the sector widgets sit underneath the game objectives UI elements
-            - add a bottom-gradient filled box above each sector widget (y=0 of screen and height = y-offset of sector widgets) representing the current owner of
-              the sector (white bgfill in case of neutral/active sector, team color otherwise). 
-            - There should be thin vertical lines separating each sector within the sector widget area instead of spacing them apart with empty space and the black bar inbetween.
+            - the sector widgets sit underneath the game objectives UI elements (y offset of 90)
+            - add a bottom-gradient filled box above each sector widget (y=0 of screen and height = y-offset of sector widgets)
+            - the bottom-gradient filled box should reflect the ownership of the sector (white bgfill in case of neutral/active sector, team color otherwise). 
+            - There should be thin vertical lines separating each sector instead of spacing them apart with empty space and the black bar inbetween. Each sector gets a line at its left and right edges. The line extends to the top of the screen (y=0). Line color should reflect the ownership of the sector (white for neutral/active, team color otherwise).
+            - This would require the mcoms to always be enabled and visible within their respective sectors to ensure the vertical lines align correctly with the sector boundaries.
+            - to prevent mcoms from being armed while enabled, the armtype could be set to bomb and on sector activation is set to default
 
 - create completely isolated OutOfBounds module that gets initialized with the necessary parameters and handles all
   out-of-bounds logic independently based on its own player tracking and areaTrigger information.

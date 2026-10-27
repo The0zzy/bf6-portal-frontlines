@@ -112,4 +112,9 @@ export abstract class FrontlinesSector {
      * Returns the capture progress (0-1) of the given team on this sector.
      */
     abstract getCaptureProgress(team: mod.Team): number;
+
+    /**
+     * Returns the number of capture points or MCOMs shown in the native objectives UI for this sector.
+     */
+    abstract getObjectiveCount(): number;
 }

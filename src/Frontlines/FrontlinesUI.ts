@@ -1,9 +1,7 @@
 import { UI } from 'bf6-portal-utils/ui';
 import { UIContainer } from 'bf6-portal-utils/ui/components/container';
-import { UIImage } from 'bf6-portal-utils/ui/components/image';
 import { UIText } from 'bf6-portal-utils/ui/components/text';
 import { getEnemyTeam, neutralTeam } from './FrontlinesConfig.ts';
-import { FrontlinesMcomSector } from './FrontlinesMcomSector.ts';
 import type { FrontlinesSector } from './FrontlinesSector.ts';
 
 /*-----------------------------------------------------------------------------------------------------------------*/
@@ -13,12 +11,14 @@ import type { FrontlinesSector } from './FrontlinesSector.ts';
 const FRIENDLY_COLOR = UI.COLORS.BF_BLUE_BRIGHT;
 const ENEMY_COLOR = UI.COLORS.BF_RED_BRIGHT;
 
-const ROOT_Y = 100;
+// sector widgets sit right below the native objectives UI
+const ROOT_Y = 90;
 const SECTOR_SIZE = 40;
-const SECTOR_GAP = 20;
-const CROWN_SIZE = 36;
-const CROWN_ALPHA = 0.7;
-const CONNECTOR_HEIGHT = 5;
+// horizontal space of one native objective icon, calibrate in-game
+const OBJECTIVE_WIDTH = 20;
+const BOUNDARY_LINE_WIDTH = 2;
+const BOUNDARY_LINE_ALPHA = 0.8;
+const GRADIENT_ALPHA = 0.4;
 const ELEMENT_SPACING = 8;
 const TIMER_WIDTH = 75;
 const TIMER_HEIGHT = 20;
@@ -26,15 +26,18 @@ const UNITS_BAR_WIDTH = 80;
 const UNITS_BAR_HEIGHT = 20;
 
 interface SectorWidgets {
-    root: UIContainer; // border (outline) and parent of the fills, crown and letter
+    root: UIContainer; // border (outline) and parent of the fills and letter
     friendlyFill: UIContainer; // grows from the bottom
     enemyFill: UIContainer; // grows from the top
-    crown?: UIImage; // only on MCOM sectors
+    gradient: UIContainer; // ownership box above the sector, up to the top of the screen
+    leftLine: UIContainer;
+    rightLine: UIContainer;
 }
 
 // Widgets of one team. Colors are relative to that team: friendly is blue, enemy is red.
 interface TeamView {
     team: mod.Team;
+    overlay: UIContainer;
     root: UIContainer;
     timer: UIText;
     sectors: Map<number, SectorWidgets>;
@@ -119,6 +122,7 @@ export class FrontlinesUI {
 
     destroy(): void {
         for (const view of this.views) {
+            view.overlay.delete();
             view.root.delete();
             view.unitsRoot.delete();
             view.sectors.clear();
@@ -150,9 +154,15 @@ export class FrontlinesUI {
             // owned sectors take the dark color of their owner, neutral ones stay white (active) or black
             const ownerColor = this.getOwnerDarkColor(sector.ownerTeam, view.team);
             widgets.root.bgColor = ownerColor ?? (active ? UI.COLORS.WHITE : UI.COLORS.BLACK);
-            if (widgets.crown) {
-                widgets.crown.imageColor = ownerColor ?? UI.COLORS.WHITE;
+
+            // active MCOM sectors keep their defending owner, so check active first
+            let boundaryColor: UI.Color = UI.COLORS.WHITE;
+            if (!active && !mod.Equals(sector.ownerTeam, neutralTeam())) {
+                boundaryColor = mod.Equals(sector.ownerTeam, view.team) ? FRIENDLY_COLOR : ENEMY_COLOR;
             }
+            widgets.gradient.bgColor = boundaryColor;
+            widgets.leftLine.bgColor = boundaryColor;
+            widgets.rightLine.bgColor = boundaryColor;
         }
     }
 
@@ -164,9 +174,18 @@ export class FrontlinesUI {
     }
 
     private createView(team: mod.Team): TeamView {
-        // the bar grows with the number of sectors
-        const barWidth = this.sectors.length * SECTOR_SIZE + (this.sectors.length - 1) * SECTOR_GAP;
+        const sectorWidths = this.sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
+        const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
         const rootHeight = SECTOR_SIZE + ELEMENT_SPACING + TIMER_HEIGHT;
+
+        const overlay = new UIContainer({
+            x: 0,
+            y: 0,
+            width: barWidth,
+            height: ROOT_Y + SECTOR_SIZE,
+            anchor: UI.Anchor.TopCenter,
+            receiver: team,
+        });
 
         const root = new UIContainer({
             x: 0,
@@ -187,29 +206,31 @@ export class FrontlinesUI {
         });
 
         const sectors = new Map<number, SectorWidgets>();
+        let x = 0;
         for (let i = 0; i < this.sectors.length; i++) {
             const sector = this.sectors[i];
-            const x = i * (SECTOR_SIZE + SECTOR_GAP);
+            const width = sectorWidths[i];
 
-            if (i > 0) {
-                new UIContainer({
-                    parent: bar,
-                    x: x - SECTOR_GAP,
-                    y: 0,
-                    width: SECTOR_GAP,
-                    height: CONNECTOR_HEIGHT,
-                    anchor: UI.Anchor.CenterLeft,
-                    bgColor: UI.COLORS.BLACK,
-                    bgAlpha: 0.8,
-                    bgFill: UI.BgFill.Solid,
-                });
-            }
+            const gradient = new UIContainer({
+                parent: overlay,
+                x,
+                y: 0,
+                width,
+                height: ROOT_Y,
+                anchor: UI.Anchor.TopLeft,
+                bgColor: UI.COLORS.WHITE,
+                bgAlpha: GRADIENT_ALPHA,
+                bgFill: UI.BgFill.GradientBottom,
+            });
+
+            const leftLine = this.createBoundaryLine(overlay, x);
+            const rightLine = this.createBoundaryLine(overlay, x + width - BOUNDARY_LINE_WIDTH);
 
             const sectorRoot = new UIContainer({
                 parent: bar,
                 x,
                 y: 0,
-                width: SECTOR_SIZE,
+                width,
                 height: SECTOR_SIZE,
                 anchor: UI.Anchor.TopLeft,
                 bgColor: UI.COLORS.BLACK,
@@ -219,7 +240,7 @@ export class FrontlinesUI {
 
             const friendlyFill = new UIContainer({
                 parent: sectorRoot,
-                width: SECTOR_SIZE,
+                width,
                 height: 0,
                 anchor: UI.Anchor.BottomLeft,
                 bgColor: FRIENDLY_COLOR,
@@ -229,7 +250,7 @@ export class FrontlinesUI {
 
             const enemyFill = new UIContainer({
                 parent: sectorRoot,
-                width: SECTOR_SIZE,
+                width,
                 height: 0,
                 anchor: UI.Anchor.TopLeft,
                 bgColor: ENEMY_COLOR,
@@ -237,23 +258,9 @@ export class FrontlinesUI {
                 bgFill: UI.BgFill.Solid,
             });
 
-            // MCOM sectors are marked with a crown behind the letter
-            let crown: UIImage | undefined;
-            if (sector instanceof FrontlinesMcomSector) {
-                crown = new UIImage({
-                    parent: sectorRoot,
-                    width: CROWN_SIZE,
-                    height: CROWN_SIZE,
-                    anchor: UI.Anchor.Center,
-                    imageType: UI.ImageType.CrownSolid,
-                    imageColor: UI.COLORS.WHITE,
-                    imageAlpha: CROWN_ALPHA,
-                });
-            }
-
             new UIText({
                 parent: sectorRoot,
-                width: SECTOR_SIZE,
+                width,
                 height: SECTOR_SIZE,
                 anchor: UI.Anchor.TopLeft,
                 label: sector.getLabel(),
@@ -262,7 +269,8 @@ export class FrontlinesUI {
                 textAnchor: UI.Anchor.Center,
             });
 
-            sectors.set(sector.id, { root: sectorRoot, friendlyFill, enemyFill, crown });
+            sectors.set(sector.id, { root: sectorRoot, friendlyFill, enemyFill, gradient, leftLine, rightLine });
+            x += width;
         }
 
         const timer = new UIText({
@@ -319,6 +327,21 @@ export class FrontlinesUI {
             textAnchor: UI.Anchor.Center,
         });
 
-        return { team, root, timer, sectors, unitsRoot, unitsFill, unitsText };
+        return { team, overlay, root, timer, sectors, unitsRoot, unitsFill, unitsText };
+    }
+
+    // Vertical line from the top of the screen to the bottom of the sector widgets.
+    private createBoundaryLine(parent: UIContainer, x: number): UIContainer {
+        return new UIContainer({
+            parent,
+            x,
+            y: 0,
+            width: BOUNDARY_LINE_WIDTH,
+            height: ROOT_Y + SECTOR_SIZE,
+            anchor: UI.Anchor.TopLeft,
+            bgColor: UI.COLORS.WHITE,
+            bgAlpha: BOUNDARY_LINE_ALPHA,
+            bgFill: UI.BgFill.Solid,
+        });
     }
 }

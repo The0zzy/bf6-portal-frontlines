@@ -32,16 +32,23 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         return 0;
     }
 
+    getObjectiveCount(): number {
+        return this.mcoms.length;
+    }
+
+    // MCOMs stay enabled so the native objectives UI keeps its layout; Bomb arm type keeps them unarmable.
     override setOwner(team: mod.Team): void {
         this.ownerTeam = team;
         for (const mcom of this.mcoms) {
             mod.SetMCOMOwner(mcom.mcom, team);
-            mod.EnableGameModeObjective(mcom.mcom, false);
+            mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Bomb);
+            mod.EnableGameModeObjective(mcom.mcom, true);
         }
     }
 
     activate(): void {
         for (const mcom of this.mcoms) {
+            mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Default);
             mod.EnableGameModeObjective(mcom.mcom, true);
         }
     }

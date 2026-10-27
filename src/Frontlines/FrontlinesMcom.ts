@@ -11,7 +11,7 @@ export class FrontlinesMcom {
         this.owner = owner;
         this.mcom = mcom;
         mod.SetMCOMOwner(this.mcom, this.owner);
-        mod.SetMCOMArmType(this.mcom, mod.MCOMArmType.Default);
+        mod.SetMCOMArmType(this.mcom, mod.MCOMArmType.Bomb);
         mod.SetMCOMFuseTime(this.mcom, fuseTime);
     }
 

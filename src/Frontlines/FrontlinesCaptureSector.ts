@@ -65,4 +65,8 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
         }
         return progressSum / this.capturePoints.size;
     }
+
+    getObjectiveCount(): number {
+        return this.capturePoints.size;
+    }
 }
