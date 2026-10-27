@@ -601,30 +601,33 @@ export namespace Frontlines {
             return;
         }
         const capturingTeam = mod.GetCurrentOwnerTeam(eventCapturePoint);
-        const capturers = mod.GetPlayersOnPoint(eventCapturePoint);
-        for (let i = 0; i < mod.CountOf(capturers); i++) {
-            const player = mod.ValueInArray(capturers, i) as mod.Player;
-            if (!mod.Equals(mod.GetTeam(player), capturingTeam)) continue;
+        if (!mod.Equals(capturingTeam, neutralTeam)) {
+            const capturers = mod.GetPlayersOnPoint(eventCapturePoint);
+            for (let i = 0; i < mod.CountOf(capturers); i++) {
+                const player = mod.ValueInArray(capturers, i) as mod.Player;
+                if (!mod.Equals(mod.GetTeam(player), capturingTeam)) continue;
 
-            const playerData = getPlayerData(player);
-            playerData.stats.captures++;
-            updateScoreboard(player, playerData);
-        }
-
-        const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-        const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, capturingTeam);
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, getEnemyTeam(capturingTeam));
-        mod.Wait(6).then(() => {
-            if (vo) {
-                mod.UnspawnObject(vo);
+                const playerData = getPlayerData(player);
+                playerData.stats.captures++;
+                updateScoreboard(player, playerData);
             }
-        });
-        if (mod.Equals(capturingTeam, currentSector.isCapturedByTeam())) {
-            currentSector.setOwner(capturingTeam);
-            nextSector(capturingTeam);
-        } else {
-            mod.EnableCapturePointDeploying(eventCapturePoint, true);
+
+            const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
+            const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
+            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, capturingTeam);
+            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, getEnemyTeam(capturingTeam));
+            mod.Wait(6).then(() => {
+                if (vo) {
+                    mod.UnspawnObject(vo);
+                }
+            });
+
+            if (!mod.Equals(neutralTeam, currentSector.isCapturedByTeam())) {
+                currentSector.setOwner(capturingTeam);
+                nextSector(capturingTeam);
+            } else {
+                mod.EnableCapturePointDeploying(eventCapturePoint, true);
+            }
         }
     }
 
