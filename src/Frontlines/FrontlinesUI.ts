@@ -12,10 +12,10 @@ const FRIENDLY_COLOR = UI.COLORS.BF_BLUE_BRIGHT;
 const ENEMY_COLOR = UI.COLORS.BF_RED_BRIGHT;
 
 // sector widgets sit right below the native objectives UI
-const ROOT_Y = 90;
-const SECTOR_SIZE = 40;
+const ROOT_Y = 100;
+const SECTOR_SIZE = 44;
 // horizontal space of one native objective icon, calibrate in-game
-const OBJECTIVE_WIDTH = 20;
+const OBJECTIVE_WIDTH = 44;
 const BOUNDARY_LINE_WIDTH = 2;
 const BOUNDARY_LINE_ALPHA = 0.8;
 const GRADIENT_ALPHA = 0.4;
@@ -26,9 +26,11 @@ const UNITS_BAR_WIDTH = 80;
 const UNITS_BAR_HEIGHT = 20;
 
 interface SectorWidgets {
-    root: UIContainer; // border (outline) and parent of the fills and letter
+    root: UIContainer; // parent of the fills, letter and outline
     friendlyFill: UIContainer; // grows from the bottom
     enemyFill: UIContainer; // grows from the top
+    outline: UIContainer;
+    label: UIText;
     gradient: UIContainer; // ownership box above the sector, up to the top of the screen
     leftLine: UIContainer;
     rightLine: UIContainer;
@@ -39,6 +41,7 @@ interface TeamView {
     team: mod.Team;
     overlay: UIContainer;
     root: UIContainer;
+    bar: UIContainer;
     timer: UIText;
     sectors: Map<number, SectorWidgets>;
     unitsRoot: UIContainer;
@@ -73,6 +76,38 @@ export class FrontlinesUI {
      */
     updateSectorProgress(activeSector: FrontlinesSector): void {
         this.updateSector(activeSector, true);
+    }
+
+    /**
+     * Resizes the sector widgets to the current objective counts, e.g. after an MCOM is destroyed.
+     */
+    updateSectorWidths(): void {
+        const sectorWidths = this.getSectorWidths();
+        const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
+        for (const view of this.views) {
+            view.overlay.width = barWidth;
+            view.root.width = barWidth;
+            view.bar.width = barWidth;
+
+            let x = 0;
+            for (let i = 0; i < this.sectors.length; i++) {
+                const width = sectorWidths[i];
+                const widgets = view.sectors.get(this.sectors[i].id);
+                if (widgets) {
+                    widgets.root.x = x;
+                    widgets.root.width = width;
+                    widgets.friendlyFill.width = width;
+                    widgets.enemyFill.width = width;
+                    widgets.outline.width = width;
+                    widgets.label.width = width;
+                    widgets.gradient.x = x;
+                    widgets.gradient.width = width;
+                    widgets.leftLine.x = x;
+                    widgets.rightLine.x = x + width - BOUNDARY_LINE_WIDTH;
+                }
+                x += width;
+            }
+        }
     }
 
     setTimer(seconds: number): void {
@@ -160,6 +195,7 @@ export class FrontlinesUI {
             if (!active && !mod.Equals(sector.ownerTeam, neutralTeam())) {
                 boundaryColor = mod.Equals(sector.ownerTeam, view.team) ? FRIENDLY_COLOR : ENEMY_COLOR;
             }
+            widgets.outline.bgColor = boundaryColor;
             widgets.gradient.bgColor = boundaryColor;
             widgets.leftLine.bgColor = boundaryColor;
             widgets.rightLine.bgColor = boundaryColor;
@@ -173,8 +209,12 @@ export class FrontlinesUI {
         return mod.Equals(owner, viewTeam) ? UI.COLORS.BF_BLUE_DARK : UI.COLORS.BF_RED_DARK;
     }
 
+    private getSectorWidths(): number[] {
+        return this.sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
+    }
+
     private createView(team: mod.Team): TeamView {
-        const sectorWidths = this.sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
+        const sectorWidths = this.getSectorWidths();
         const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
         const rootHeight = SECTOR_SIZE + ELEMENT_SPACING + TIMER_HEIGHT;
 
@@ -235,7 +275,7 @@ export class FrontlinesUI {
                 anchor: UI.Anchor.TopLeft,
                 bgColor: UI.COLORS.BLACK,
                 bgAlpha: 1,
-                bgFill: UI.BgFill.OutlineThin,
+                bgFill: UI.BgFill.None,
             });
 
             const friendlyFill = new UIContainer({
@@ -258,7 +298,7 @@ export class FrontlinesUI {
                 bgFill: UI.BgFill.Solid,
             });
 
-            new UIText({
+            const label = new UIText({
                 parent: sectorRoot,
                 width,
                 height: SECTOR_SIZE,
@@ -269,7 +309,18 @@ export class FrontlinesUI {
                 textAnchor: UI.Anchor.Center,
             });
 
-            sectors.set(sector.id, { root: sectorRoot, friendlyFill, enemyFill, gradient, leftLine, rightLine });
+            // added last so the outline draws on top of the fills
+            const outline = new UIContainer({
+                parent: sectorRoot,
+                width,
+                height: SECTOR_SIZE,
+                anchor: UI.Anchor.TopLeft,
+                bgColor: UI.COLORS.BLACK,
+                bgAlpha: 1,
+                bgFill: UI.BgFill.OutlineThin,
+            });
+
+            sectors.set(sector.id, { root: sectorRoot, friendlyFill, enemyFill, outline, label, gradient, leftLine, rightLine });
             x += width;
         }
 
@@ -327,7 +378,7 @@ export class FrontlinesUI {
             textAnchor: UI.Anchor.Center,
         });
 
-        return { team, overlay, root, timer, sectors, unitsRoot, unitsFill, unitsText };
+        return { team, overlay, root, bar, timer, sectors, unitsRoot, unitsFill, unitsText };
     }
 
     // Vertical line from the top of the screen to the bottom of the sector widgets.

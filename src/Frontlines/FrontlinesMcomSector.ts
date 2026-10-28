@@ -33,7 +33,7 @@ export class FrontlinesMcomSector extends FrontlinesSector {
     }
 
     getObjectiveCount(): number {
-        return this.mcoms.length;
+        return this.mcoms.filter(mcom => !mcom.destroyed).length;
     }
 
     // MCOMs stay enabled so the native objectives UI keeps its layout; Bomb arm type keeps them unarmable.
@@ -63,7 +63,7 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         const mcom = this.mcoms.find(m => mod.GetObjId(m.mcom) === mcomId);
         if (mcom) {
             mcom.destroyMCOM();
-        }else{
+        } else {
             console.log(`ERROR: destroyMcom() - MCOM with ID ${mcomId} not found in this sector!`);
         }
     }

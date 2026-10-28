@@ -67,11 +67,24 @@ Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../leve
             - draw sectors with dynamic width according to the number of capture points and MCOMs within them
             - current sector size holds about 2 capture points or MCOMs
             - the sector widgets sit underneath the game objectives UI elements (y offset of 90)
-            - add a bottom-gradient filled box above each sector widget (y=0 of screen and height = y-offset of sector widgets)
-            - the bottom-gradient filled box should reflect the ownership of the sector (white bgfill in case of neutral/active sector, team color otherwise). 
-            - There should be thin vertical lines separating each sector instead of spacing them apart with empty space and the black bar inbetween. Each sector gets a line at its left and right edges. The line extends to the top of the screen (y=0). Line color should reflect the ownership of the sector (white for neutral/active, team color otherwise).
-            - This would require the mcoms to always be enabled and visible within their respective sectors to ensure the vertical lines align correctly with the sector boundaries.
-            - to prevent mcoms from being armed while enabled, the armtype could be set to bomb and on sector activation is set to default
+            - add a bottom-gradient filled box above each sector widget (y=0 of screen and height = y-offset of sector
+              widgets)
+            - the bottom-gradient filled box should reflect the ownership of the sector (white bgfill in case of
+              neutral/active sector, team color otherwise).
+            - There should be thin vertical lines separating each sector instead of spacing them apart with empty space
+              and the black bar inbetween. Each sector gets a line at its left and right edges. The line extends to the
+              top of the screen (y=0). Line color should reflect the ownership of the sector (white for neutral/active,
+              team color otherwise).
+            - This would require the mcoms to always be enabled and visible within their respective sectors to ensure
+              the vertical lines align correctly with the sector boundaries.
+            - to prevent mcoms from being armed while enabled, the armtype could be set to bomb and on sector activation
+              is set to default
+            - assign all objectives to one sector for better labels (A, B, C, etc. instead of doubled A,B per sector)
+              limits total objectives to 8, but is not a show stopper as it can be changed to per sector assignment in
+              the map
+            - add according HQ polygonvolumes so the owned sectors get marked with according team colors.
+
+- HQs are not properly enabled/disabled on sector switch it seems
 
 - create completely isolated OutOfBounds module that gets initialized with the necessary parameters and handles all
   out-of-bounds logic independently based on its own player tracking and areaTrigger information.
