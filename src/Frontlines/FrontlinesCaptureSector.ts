@@ -69,4 +69,14 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
     getObjectiveCount(): number {
         return this.capturePoints.size;
     }
+
+    countCapturePointsOwnedBy(team: mod.Team): number {
+        let count = 0;
+        for (const point of this.capturePoints.values()) {
+            if (mod.Equals(mod.GetCurrentOwnerTeam(point), team)) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

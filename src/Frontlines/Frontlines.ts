@@ -38,6 +38,7 @@ export namespace Frontlines {
     const playerDataMap: Map<number, PlayerData> = new Map();
 
     let matchTimer: number = 2400;
+    let lastElapsedSeconds: number = 0;
 
     let currentSectorIndex: number = 0;
 
@@ -115,35 +116,64 @@ export namespace Frontlines {
         return data;
     }
 
-    function secondTimer(): void {
-        mod.Wait(1).then(() => {
-            // Timer update
-            matchTimer--;
-            ui?.setTimer(matchTimer);
-            if (matchTimer == 0) {
-                // Time over
-                if (currentSectorIndex == sectors.length - 1) {
-                    mod.EndGameMode(mod.GetTeam(1));
-                } else {
-                    mod.EndGameMode(mod.GetTeam(2));
-                }
-                return;
-            }
+    /**
+     * 
+     * @returns mod.Team the team that currently holds more territory; ties return the neutral team (team 0).
+     */
+    function getTimeLimitWinner(): mod.Team {
+        const team1 = mod.GetTeam(1);
+        const team2 = mod.GetTeam(2);
 
-            // Day/Night cycle
-            const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
-            const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
-            const shouldBeDay = minutesPassed < frontlinesSettings.daytime;
-            if (shouldBeDay !== isDay) {
-                isDay = shouldBeDay;
-                console.log(isDay ? "Transitioning to day." : "Transitioning to night.");
-                const allPlayers = mod.GetAllPlayers();
-                for (let i = 0; i < mod.CountOf(allPlayers); i++) {
-                    applyDayNightState(mod.ValueInArray(allPlayers, i) as mod.Player);
-                }
+        const middleIndex = Math.floor(sectors.length / 2);
+        if (currentSectorIndex < middleIndex) {
+            return team2;
+        } else if (currentSectorIndex > middleIndex) {
+            return team1;
+        }
+
+        const activeSector = sectors[currentSectorIndex];
+        if (!(activeSector instanceof FrontlinesCaptureSector)) {
+            return mod.GetTeam(0);
+        }
+
+        const team1Points = activeSector.countCapturePointsOwnedBy(team1);
+        const team2Points = activeSector.countCapturePointsOwnedBy(team2);
+        if (team1Points !== team2Points) {
+            return team1Points > team2Points ? team1 : team2;
+        }
+
+        return mod.GetTeam(0);
+    }
+
+    // Called every tick from OngoingGlobal; does the per-second work once per elapsed second.
+    function updateMatchTimer(): void {
+        const elapsedSeconds = Math.floor(mod.GetMatchTimeElapsed());
+        if (elapsedSeconds === lastElapsedSeconds) return;
+        lastElapsedSeconds = elapsedSeconds;
+
+        if (matchTimer <= 0) return;
+
+        // Timer update
+        matchTimer--;
+        ui?.setTimer(matchTimer);
+        if (matchTimer == 0) {
+            // Time over
+            mod.EndGameMode(getTimeLimitWinner());
+            return;
+        }
+
+        // Day/Night cycle
+        const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
+        const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
+        const shouldBeDay = minutesPassed < frontlinesSettings.daytime;
+        if (shouldBeDay !== isDay) {
+            isDay = shouldBeDay;
+            console.log(isDay ? "Transitioning to day." : "Transitioning to night.");
+            const allPlayers = mod.GetAllPlayers();
+            for (let i = 0; i < mod.CountOf(allPlayers); i++) {
+                applyDayNightState(mod.ValueInArray(allPlayers, i) as mod.Player);
             }
-            secondTimer();
-        });
+        }
     }
 
     //#endregion
@@ -277,6 +307,7 @@ export namespace Frontlines {
         }
 
         matchTimer = frontlinesSettings.timeLimit * 60;
+        lastElapsedSeconds = Math.floor(mod.GetMatchTimeElapsed());
         mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
         mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
         mod.SetScoreboardColumnNames(
@@ -300,8 +331,6 @@ export namespace Frontlines {
         for (let i = 0; i < mod.CountOf(existingPlayers); i++) {
             handlePlayerJoinGame(mod.ValueInArray(existingPlayers, i) as mod.Player);
         }
-
-        secondTimer();
     }
 
     function loadMapObjects(): string | undefined {
@@ -649,6 +678,8 @@ export namespace Frontlines {
     }
 
     function handleOngoingGlobal(): void {
+        updateMatchTimer();
+
         const currentSector = getCurrentSector();
         if (!(currentSector instanceof FrontlinesCaptureSector)) return;
 
