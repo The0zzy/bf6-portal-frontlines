@@ -50,7 +50,7 @@ ID scheme (n = child index, starting at 0):
 Range overview: 100-199 fixed HQ elements, 201-209 sectors, 211-219 area triggers, 221-229 sector HQs, 310-397 vehicle
 spawners, 410-497 capture points and MCOMs. No overlaps.
 
-Level file updates and the Atoll example are in [MAP_REQUIREMENTS.md](../../levels/MAP_REQUIREMENTS.md).
+Level file updates and the Atoll example are in [CONTRIBUTING.md](../../CONTRIBUTING.md#maps).
 
 ## Others
 

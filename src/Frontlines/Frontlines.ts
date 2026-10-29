@@ -1,14 +1,3 @@
-/*
-    Map IDs follow levels/MAP_REQUIREMENTS.md (scheme, required objects and failure rules).
-    Fixed HQs:        100 (Team 1), 150 (Team 2), area triggers 101 and 151.
-    Sectors:          201 to 20N, N = 5-7. First and last are MCOM sectors, the rest are capture sectors.
-    Sector parts:     area trigger sectorId + 10, sector HQ sectorId + 20 (capture sectors only).
-    Children:         capture points and MCOMs 400 + (sectorId - 200) * 10 + n (n = 0-7).
-    Vehicle spawners: 300 + (sectorId - 200) * 10 + n (optional).
-
-    init() validates the map once. A missing, duplicate or non-contiguous ID is logged and the match ends as a draw.
-*/
-
 //#region Imports
 import { Events } from 'bf6-portal-utils/events';
 import { FIRST_SECTOR_ID, FIXED_HQ_TEAM1_ID, FIXED_HQ_TEAM2_ID, LAST_SECTOR_ID, MAX_CHILDREN_PER_SECTOR, MAX_SECTORS, MIN_SECTORS, childBaseId, frontlinesSettings, getEnemyTeam, hqAreaTriggerId, neutralTeam, sectorAreaTriggerId, sectorHqId, vehicleSpawnerBaseId } from './FrontlinesConfig.ts';

@@ -34,7 +34,6 @@ export const defaultSettings: FrontlineSettings = {
 };
 export const frontlinesSettings = debugSettings;
 
-// ID scheme, see levels/MAP_REQUIREMENTS.md
 export const FIRST_SECTOR_ID = 201;
 export const LAST_SECTOR_ID = 209;
 export const MIN_SECTORS = 5;
