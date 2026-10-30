@@ -7,7 +7,8 @@ export interface FrontlineSettings {
     maxUnitsRemaining: number,
     redeployTime: number,
     daytime: number,
-    nighttime: number
+    nighttime: number,
+    outOfBoundsGracePeriod: number
 }
 
 export const debugSettings: FrontlineSettings = {
@@ -20,6 +21,7 @@ export const debugSettings: FrontlineSettings = {
     redeployTime: 5, //seconds
     daytime: 5, //minutes
     nighttime: 5, //minutes
+    outOfBoundsGracePeriod: 10, //seconds
 };
 export const defaultSettings: FrontlineSettings = {
     timeLimit: 60, //minutes
@@ -31,6 +33,7 @@ export const defaultSettings: FrontlineSettings = {
     redeployTime: 15, //seconds
     daytime: 14, //minutes
     nighttime: 10, //minutes
+    outOfBoundsGracePeriod: 10, //seconds
 };
 export const frontlinesSettings = debugSettings;
 
