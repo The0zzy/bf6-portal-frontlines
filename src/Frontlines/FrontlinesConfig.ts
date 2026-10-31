@@ -37,13 +37,14 @@ export const defaultSettings: FrontlineSettings = {
 };
 export const frontlinesSettings = debugSettings;
 
-export const FIRST_SECTOR_ID = 201;
-export const LAST_SECTOR_ID = 209;
+// IDs start at 6100 to stay clear of base game modes (up to 3000) and the payload mode (up to 5002).
+export const FIRST_SECTOR_ID = 6201;
+export const LAST_SECTOR_ID = 6209;
 export const MIN_SECTORS = 5;
 export const MAX_SECTORS = 7;
 export const MAX_CHILDREN_PER_SECTOR = 8;
-export const FIXED_HQ_TEAM1_ID = 100;
-export const FIXED_HQ_TEAM2_ID = 150;
+export const FIXED_HQ_TEAM1_ID = 6100;
+export const FIXED_HQ_TEAM2_ID = 6150;
 export const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
 // Neutral owner of capture points and sectors. Team 3 is a workaround until the in-game team 0 bug is fixed; then return mod.GetTeam(0).
@@ -72,11 +73,11 @@ export function hqAreaTriggerId(hqId: number): number {
     return hqId + 1;
 }
 
-// capture points and MCOMs share the block 400-497
+// capture points and MCOMs share the block 6410-6497
 export function childBaseId(sectorId: number): number {
-    return 400 + (sectorId - 200) * 10;
+    return 6400 + (sectorId - 6200) * 10;
 }
 
 export function vehicleSpawnerBaseId(sectorId: number): number {
-    return 300 + (sectorId - 200) * 10;
+    return 6300 + (sectorId - 6200) * 10;
 }

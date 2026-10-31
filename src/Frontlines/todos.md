@@ -13,7 +13,7 @@ ensured, or the amount is an even number etc.
 
 Object rules:
 
-- there must be two fixed HQs (100 for team 1, 150 for team 2) with according areatriggers
+- there must be two fixed HQs (6100 for team 1, 6150 for team 2) with according areatriggers
 - the first and last sectors must contain at least one MCOM and max 8.
 - there must be at least 3 capture sectors defined (minimum 5 sectors in total, max 7 (more may need increase of
   letters?)).
@@ -32,23 +32,24 @@ adjusted to ensure consistency and prevent conflicts. Idea:
 
 - instead of hardcoding MCOM sector, the first and last sector act as MCOM sectors. Instead of capture points, they hold
   MCOMs with the same ID-range logic (there can be more than two MCOMs).
-- sectors use 201-209; 100-199 is for fixed HQ elements.
+- sectors use 6201-6209; 6100-6199 is for fixed HQ elements.
+- all IDs are offset into 6100-6499 to avoid collisions with base game modes (up to 3000) and payload (up to 5002).
 
 ID scheme (n = child index, starting at 0):
 
-- fixed HQ team 1 = 100, team 2 = 150
-    - HQ areaTrigger = hqId + 1 (101 for team 1, 151 for team 2)
-    - 102-149 (resp. 152-199) reserved for other HQ-related elements (e.g. vehicles)
-- sectorId = 201-209 (max 7 sectors in use, see Object rules)
-- areaTriggerId = sectorId + 10 (211-219)
-- sectorHQId = sectorId + 20 (221-229), capture sectors only
-- cpId / mcomId = 400 + (sectorId - 200) * 10 + n, n = 0-7 (max 8 per sector)
-    - sector 201 → 410-417, sector 202 → 420-427, sector 209 → 490-497
-- vehicleSpawnerId = 300 + (sectorId - 200) * 10 + n, n = 0-7 (max 8 per sector)
-    - sector 201 → 310-317, sector 207 → 370-377
+- fixed HQ team 1 = 6100, team 2 = 6150
+    - HQ areaTrigger = hqId + 1 (6101 for team 1, 6151 for team 2)
+    - 6102-6149 (resp. 6152-6199) reserved for other HQ-related elements (e.g. vehicles)
+- sectorId = 6201-6209 (max 7 sectors in use, see Object rules)
+- areaTriggerId = sectorId + 10 (6211-6219)
+- sectorHQId = sectorId + 20 (6221-6229), capture sectors only
+- cpId / mcomId = 6400 + (sectorId - 6200) * 10 + n, n = 0-7 (max 8 per sector)
+    - sector 6201 → 6410-6417, sector 6202 → 6420-6427, sector 6209 → 6490-6497
+- vehicleSpawnerId = 6300 + (sectorId - 6200) * 10 + n, n = 0-7 (max 8 per sector)
+    - sector 6201 → 6310-6317, sector 6207 → 6370-6377
 
-Range overview: 100-199 fixed HQ elements, 201-209 sectors, 211-219 area triggers, 221-229 sector HQs, 310-397 vehicle
-spawners, 410-497 capture points and MCOMs. No overlaps.
+Range overview: 6100-6199 fixed HQ elements, 6201-6209 sectors, 6211-6219 area triggers, 6221-6229 sector HQs, 6310-6397
+vehicle spawners, 6410-6497 capture points and MCOMs. No overlaps.
 
 Level file updates and the Atoll example are in [CONTRIBUTING.md](../../CONTRIBUTING.md#maps).
 
