@@ -340,7 +340,7 @@ export namespace Frontlines {
             overlay: true,
             sound: true,
             spot: true,
-            penalty: OutOfBounds.Penalty.Undeploy,
+            penalty: OutOfBounds.Penalty.Kill,
         });
 
         setupHqs();

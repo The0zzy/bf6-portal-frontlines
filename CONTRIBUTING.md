@@ -9,28 +9,41 @@ This repository must use the following modules from `bf6-portal-utils`:
 - `Events` (`bf6-portal-utils/events`) for event handling.
 - `UI` (`bf6-portal-utils/ui`) for all UI.
 
-Do not add code that bypasses these modules, for example by calling the raw game events or UI APIs directly.
+Do not add default event handler functions of the game as they would interfere with the events module.
 
 ## Maps
 
-This section defines the object ID scheme every Frontlines level must follow, the rules checked at startup, and a worked
-example (Atoll). A level that breaks these rules fails initialization.
+This section defines the object ID scheme every Frontlines level must follow, the rules checked at startup, and a working
+example (Atoll).
 
 ### Level sources
 
-Each level exists as a Godot source, a spatial export, or both:
+Each level exists as a Godot source and its spatial export.
 
-- `levels/godot/<map>.tscn`: authoring source. An object's ID is the `ObjId = N` line under its node header.
-- `levels/spatial/<map>.spatial.json`: the file used by the game. An object's ID is the `"ObjId": N` value that precedes
-  the object's `"id"` field.
+- `levels/godot/<map>.tscn`: authoring source.
+- `levels/spatial/<map>.spatial.json`: the file used by the game.
 
-If both exist, both must carry the same IDs.
+Naming convention:
 
-### Linking rules
+- use the portal SDK map names (e.g. `MP_Atoll` instead of `Wake Island`)
+- add a `_frontlines`suffix to the map name `<portal-sdk-map-name>_frontlines.<tscn|spatial.json>`
 
-- Objects are linked by ID only.
-- Node names, node hierarchy and position in the file are not used for linking. An object may be placed under any node.
-- Each ID appears at most once per level. A duplicate ID is a failure.
+Example:
+`levels/godot/MP_Atoll_frontlines.tscn`
+`levels/spatial/MP_Atoll_frontlines.spatial.json`
+
+The spatial export is just tracked for convenience in the repository. Ideally it should be generated based on the Godot source tscn file.
+
+### General rules
+
+- Fixed HQs for Team1 and Team2 must be outside the combat area (to trigger default Out-Of-Bounds enforcement)
+- Fixed HQs must have an area trigger assigned to their HQ area (fallback for custom OOB)
+- Areas must have a specific height and not 0
+- Vehicle Spawners must be linked to HQs
+- HQs must reuse/link existing spawn points of capture points where applicable (cumulate in "infantry spawns")
+- HQs must use the sector areas as their HQ area
+- Avoid duplicate IDs for any object
+- Objectives must be linked to their respective sectors
 
 ### Terms
 
@@ -40,15 +53,14 @@ If both exist, both must carry the same IDs.
 - Capture sector: every sector between the two MCOM sectors. Has a sector HQ and capture points.
 - Sector HQ: the HQ belonging to one sector. Enabled only for the sector's owner; disabled while the sector is
   contested.
-- Vehicle spawner: an optional spawner belonging to one sector.
+- Vehicle spawner: an optional spawner belonging to one sector/HQ.
 
 ### ID scheme
 
-All IDs are integers. `n` is the child index within its group, starting at 0. Indices must be contiguous: a gap is a
-failure.
+All frontlines IDs live in the range 6100-6499.
 
-All frontlines IDs live in 6100-6499 so they do not collide with objects of base game modes (up to 3000) or the payload
-mode (up to 5002).
+All IDs are integers. `n` is the child index within its group, starting at 0.
+Indices must be contiguous: a gap is a failure.
 
 #### Fixed HQs
 
@@ -57,12 +69,12 @@ mode (up to 5002).
 | Fixed HQ        | `hqId`     | 6100   | 6150   |
 | HQ area trigger | `hqId + 1` | 6101   | 6151   |
 
-IDs 6102-6149 and 6152-6199 are reserved for other HQ-related objects. The current rules do not use them.
+IDs 6102-6149 and 6152-6199 are reserved for other HQ-related objects (e.g. vehicle spawners).
 
 #### Sectors
 
-Sector IDs start at 6201. A level uses N contiguous sectors, 6201 to 620N, where 3 ≤ N ≤ 7. The block 6201-6209 is
-reserved for sectors.
+Sector IDs start at 6201. A level uses N contiguous sectors, 6201 to 620N, where 3 ≤ N ≤ 7.
+The block 6201-6209 is reserved for sectors.
 
 | Element                         | Formula                                      | Range     |
 | ------------------------------- | -------------------------------------------- | --------- |
@@ -106,7 +118,7 @@ as a draw with `mod.EndGameMode(mod.GetTeam(0))`.
 Required:
 
 - Fixed HQs 6100 and 6150, and their area triggers 6101 and 6151.
-- Sectors 6201 to 620N, contiguous, with N between 3 and 7.
+- Sectors 6201 to 620N, contiguous, with N between 3 and 7 and N modulo 2 = 1.
 - An area trigger for every sector.
 - A sector HQ for every sector.
 - 1 to 8 capture points for every capture sector.
