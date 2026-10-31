@@ -24,6 +24,8 @@ const TIMER_WIDTH = 75;
 const TIMER_HEIGHT = 20;
 const UNITS_BAR_WIDTH = 80;
 const UNITS_BAR_HEIGHT = 20;
+const UNITS_LABEL_HEIGHT = 18;
+const STATUS_WIDTH = 200;
 
 interface SectorWidgets {
     root: UIContainer; // parent of the fills, letter and outline
@@ -42,6 +44,7 @@ interface TeamView {
     overlay: UIContainer;
     root: UIContainer;
     bar: UIContainer;
+    status: UIContainer; // centered on screen independent of the sector widths; holds timer and units
     timer: UIText;
     sectors: Map<number, SectorWidgets>;
     unitsRoot: UIContainer;
@@ -159,7 +162,7 @@ export class FrontlinesUI {
         for (const view of this.views) {
             view.overlay.delete();
             view.root.delete();
-            view.unitsRoot.delete();
+            view.status.delete();
             view.sectors.clear();
         }
         this.views.length = 0;
@@ -216,7 +219,6 @@ export class FrontlinesUI {
     private createView(team: mod.Team): TeamView {
         const sectorWidths = this.getSectorWidths();
         const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
-        const rootHeight = SECTOR_SIZE + ELEMENT_SPACING + TIMER_HEIGHT;
 
         const overlay = new UIContainer({
             x: 0,
@@ -231,7 +233,7 @@ export class FrontlinesUI {
             x: 0,
             y: ROOT_Y,
             width: barWidth,
-            height: rootHeight,
+            height: SECTOR_SIZE,
             anchor: UI.Anchor.TopCenter,
             receiver: team,
         });
@@ -324,13 +326,23 @@ export class FrontlinesUI {
             x += width;
         }
 
+        const unitsHeight = UNITS_LABEL_HEIGHT + UNITS_BAR_HEIGHT;
+        const status = new UIContainer({
+            x: 0,
+            y: ROOT_Y + SECTOR_SIZE + ELEMENT_SPACING,
+            width: STATUS_WIDTH,
+            height: TIMER_HEIGHT + ELEMENT_SPACING + unitsHeight,
+            anchor: UI.Anchor.TopCenter,
+            receiver: team,
+        });
+
         const timer = new UIText({
-            parent: root,
+            parent: status,
             x: 0,
             y: 0,
             width: TIMER_WIDTH,
             height: TIMER_HEIGHT,
-            anchor: UI.Anchor.BottomCenter,
+            anchor: UI.Anchor.TopCenter,
             padding: 8,
             bgColor: { r: 0.2, g: 0.2, b: 1 },
             bgFill: UI.BgFill.Solid,
@@ -341,20 +353,42 @@ export class FrontlinesUI {
         });
 
         const unitsRoot = new UIContainer({
+            parent: status,
             x: 0,
-            y: ROOT_Y + rootHeight + ELEMENT_SPACING,
+            y: TIMER_HEIGHT + ELEMENT_SPACING,
+            width: STATUS_WIDTH,
+            height: unitsHeight,
+            anchor: UI.Anchor.TopCenter,
+            visible: false,
+        });
+
+        new UIText({
+            parent: unitsRoot,
+            x: 0,
+            y: 0,
+            width: STATUS_WIDTH,
+            height: UNITS_LABEL_HEIGHT,
+            anchor: UI.Anchor.TopCenter,
+            label: mod.Message(mod.stringkeys.frontlines.UnitsRemainingLabel),
+            textSize: 14,
+            textColor: UI.COLORS.WHITE,
+            textAnchor: UI.Anchor.Center,
+        });
+
+        const unitsBar = new UIContainer({
+            parent: unitsRoot,
+            x: 0,
+            y: UNITS_LABEL_HEIGHT,
             width: UNITS_BAR_WIDTH,
             height: UNITS_BAR_HEIGHT,
             anchor: UI.Anchor.TopCenter,
             bgColor: { r: 0.1, g: 0.1, b: 0.1 },
             bgAlpha: 0.6,
             bgFill: UI.BgFill.Solid,
-            visible: false,
-            receiver: team,
         });
 
         const unitsFill = new UIContainer({
-            parent: unitsRoot,
+            parent: unitsBar,
             x: 0,
             y: 0,
             width: UNITS_BAR_WIDTH,
@@ -366,7 +400,7 @@ export class FrontlinesUI {
         });
 
         const unitsText = new UIText({
-            parent: unitsRoot,
+            parent: unitsBar,
             x: 0,
             y: 0,
             width: UNITS_BAR_WIDTH,
@@ -378,7 +412,7 @@ export class FrontlinesUI {
             textAnchor: UI.Anchor.Center,
         });
 
-        return { team, overlay, root, bar, timer, sectors, unitsRoot, unitsFill, unitsText };
+        return { team, overlay, root, bar, status, timer, sectors, unitsRoot, unitsFill, unitsText };
     }
 
     // Vertical line from the top of the screen to the bottom of the sector widgets.

@@ -37,6 +37,7 @@
         "lastStandAttackMSG": "Destroy the enemy MCOMs!",
         "lastStandDefendMSG": "Defend your MCOMs!",
         "UnitsRemainingText": "{}",
+        "UnitsRemainingLabel": "Remaining reinforcements",
         "youDestroyedMCOM": "Your Team destroyed an MCOM!",
         "teamDestroyedMCOM": "We've lost an MCOM!",
         "captures": "Captures",
