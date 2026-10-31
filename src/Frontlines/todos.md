@@ -15,11 +15,10 @@ Object rules:
 
 - there must be two fixed HQs (6100 for team 1, 6150 for team 2) with according areatriggers
 - the first and last sectors must contain at least one MCOM and max 8.
-- there must be at least 3 capture sectors defined (minimum 5 sectors in total, max 7 (more may need increase of
+- there must be at least 1 capture sector defined (minimum 3 sectors in total, max 7 (more may need increase of
   letters?)).
 - all sectors must have a valid area trigger defined.
-- all capturesectors must have a valid HQ defined.
-- mcom sectors are supposed to be close to the fixed HQs and therefore must not have an HQ defined.
+- all sectors (including MCOM sectors) must have a valid HQ defined.
 - all capture sectors must contain at least one capture point and max 8.
 - any sector may contain 0 to 8 vehicle spawners.
 - any game objects that were not associated to frontlines objects must be disabled (diff of all game objects vs
@@ -42,7 +41,7 @@ ID scheme (n = child index, starting at 0):
     - 6102-6149 (resp. 6152-6199) reserved for other HQ-related elements (e.g. vehicles)
 - sectorId = 6201-6209 (max 7 sectors in use, see Object rules)
 - areaTriggerId = sectorId + 10 (6211-6219)
-- sectorHQId = sectorId + 20 (6221-6229), capture sectors only
+- sectorHQId = sectorId + 20 (6221-6229), all sectors
 - cpId / mcomId = 6400 + (sectorId - 6200) * 10 + n, n = 0-7 (max 8 per sector)
     - sector 6201 → 6410-6417, sector 6202 → 6420-6427, sector 6209 → 6490-6497
 - vehicleSpawnerId = 6300 + (sectorId - 6200) * 10 + n, n = 0-7 (max 8 per sector)

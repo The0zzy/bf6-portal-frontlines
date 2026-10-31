@@ -40,7 +40,7 @@ export const frontlinesSettings = debugSettings;
 // IDs start at 6100 to stay clear of base game modes (up to 3000) and the payload mode (up to 5002).
 export const FIRST_SECTOR_ID = 6201;
 export const LAST_SECTOR_ID = 6209;
-export const MIN_SECTORS = 5;
+export const MIN_SECTORS = 3;
 export const MAX_SECTORS = 7;
 export const MAX_CHILDREN_PER_SECTOR = 8;
 export const FIXED_HQ_TEAM1_ID = 6100;

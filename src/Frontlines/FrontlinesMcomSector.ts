@@ -5,8 +5,8 @@ import { FrontlinesSector } from './FrontlinesSector.ts';
 export class FrontlinesMcomSector extends FrontlinesSector {
     readonly mcoms: FrontlinesMcom[];
 
-    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, owner: mod.Team, mcoms: FrontlinesMcom[]) {
-        super(sector, id, areaTrigger);
+    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ, owner: mod.Team, mcoms: FrontlinesMcom[]) {
+        super(sector, id, areaTrigger, hq);
         this.ownerTeam = owner;
         this.mcoms = mcoms;
     }
@@ -38,7 +38,7 @@ export class FrontlinesMcomSector extends FrontlinesSector {
 
     // MCOMs stay enabled so the native objectives UI keeps its layout; Bomb arm type keeps them unarmable.
     override setOwner(team: mod.Team): void {
-        this.ownerTeam = team;
+        super.setOwner(team);
         for (const mcom of this.mcoms) {
             mod.SetMCOMOwner(mcom.mcom, team);
             mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Bomb);
@@ -46,7 +46,9 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         }
     }
 
+    // The owner stays the defender while contested; only its HQ is closed.
     activate(): void {
+        mod.EnableHQ(this.hq, false);
         for (const mcom of this.mcoms) {
             mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Default);
             mod.EnableGameModeObjective(mcom.mcom, true);

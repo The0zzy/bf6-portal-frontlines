@@ -343,6 +343,7 @@ export namespace Frontlines {
             penalty: OutOfBounds.Penalty.Undeploy,
         });
 
+        setupHqs();
         startCapture();
 
         registerEvents();
@@ -417,7 +418,14 @@ export namespace Frontlines {
         return undefined;
     }
 
-    function createMcomSector(sectorId: number, owner: mod.Team): FrontlinesMcomSector | string {
+    interface SectorObjects {
+        sector: mod.Sector;
+        areaTrigger: mod.AreaTrigger;
+        hq: mod.HQ;
+    }
+
+    // Every sector needs a sector object, an area trigger and a sector HQ.
+    function getSectorObjects(sectorId: number): SectorObjects | string {
         const sector = sectorsById.get(sectorId);
         if (!sector) {
             return 'missing sector ' + sectorId;
@@ -428,8 +436,18 @@ export namespace Frontlines {
             return 'missing area trigger ' + sectorAreaTriggerId(sectorId);
         }
 
-        if (hqsById.has(sectorHqId(sectorId))) {
-            return 'sector HQ ' + sectorHqId(sectorId) + ' is not allowed on MCOM sector ' + sectorId;
+        const hq = hqsById.get(sectorHqId(sectorId));
+        if (!hq) {
+            return 'missing sector HQ ' + sectorHqId(sectorId);
+        }
+
+        return { sector, areaTrigger, hq };
+    }
+
+    function createMcomSector(sectorId: number, owner: mod.Team): FrontlinesMcomSector | string {
+        const objects = getSectorObjects(sectorId);
+        if (typeof objects === 'string') {
+            return objects;
         }
 
         const baseId = childBaseId(sectorId);
@@ -448,23 +466,13 @@ export namespace Frontlines {
             mcoms.push(new FrontlinesMcom(mcom, owner, frontlinesSettings.mCOMFuseTime));
         }
 
-        return new FrontlinesMcomSector(sector, sectorId, areaTrigger, owner, mcoms);
+        return new FrontlinesMcomSector(objects.sector, sectorId, objects.areaTrigger, objects.hq, owner, mcoms);
     }
 
     function createCaptureSector(sectorId: number): FrontlinesCaptureSector | string {
-        const sector = sectorsById.get(sectorId);
-        if (!sector) {
-            return 'missing sector ' + sectorId;
-        }
-
-        const areaTrigger = areaTriggersById.get(sectorAreaTriggerId(sectorId));
-        if (!areaTrigger) {
-            return 'missing area trigger ' + sectorAreaTriggerId(sectorId);
-        }
-
-        const hq = hqsById.get(sectorHqId(sectorId));
-        if (!hq) {
-            return 'missing sector HQ ' + sectorHqId(sectorId);
+        const objects = getSectorObjects(sectorId);
+        if (typeof objects === 'string') {
+            return objects;
         }
 
         const baseId = childBaseId(sectorId);
@@ -478,7 +486,7 @@ export namespace Frontlines {
             return 'missing capture point ' + baseId;
         }
 
-        return new FrontlinesCaptureSector(sector, sectorId, areaTrigger, hq, capturePoints);
+        return new FrontlinesCaptureSector(objects.sector, sectorId, objects.areaTrigger, objects.hq, capturePoints);
     }
 
     // Builds the MCOM sectors and capture sectors. Returns an error message for the first invalid ID.
@@ -548,6 +556,19 @@ export namespace Frontlines {
             sector.enableSectorAndArea(true);
         }
         return undefined;
+    }
+
+    // Disables every HQ on the map (including ones not meant for frontlines), then enables the fixed HQs for their teams.
+    // Sector HQs are enabled for their owner by the sectors themselves.
+    function setupHqs(): void {
+        for (const hq of hqsById.values()) {
+            mod.EnableHQ(hq, false);
+        }
+        for (const [hqId, team] of [[FIXED_HQ_TEAM1_ID, mod.GetTeam(1)], [FIXED_HQ_TEAM2_ID, mod.GetTeam(2)]] as const) {
+            const hq = hqsById.get(hqId)!;
+            mod.SetHQTeam(hq, team);
+            mod.EnableHQ(hq, true);
+        }
     }
 
     function updateScoreboard(player: mod.Player, data: PlayerData): void {

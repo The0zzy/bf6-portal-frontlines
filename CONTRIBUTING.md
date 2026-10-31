@@ -36,9 +36,10 @@ If both exist, both must carry the same IDs.
 
 - Fixed HQ: `TEAM_1_HQ` (ID 6100) or `TEAM_2_HQ` (ID 6150). Present on every map.
 - Sector: a map area with an area trigger, identified by `sectorId`.
-- MCOM sector: the first and last sector. Holds MCOMs. Has no sector HQ and no capture points.
+- MCOM sector: the first and last sector. Holds MCOMs and a sector HQ. Has no capture points.
 - Capture sector: every sector between the two MCOM sectors. Has a sector HQ and capture points.
-- Sector HQ: the HQ belonging to one capture sector.
+- Sector HQ: the HQ belonging to one sector. Enabled only for the sector's owner; disabled while the sector is
+  contested.
 - Vehicle spawner: an optional spawner belonging to one sector.
 
 ### ID scheme
@@ -60,17 +61,17 @@ IDs 6102-6149 and 6152-6199 are reserved for other HQ-related objects. The curre
 
 #### Sectors
 
-Sector IDs start at 6201. A level uses N contiguous sectors, 6201 to 620N, where 5 ≤ N ≤ 7. The block 6201-6209 is
+Sector IDs start at 6201. A level uses N contiguous sectors, 6201 to 620N, where 3 ≤ N ≤ 7. The block 6201-6209 is
 reserved for sectors.
 
-| Element                          | Formula                                      | Range     |
-| -------------------------------- | -------------------------------------------- | --------- |
-| Sector                           | `sectorId`                                   | 6201-6209 |
-| Sector area trigger              | `sectorId + 10`                              | 6211-6219 |
-| Sector HQ (capture sectors only) | `sectorId + 20`                              | 6221-6229 |
-| Vehicle spawner                  | `6300 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6310-6397 |
-| Capture point (capture sectors)  | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
-| MCOM (MCOM sectors)              | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
+| Element                         | Formula                                      | Range     |
+| ------------------------------- | -------------------------------------------- | --------- |
+| Sector                          | `sectorId`                                   | 6201-6209 |
+| Sector area trigger             | `sectorId + 10`                              | 6211-6219 |
+| Sector HQ                       | `sectorId + 20`                              | 6221-6229 |
+| Vehicle spawner                 | `6300 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6310-6397 |
+| Capture point (capture sectors) | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
+| MCOM (MCOM sectors)             | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
 
 Per-sector blocks, with n = 0-7 for each:
 
@@ -86,30 +87,28 @@ Per-sector blocks, with n = 0-7 for each:
 | 6208     | 6218         | 6228      | 6380-6387        | 6480-6487              |
 | 6209     | 6219         | 6229      | 6390-6397        | 6490-6497              |
 
-The sector HQ ID of an MCOM sector (for example 6221 or 6225) is not used and must not be placed.
-
 #### Sector roles
 
 | Position | Sector IDs       | Role                         | Required content                            |
 | -------- | ---------------- | ---------------------------- | ------------------------------------------- |
-| First    | 6201             | MCOM sector                  | 1-8 MCOMs, area trigger                     |
-| Middle   | 6202 to 620(N-1) | Capture sector (3-5 sectors) | Sector HQ, 1-8 capture points, area trigger |
-| Last     | 620N             | MCOM sector                  | 1-8 MCOMs, area trigger                     |
+| First    | 6201             | MCOM sector                  | Sector HQ, 1-8 MCOMs, area trigger          |
+| Middle   | 6202 to 620(N-1) | Capture sector (1-5 sectors) | Sector HQ, 1-8 capture points, area trigger |
+| Last     | 620N             | MCOM sector                  | Sector HQ, 1-8 MCOMs, area trigger          |
 
 Every sector also gets 0-8 optional vehicle spawners.
 
 ### Required objects and failure
 
 Startup validation checks the rules below. If a required object is missing, an index sequence has a gap, or the sector
-count is outside 5-7, initialization fails. The game logs an error naming the missing or invalid ID and ends the match
+count is outside 3-7, initialization fails. The game logs an error naming the missing or invalid ID and ends the match
 as a draw with `mod.EndGameMode(mod.GetTeam(0))`.
 
 Required:
 
 - Fixed HQs 6100 and 6150, and their area triggers 6101 and 6151.
-- Sectors 6201 to 620N, contiguous, with N between 5 and 7.
+- Sectors 6201 to 620N, contiguous, with N between 3 and 7.
 - An area trigger for every sector.
-- A sector HQ for every capture sector.
+- A sector HQ for every sector.
 - 1 to 8 capture points for every capture sector.
 - 1 to 8 MCOMs for every MCOM sector.
 
@@ -119,12 +118,12 @@ Optional:
 
 Forbidden (a failure if present):
 
-- A sector HQ on an MCOM sector.
 - Duplicate IDs.
 
 Ignored for now:
 
-- Objects with IDs outside this scheme. A future version will disable them.
+- Objects with IDs outside this scheme. A future version will disable them. HQs outside this scheme are already disabled
+  at startup.
 
 ### Example: Atoll
 
