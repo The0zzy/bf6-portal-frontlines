@@ -204,7 +204,7 @@ script = ExtResource("12_rhp23")
 metadata/_custom_type_script = "uid://cgyatr67qr332"
 
 [node name="S2_HQ" type="Node3D" parent="Sector2" unique_id=175336808 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 216.8557, 0, -53.79795)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 216.8557, 107.40453, -53.79795)
 script = ExtResource("11_pm2ci")
 ObjId = 6222
 HQArea = NodePath("../Sector2Area")
