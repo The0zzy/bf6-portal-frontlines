@@ -6,16 +6,14 @@ import { FrontlinesCaptureSector } from './FrontlinesCaptureSector.ts';
 import { FrontlinesMcomSector } from './FrontlinesMcomSector.ts';
 import { FrontlinesUI } from './FrontlinesUI.ts';
 import { FrontlinesMcom } from './FrontlinesMcom.ts';
-import { BoundsOverlayUI } from '../utils/BoundsOverlayUI.ts';
+import { OutOfBounds } from '../OutOfBounds/OutOfBounds.ts';
 //#endregion
 
 export namespace Frontlines {
 
     //#region Data Structures
     interface PlayerData {
-        bounds: BoundsOverlayUI | undefined;
         stats: IPlayerStats;
-        inBounds: boolean;
     }
 
     interface IPlayerStats {
@@ -34,6 +32,7 @@ export namespace Frontlines {
     const hq2AreaId: number = hqAreaTriggerId(FIXED_HQ_TEAM2_ID);
 
     let ui: FrontlinesUI | undefined;
+    let outOfBounds: OutOfBounds | undefined;
 
     const playerDataMap: Map<number, PlayerData> = new Map();
 
@@ -107,9 +106,7 @@ export namespace Frontlines {
         let data = playerDataMap.get(playerId);
         if (!data) {
             data = {
-                bounds: undefined,
-                stats: { captures: 0, kd: 0, kills: 0, deaths: 0, assists: 0 },
-                inBounds: true
+                stats: { captures: 0, kd: 0, kills: 0, deaths: 0, assists: 0 }
             };
             playerDataMap.set(playerId, data);
         }
@@ -205,6 +202,22 @@ export namespace Frontlines {
             ui?.hideUnitsRemaining();
         }
         ui?.updateSectors(current);
+        updateOutOfBoundsAreas();
+    }
+
+    // Each team may be in its own HQ, its own sectors, neutral sectors and the current sector; never in the enemy HQ.
+    function updateOutOfBoundsAreas(): void {
+        for (const team of [mod.GetTeam(1), mod.GetTeam(2)]) {
+            const isTeam1 = mod.Equals(team, mod.GetTeam(1));
+            const allowed = [isTeam1 ? hq1AreaId : hq2AreaId];
+            for (let i = 0; i < sectors.length; i++) {
+                const owner = sectors[i].ownerTeam;
+                if (i === currentSectorIndex || mod.Equals(owner, neutralTeam()) || mod.Equals(owner, team)) {
+                    allowed.push(mod.GetObjId(sectors[i].areaTrigger));
+                }
+            }
+            outOfBounds?.setTeamAreas(team, allowed, [isTeam1 ? hq2AreaId : hq1AreaId]);
+        }
     }
 
     function getCurrentSector(): FrontlinesSector {
@@ -322,9 +335,19 @@ export namespace Frontlines {
         ui = new FrontlinesUI(sectors);
         ui.setTimer(matchTimer);
 
+        outOfBounds = new OutOfBounds({
+            gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
+            overlay: true,
+            sound: true,
+            spot: true,
+            penalty: OutOfBounds.Penalty.Undeploy,
+        });
+
         startCapture();
 
         registerEvents();
+
+        outOfBounds.activate();
 
         // Players who joined before init never fire OnPlayerJoinGame.
         const existingPlayers = mod.GetAllPlayers();
@@ -531,97 +554,7 @@ export namespace Frontlines {
         mod.SetScoreboardPlayerValues(player, data.stats.captures, data.stats.kd, data.stats.kills, data.stats.deaths, data.stats.assists);
     }
 
-    function enableOutOfBounds(player: mod.Player): void {
-        let timer: number = 10;
-
-        const playerData = getPlayerData(player);
-        if (playerData.bounds) {
-            playerData.inBounds = false;
-            playerData.bounds.show(mod.Message(mod.stringkeys.frontlines.boundsMSG, timer));
-        }
-
-        function loop() {
-            if (!mod.IsPlayerValid(player) || playerData.inBounds) {
-                return;
-            }
-            timer--;
-
-            if (playerData.bounds) {
-                playerData.bounds.show(mod.Message(mod.stringkeys.frontlines.boundsMSG, timer));
-            }
-
-            if (timer <= 0) {
-                if (playerData.bounds) {
-                    playerData.bounds.hide();
-                }
-
-                mod.UndeployPlayer(player);
-                return;
-            }
-
-            mod.Wait(1).then(loop);
-        }
-
-        loop();
-        return;
-    }
-
-    function checkPlayerEnteredAllowedZone(player: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
-        console.log('EventAreaTrigger Id: ' + mod.GetObjId(eventAreaTrigger));
-        //disable outofbounds
-        const playerData = getPlayerData(player);
-        if (playerData.bounds) {
-            playerData.inBounds = true;
-            playerData.bounds.hide();
-        }
-
-        //check if in enemy hq
-        if (mod.Equals(mod.GetTeam(player), mod.GetTeam(1))) {
-            console.log('InAreaTrigger Id: ' + hq2AreaId);
-
-            if (hq2AreaId == mod.GetObjId(eventAreaTrigger)) {
-                console.log('in enemy hq team 2');
-                enableOutOfBounds(player);
-                return;
-            }
-
-        }
-        else {
-            if (hq1AreaId == mod.GetObjId(eventAreaTrigger)) {
-                console.log('in enemy hq team 1');
-                enableOutOfBounds(player);
-                return;
-            }
-        }
-
-        for (const sector of sectors) {
-            if (mod.GetObjId(sector.areaTrigger) == mod.GetObjId(eventAreaTrigger)) {
-                //neutral sector
-                if (mod.Equals(sector.ownerTeam, neutralTeam())) {
-                    console.log('neutral sector');
-                    return;
-                }
-                //current objective sector
-                if (getCurrentSector().id == sector.id) {
-                    console.log('current objective sector');
-                    return;
-                }
-                //check if enemy area of sector
-                if (mod.Equals(mod.GetTeam(player), sector.ownerTeam) == false) {
-                    //Out of bounds
-                    console.log('in enemy sector');
-                    enableOutOfBounds(player);
-                }
-            }
-
-        }
-    }
-
     //#region Event Handlers
-    function handlePlayerEnterAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {
-        checkPlayerEnteredAllowedZone(eventPlayer, eventAreaTrigger);
-    }
-
     function handleMCOMDestroyed(eventMCOM: mod.MCOM): void {
         const eventId = mod.GetObjId(eventMCOM);
         const currentSector = getCurrentSector();
@@ -709,11 +642,7 @@ export namespace Frontlines {
     }
 
     function handlePlayerJoinGame(eventPlayer: mod.Player): void {
-        const data = getPlayerData(eventPlayer);
-        if (!data.bounds) {
-            data.bounds = new BoundsOverlayUI(eventPlayer);
-        }
-
+        getPlayerData(eventPlayer);
         mod.SetRedeployTime(eventPlayer, frontlinesSettings.redeployTime);
     }
 
@@ -745,12 +674,10 @@ export namespace Frontlines {
     }
 
     function handlePlayerLeaveGame(playerId: number): void {
-        playerDataMap.get(playerId)?.bounds?.destroy();
         playerDataMap.delete(playerId);
     }
 
     function registerEvents(): void {
-        Events.OnPlayerEnterAreaTrigger.subscribe(handlePlayerEnterAreaTrigger);
         Events.OnMCOMDestroyed.subscribe(handleMCOMDestroyed);
         Events.OnCapturePointCaptured.subscribe(handleCapturePointCaptured);
         Events.OngoingGlobal.subscribe(handleOngoingGlobal);
