@@ -11,11 +11,14 @@ import type { FrontlinesSector } from './FrontlinesSector.ts';
 const FRIENDLY_COLOR = UI.COLORS.BF_BLUE_BRIGHT;
 const ENEMY_COLOR = UI.COLORS.BF_RED_BRIGHT;
 const LOCKED_COLOR: UI.Color = UI.COLORS.BF_GREY_2;
-const LOCK_LABEL_TEXT_SIZE = 18;
+const LOCK_LABEL_TEXT_SIZE = 12;
+const LETTER_TEXT_SIZE = 30;
+const LOCKED_LETTER_TEXT_SIZE = 18;
 
 // sector widgets sit right below the native objectives UI
 const ROOT_Y = 100;
 const SECTOR_SIZE = 44;
+const LOCK_LABEL_HEIGHT = SECTOR_SIZE / 2;
 // horizontal space of one native objective icon, calibrate in-game
 const OBJECTIVE_WIDTH = 44;
 const BOUNDARY_LINE_WIDTH = 2;
@@ -35,9 +38,9 @@ interface SectorWidgets {
     enemyFill: UIContainer; // grows from the top
     outline: UIContainer;
     label: UIText;
-    gradient: UIContainer; // ownership box above the sector, up to the top of the screen
-    lockLabel: UIText; // lock countdown inside the gradient, only visible while locked
+    lockLabel: UIText; // lock countdown inside the sector, only visible while locked
     locked: boolean;
+    gradient: UIContainer; // ownership box above the sector, up to the top of the screen
     leftLine: UIContainer;
     rightLine: UIContainer;
 }
@@ -205,7 +208,6 @@ export class FrontlinesUI {
                 widgets.lockLabel.label = mod.Message(mod.stringkeys.frontlines.lockedCountdownMSG, lockRemaining);
             }
             const neutralColor = locked ? LOCKED_COLOR : UI.COLORS.WHITE;
-            widgets.label.textColor = neutralColor;
 
             // owned sectors take the dark color of their owner, neutral ones stay white (active) or black
             const ownerColor = this.getOwnerDarkColor(sector.ownerTeam, view.team);
@@ -223,15 +225,14 @@ export class FrontlinesUI {
         }
     }
 
-    // Raises the gradient and lock label above the game UI only while locked.
+    // Shrinks the letter and shows the lock countdown in the lower half of the sector while locked.
     private setSectorLocked(widgets: SectorWidgets, locked: boolean): void {
         if (widgets.locked === locked) {
             return;
         }
         widgets.locked = locked;
-        const depth = locked ? UI.Depth.AboveGameUI : UI.Depth.BelowGameUI;
-        widgets.gradient.depth = depth;
-        widgets.lockLabel.depth = depth;
+        widgets.label.height = locked ? SECTOR_SIZE - LOCK_LABEL_HEIGHT : SECTOR_SIZE;
+        widgets.label.textSize = locked ? LOCKED_LETTER_TEXT_SIZE : LETTER_TEXT_SIZE;
         widgets.lockLabel.visible = locked;
     }
 
@@ -305,22 +306,6 @@ export class FrontlinesUI {
                 bgColor: UI.COLORS.WHITE,
                 bgAlpha: GRADIENT_ALPHA,
                 bgFill: UI.BgFill.GradientBottom,
-                depth: UI.Depth.BelowGameUI,
-            });
-
-            const lockLabel = new UIText({
-                parent: gradient,
-                x: 0,
-                y: 0,
-                width,
-                height: ROOT_Y,
-                anchor: UI.Anchor.TopLeft,
-                label: mod.Message(mod.stringkeys.frontlines.lockedCountdownMSG, 0),
-                textSize: LOCK_LABEL_TEXT_SIZE,
-                textColor: UI.COLORS.WHITE,
-                textAnchor: UI.Anchor.Center,
-                visible: false,
-                depth: UI.Depth.BelowGameUI,
             });
 
             const leftLine = this.createBoundaryLine(overlay, x);
@@ -364,9 +349,23 @@ export class FrontlinesUI {
                 height: SECTOR_SIZE,
                 anchor: UI.Anchor.TopLeft,
                 label: sector.getLabel(),
-                textSize: 30,
+                textSize: LETTER_TEXT_SIZE,
                 textColor: UI.COLORS.WHITE,
                 textAnchor: UI.Anchor.Center,
+            });
+
+            const lockLabel = new UIText({
+                parent: sectorRoot,
+                x: 0,
+                y: SECTOR_SIZE - LOCK_LABEL_HEIGHT,
+                width,
+                height: LOCK_LABEL_HEIGHT,
+                anchor: UI.Anchor.TopLeft,
+                label: mod.Message(mod.stringkeys.frontlines.lockedCountdownMSG, 0),
+                textSize: LOCK_LABEL_TEXT_SIZE,
+                textColor: UI.COLORS.WHITE,
+                textAnchor: UI.Anchor.Center,
+                visible: false,
             });
 
             // added last so the outline draws on top of the fills

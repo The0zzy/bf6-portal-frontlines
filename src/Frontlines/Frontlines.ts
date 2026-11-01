@@ -341,10 +341,10 @@ export namespace Frontlines {
 
         outOfBounds = new OutOfBounds({
             gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
-            overlay: true,
-            sound: true,
+            overlay: false,
+            sound: false,
             spot: true,
-            penalty: OutOfBounds.Penalty.Kill,
+            penalty: OutOfBounds.Penalty.None,
         });
 
         setupHqs();
