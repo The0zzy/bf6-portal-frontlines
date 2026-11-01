@@ -33,6 +33,4 @@ currently holding the most territory wins.
 
 #### Overtime
 
-In case an MCOM is currently being armed while the time limit is reached, an indefinite overtime period begins where the
-team that is currently arming the MCOM must complete the arming process to win, while the opposing team must disarm the
-MCOM to end the overtime.
+In case the central sector is being contested when the time limit is reached, an indefinite overtime period begins until all capture progress on any capture point within the sector is 100%.

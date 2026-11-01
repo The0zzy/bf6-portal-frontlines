@@ -182,6 +182,7 @@ export namespace Frontlines {
             const team = i < currentSectorIndex ? mod.GetTeam(1) : mod.GetTeam(2);
             if (i !== currentSectorIndex) {
                 sector.setOwner(team);
+                sector.deactivate();
             } else {
                 sector.activate();
             }
@@ -291,10 +292,13 @@ export namespace Frontlines {
             currentSectorIndex--;
         }
 
-        //removed next sector preparation timer
         updateSectorsState();
 
         const newSector = getCurrentSector();
+        if (newSector instanceof FrontlinesCaptureSector) {
+            newSector.lockCapture(frontlinesSettings.nextSectorCaptureLockTime);
+            ui?.updateSectorProgress(newSector);
+        }
         if (newSector instanceof FrontlinesMcomSector) {
             // shown 5 seconds after the sector captured notification
             mod.Wait(5).then(() => {

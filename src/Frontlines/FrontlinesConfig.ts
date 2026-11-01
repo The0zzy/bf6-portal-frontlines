@@ -3,6 +3,7 @@ export interface FrontlineSettings {
     captureTime: number,
     captureNeutralizationTime: number,
     neutralCaptureNeutralizationTime: number,
+    nextSectorCaptureLockTime: number,
     mCOMFuseTime: number,
     maxUnitsRemaining: number,
     redeployTime: number,
@@ -16,6 +17,7 @@ export const debugSettings: FrontlineSettings = {
     captureTime: 10, //seconds
     captureNeutralizationTime: 10, //seconds
     neutralCaptureNeutralizationTime: 1, //seconds
+    nextSectorCaptureLockTime: 15, //seconds
     mCOMFuseTime: 10, //seconds
     maxUnitsRemaining: 20,
     redeployTime: 5, //seconds
@@ -28,6 +30,7 @@ export const defaultSettings: FrontlineSettings = {
     captureTime: 40, //seconds
     captureNeutralizationTime: 30, //seconds
     neutralCaptureNeutralizationTime: 1, //seconds
+    nextSectorCaptureLockTime: 15, //seconds
     mCOMFuseTime: 40, //seconds
     maxUnitsRemaining: 100,
     redeployTime: 15, //seconds

@@ -36,6 +36,10 @@ export abstract class FrontlinesSector {
         mod.EnableAreaTrigger(this.areaTrigger, enable);
     }
 
+    getCaptureLockRemaining(): number {
+        return 0;
+    }
+
     getLabel(): mod.Message {
         switch (this.letter) {
             case "B":
@@ -111,7 +115,7 @@ export abstract class FrontlinesSector {
     abstract activate(): void;
 
     /**
-     * Deactivates this sector, disabling it for the whole game mode (shouldn't be needed).
+     * Deactivates this sectors objectives, disabling it for the whole game mode (shouldn't be needed).
      */
     abstract deactivate(): void;
 
