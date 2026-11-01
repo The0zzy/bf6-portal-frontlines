@@ -1,0 +1,176 @@
+# Contributing
+
+Guidelines for contributing to Frontlines.
+
+## Required modules
+
+This repository must use the following modules from `bf6-portal-utils`:
+
+- `Events` (`bf6-portal-utils/events`) for event handling.
+- `UI` (`bf6-portal-utils/ui`) for all UI.
+
+Do not add default event handler functions of the game as they would interfere with the events module.
+
+## Maps
+
+This section defines the object ID scheme every Frontlines level must follow, the rules checked at startup, and a working
+example (Atoll).
+
+### Level sources
+
+Each level exists as a Godot source and its spatial export.
+
+- `levels/godot/<map>.tscn`: authoring source.
+- `levels/spatial/<map>.spatial.json`: the file used by the game.
+
+Naming convention:
+
+- use the portal SDK map names (e.g. `MP_Atoll` instead of `Wake Island`)
+- add a `_frontlines`suffix to the map name `<portal-sdk-map-name>_frontlines.<tscn|spatial.json>`
+
+Example:
+`levels/godot/MP_Atoll_frontlines.tscn`
+`levels/spatial/MP_Atoll_frontlines.spatial.json`
+
+The spatial export is just tracked for convenience in the repository. Ideally it should be generated based on the Godot source tscn file.
+
+### General rules
+
+- Fixed HQs for Team1 and Team2 must be outside the combat area (to trigger default Out-Of-Bounds enforcement)
+- Fixed HQs must have an area trigger assigned to their HQ area (fallback for custom OOB)
+- Areas must have a specific height and not 0
+- Vehicle Spawners must be linked to HQs
+- HQs must reuse/link existing spawn points of capture points where applicable (cumulate in "infantry spawns")
+- HQs must use the sector areas as their HQ area
+- Avoid duplicate IDs for any object
+- Objectives must be linked to their respective sectors
+
+### Terms
+
+- Fixed HQ: `TEAM_1_HQ` (ID 6100) or `TEAM_2_HQ` (ID 6150). Present on every map.
+- Sector: a map area with an area trigger, identified by `sectorId`.
+- MCOM sector: the first and last sector. Holds MCOMs and a sector HQ. Has no capture points.
+- Capture sector: every sector between the two MCOM sectors. Has a sector HQ and capture points.
+- Sector HQ: the HQ belonging to one sector. Enabled only for the sector's owner; disabled while the sector is
+  contested.
+- Vehicle spawner: an optional spawner belonging to one sector/HQ.
+
+### ID scheme
+
+All frontlines IDs live in the range 6100-6499.
+
+All IDs are integers. `n` is the child index within its group, starting at 0.
+Indices must be contiguous: a gap is a failure.
+
+#### Fixed HQs
+
+| Element         | Formula    | Team 1 | Team 2 |
+| --------------- | ---------- | ------ | ------ |
+| Fixed HQ        | `hqId`     | 6100   | 6150   |
+| HQ area trigger | `hqId + 1` | 6101   | 6151   |
+
+IDs 6102-6149 and 6152-6199 are reserved for other HQ-related objects (e.g. vehicle spawners).
+
+#### Sectors
+
+Sector IDs start at 6201. A level uses N contiguous sectors, 6201 to 620N, where 3 ≤ N ≤ 7.
+The block 6201-6209 is reserved for sectors.
+
+| Element                         | Formula                                      | Range     |
+| ------------------------------- | -------------------------------------------- | --------- |
+| Sector                          | `sectorId`                                   | 6201-6209 |
+| Sector area trigger             | `sectorId + 10`                              | 6211-6219 |
+| Sector HQ                       | `sectorId + 20`                              | 6221-6229 |
+| Vehicle spawner                 | `6300 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6310-6397 |
+| Capture point (capture sectors) | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
+| MCOM (MCOM sectors)             | `6400 + (sectorId - 6200) * 10 + n`, n = 0-7 | 6410-6497 |
+
+Per-sector blocks, with n = 0-7 for each:
+
+| sectorId | Area trigger | Sector HQ | Vehicle spawners | Capture points / MCOMs |
+| -------- | ------------ | --------- | ---------------- | ---------------------- |
+| 6201     | 6211         | 6221      | 6310-6317        | 6410-6417              |
+| 6202     | 6212         | 6222      | 6320-6327        | 6420-6427              |
+| 6203     | 6213         | 6223      | 6330-6337        | 6430-6437              |
+| 6204     | 6214         | 6224      | 6340-6347        | 6440-6447              |
+| 6205     | 6215         | 6225      | 6350-6357        | 6450-6457              |
+| 6206     | 6216         | 6226      | 6360-6367        | 6460-6467              |
+| 6207     | 6217         | 6227      | 6370-6377        | 6470-6477              |
+| 6208     | 6218         | 6228      | 6380-6387        | 6480-6487              |
+| 6209     | 6219         | 6229      | 6390-6397        | 6490-6497              |
+
+#### Sector roles
+
+| Position | Sector IDs       | Role                         | Required content                            |
+| -------- | ---------------- | ---------------------------- | ------------------------------------------- |
+| First    | 6201             | MCOM sector                  | Sector HQ, 1-8 MCOMs, area trigger          |
+| Middle   | 6202 to 620(N-1) | Capture sector (1-5 sectors) | Sector HQ, 1-8 capture points, area trigger |
+| Last     | 620N             | MCOM sector                  | Sector HQ, 1-8 MCOMs, area trigger          |
+
+Every sector also gets 0-8 optional vehicle spawners.
+
+### Required objects and failure
+
+Startup validation checks the rules below. If a required object is missing, an index sequence has a gap, or the sector
+count is outside 3-7, initialization fails. The game logs an error naming the missing or invalid ID and ends the match
+as a draw with `mod.EndGameMode(mod.GetTeam(0))`.
+
+Required:
+
+- Fixed HQs 6100 and 6150, and their area triggers 6101 and 6151.
+- Sectors 6201 to 620N, contiguous, with N between 3 and 7 and N modulo 2 = 1.
+- An area trigger for every sector.
+- A sector HQ for every sector.
+- 1 to 8 capture points for every capture sector.
+- 1 to 8 MCOMs for every MCOM sector.
+
+Optional:
+
+- 0 to 8 vehicle spawners per sector. If any are present, their indices must be contiguous from 0.
+
+Forbidden (a failure if present):
+
+- Duplicate IDs.
+
+Ignored for now:
+
+- Objects with IDs outside this scheme. A future version will disable them. HQs outside this scheme are already disabled
+  at startup.
+
+### Example: Atoll
+
+Atoll has 5 sectors: sector 6201 is an MCOM sector, sectors 6202 to 6204 are capture sectors, and sector 6205 is an MCOM
+sector. Source: [MP_Atoll_frontlines.spatial.json](levels/spatial/MP_Atoll_frontlines.spatial.json).
+
+| Sector                | Object                 | ObjId |
+| --------------------- | ---------------------- | ----- |
+| -                     | Team 1 fixed HQ        | 6100  |
+| -                     | Team 1 HQ area trigger | 6101  |
+| -                     | Team 2 fixed HQ        | 6150  |
+| -                     | Team 2 HQ area trigger | 6151  |
+| 6201 (MCOM sector)    | Sector                 | 6201  |
+| 6201                  | Area trigger           | 6211  |
+| 6201                  | MCOM                   | 6410  |
+| 6201                  | MCOM                   | 6411  |
+| 6202 (capture sector) | Sector                 | 6202  |
+| 6202                  | Area trigger           | 6212  |
+| 6202                  | Sector HQ              | 6222  |
+| 6202                  | Capture point A        | 6420  |
+| 6202                  | Capture point B        | 6421  |
+| 6202                  | Vehicle spawner        | 6320  |
+| 6203 (capture sector) | Sector                 | 6203  |
+| 6203                  | Area trigger           | 6213  |
+| 6203                  | Sector HQ              | 6223  |
+| 6203                  | Capture point A        | 6430  |
+| 6203                  | Capture point B        | 6431  |
+| 6203                  | Vehicle spawner        | 6330  |
+| 6204 (capture sector) | Sector                 | 6204  |
+| 6204                  | Area trigger           | 6214  |
+| 6204                  | Sector HQ              | 6224  |
+| 6204                  | Capture point A        | 6440  |
+| 6204                  | Capture point B        | 6441  |
+| 6204                  | Vehicle spawner        | 6340  |
+| 6205 (MCOM sector)    | Sector                 | 6205  |
+| 6205                  | Area trigger           | 6215  |
+| 6205                  | MCOM                   | 6450  |
+| 6205                  | MCOM                   | 6451  |
