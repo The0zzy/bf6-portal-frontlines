@@ -168,9 +168,11 @@ metadata/_calculated_global_transform = Transform3D(-0.9998884, 0, -0.014939566,
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.023376, 88.92941, -32.646347)
 ObjId = 6310
 VehicleType = 22
+P_AutoSpawnEnabled = true
 
 [node name="S1_HQ" parent="Sector1" unique_id=1848571927 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9184265, 91.3218, 1.8697739)
+AltTeam = 0
 ObjId = 6221
 HQArea = NodePath("../Sector1Area")
 HQProtectionAreaVolume = NodePath("../Sector1Area")
@@ -200,6 +202,7 @@ metadata/linked = ["SectorArea", "CapturePoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7248535, 101.09308, -13.74929)
 ObjId = 6320
 VehicleType = 22
+P_AutoSpawnEnabled = true
 
 [node name="Sector2Area" parent="Sector2" unique_id=41097525 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-141.59627, 75.72444, -171.92894, 134.51862, -133.02185, 149.58475, -73.4556, 212.24281, -30.532715, 195.04272, 6.3535767, 159.15439, 42.641663, 115.060936, 70.66565, 119.70532, 115.364075, 132.86374, 283.2872, 46.986122, 214.26816, -156.95142, 95.374664, -203.78091, -32.0112, -162.28949, -140.47116, -133.90063)
@@ -318,6 +321,8 @@ metadata/_calculated_global_transform = Transform3D(0.9992522, 0, -0.0386499, 0,
 
 [node name="S2_HQ" parent="Sector2" unique_id=691583191 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.731506, 102.146515, -21.3749)
+AltTeam = 0
+VehicleSpawnersEnabled = true
 ObjId = 6222
 HQArea = NodePath("../Sector2Area")
 HQProtectionAreaVolume = NodePath("../Sector2Area")
@@ -454,9 +459,7 @@ metadata/_calculated_global_transform = Transform3D(0.8322639, 0, 0.5543785, 0, 
 
 [node name="S3_HQ" parent="Sector3" unique_id=852832318 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.552032, -67.51568, -13.05777)
-Team = 0
 AltTeam = 0
-HQEnabled = false
 VehicleSpawnersEnabled = true
 ObjId = 6223
 HQArea = NodePath("../SectorArea")
@@ -626,7 +629,6 @@ metadata/_calculated_global_transform = Transform3D(-0.83408725, 0, 0.5516318, 0
 
 [node name="S4_HQ" parent="Sector4" unique_id=1257311370 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.752518, -21.7919, -47.610077)
-Team = 2
 AltTeam = 0
 VehicleSpawnersEnabled = true
 ObjId = 6224
@@ -671,6 +673,7 @@ metadata/linked = ["SectorArea", "CapturePoints", "MCOMs"]
 
 [node name="S5_HQ" parent="Sector5" unique_id=2058666981 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.58435, -20.543518, 8.090164)
+AltTeam = 0
 ObjId = 6225
 HQArea = NodePath("../SectorArea")
 HQProtectionAreaVolume = NodePath("../SectorArea")
@@ -719,7 +722,6 @@ metadata/_calculated_global_transform = Transform3D(0.66905254, 0, -0.7432147, 0
 
 [node name="TEAM_2_HQ" parent="." unique_id=834748985 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.80914, 99.602066, 61.39133)
-Team = 2
 AltTeam = 0
 ObjId = 6150
 HQArea = NodePath("T2_HQ_Area")
