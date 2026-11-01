@@ -29,7 +29,7 @@
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.224136, 99.501854, -216.81816)
 script = ExtResource("2_5mt4s")
 AltTeam = 0
-ObjId = 100.0
+ObjId = 6100.0
 HQArea = NodePath("HQ_Team1")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.224136, 99.501854, -216.81816)
 metadata/linked = ["HQArea", "InfantrySpawns"]
@@ -66,7 +66,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.80914, 99.602066, 61.391
 script = ExtResource("2_5mt4s")
 Team = 2
 AltTeam = 0
-ObjId = 150.0
+ObjId = 6150.0
 HQArea = NodePath("HQ_Team2")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.80914, 99.602066, 61.39133)
 metadata/linked = ["HQArea", "InfantrySpawns"]
@@ -124,7 +124,7 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 0.0871558, 0.996
 [node name="Sector  T1Mcoms" type="Node3D" parent="." unique_id=1136874570 node_paths=PackedStringArray("SectorArea") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.82416, 14.768875, -88.543236)
 script = ExtResource("12_5am27")
-ObjId = 201.0
+ObjId = 6201.0
 SectorArea = NodePath("SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.82416, 14.768875, -88.543236)
 metadata/linked = ["SectorArea", "CapturePoints", "MCOMs"]
@@ -139,14 +139,14 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1
 
 [node name="AreaTrigger" type="Node3D" parent="Sector  T1Mcoms" unique_id=2113977647 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 script = ExtResource("14_0nx16")
-ObjId = 211.0
+ObjId = 6211.0
 Area = NodePath("../SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.82416, 14.768875, -88.543236)
 metadata/linked = ["Area"]
 
 [node name="HQ1AreaTrigger" type="Node3D" parent="Sector  T1Mcoms" unique_id=1118318438 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 script = ExtResource("14_0nx16")
-ObjId = 101.0
+ObjId = 6101.0
 Area = NodePath("HQ1Area")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.82416, 14.768875, -88.543236)
 metadata/linked = ["Area"]
@@ -162,13 +162,13 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1
 [node name="MCOM" type="Node3D" parent="Sector  T1Mcoms" unique_id=1212822764 instance=ExtResource("15_c1odg")]
 transform = Transform3D(-0.78830075, 0, 0.6152898, 0, 1, 0, -0.6152898, 0, -0.78830075, 26.156586, 87.148674, -55.94462)
 script = ExtResource("16_ea7sf")
-ObjId = 410.0
+ObjId = 6410.0
 metadata/_calculated_global_transform = Transform3D(-0.78830075, 0, 0.6152898, 0, 1, 0, -0.6152898, 0, -0.78830075, 133.98074, 101.91755, -144.48785)
 
 [node name="MCOM2" type="Node3D" parent="Sector  T1Mcoms" unique_id=398708609 instance=ExtResource("15_c1odg")]
 transform = Transform3D(-0.9998884, 0, -0.014939566, 0, 1, 0, 0.014939566, 0, -0.9998884, -26.877365, 85.21776, 78.34191)
 script = ExtResource("16_ea7sf")
-ObjId = 411.0
+ObjId = 6411.0
 metadata/_calculated_global_transform = Transform3D(-0.9998884, 0, -0.014939566, 0, 1, 0, 0.014939566, 0, -0.9998884, 80.94679, 99.98663, -10.201326)
 
 [node name="UH60" type="Node3D" parent="Sector  T1Mcoms" unique_id=2002933623 instance=ExtResource("17_omiuj")]
@@ -253,7 +253,7 @@ metadata/_calculated_global_transform = Transform3D(-0.32018343, 0, 0.9473553, 0
 [node name="Sector1" type="Node3D" parent="." unique_id=2124366658 node_paths=PackedStringArray("SectorArea") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 350.75876, 0, -78.03955)
 script = ExtResource("12_5am27")
-ObjId = 202.0
+ObjId = 6202.0
 SectorArea = NodePath("SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 350.75876, 0, -78.03955)
 metadata/linked = ["SectorArea", "CapturePoints"]
@@ -268,7 +268,7 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3
 
 [node name="AreaTrigger" type="Node3D" parent="Sector1" unique_id=2046724573 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 script = ExtResource("14_0nx16")
-ObjId = 212.0
+ObjId = 6212.0
 Area = NodePath("../SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 350.75876, 0, -78.03955)
 metadata/linked = ["Area"]
@@ -277,7 +277,7 @@ metadata/linked = ["Area"]
 transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, 73.09201, 100.26813, -81.24779)
 script = ExtResource("20_18b55")
 InitialOwner = 1
-ObjId = 420.0
+ObjId = 6420.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, 423.85077, 100.26813, -159.28734)
@@ -341,7 +341,7 @@ metadata/_calculated_global_transform = Transform3D(0.1074435, 0, -0.9942106, 0,
 transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, -43.762573, 100.99873, 29.869865)
 script = ExtResource("20_18b55")
 InitialOwner = 1
-ObjId = 421.0
+ObjId = 6421.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, 306.9962, 100.99873, -48.169685)
@@ -406,7 +406,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.268982, 100.401596, -58.06
 script = ExtResource("2_5mt4s")
 AltTeam = 0
 VehicleSpawnersEnabled = true
-ObjId = 222.0
+ObjId = 6222.0
 HQArea = NodePath("HQ_Team1")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 399.02774, 100.401596, -136.10393)
 metadata/linked = ["HQArea", "InfantrySpawns"]
@@ -441,7 +441,7 @@ metadata/_calculated_global_transform = Transform3D(0.85967356, 0, -0.5108431, 0
 [node name="VehicleSpawner" type="Node3D" parent="Sector1/TEAM_1_HQ" unique_id=1559775673 instance=ExtResource("17_omiuj")]
 transform = Transform3D(-0.019656422, 0.8139307, 0.5806285, 0.99952435, 0.029802889, -0.00793989, -0.023766633, 0.58019644, -0.8141296, 41.158783, -2.8216934, -41.733765)
 script = ExtResource("18_t18vk")
-ObjId = 320.0
+ObjId = 6320.0
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 30.0
@@ -450,7 +450,7 @@ metadata/_calculated_global_transform = Transform3D(-0.019656422, 0.8139307, 0.5
 [node name="Sector2 - Middle" type="Node3D" parent="." unique_id=1867373079 node_paths=PackedStringArray("SectorArea") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 468.72745, 173.75035, 413.20776)
 script = ExtResource("12_5am27")
-ObjId = 203.0
+ObjId = 6203.0
 SectorArea = NodePath("SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 468.72745, 173.75035, 413.20776)
 metadata/linked = ["SectorArea", "CapturePoints"]
@@ -465,7 +465,7 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4
 
 [node name="AreaTrigger" type="Node3D" parent="Sector2 - Middle" unique_id=470495732 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 script = ExtResource("14_0nx16")
-ObjId = 213.0
+ObjId = 6213.0
 Area = NodePath("../SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 468.72745, 173.75035, 413.20776)
 metadata/linked = ["Area"]
@@ -473,7 +473,7 @@ metadata/linked = ["Area"]
 [node name="CapturePointA" type="Node3D" parent="Sector2 - Middle" unique_id=1407748884 node_paths=PackedStringArray("CaptureArea") instance=ExtResource("19_nans0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.238007, -67.718475, -200.77997)
 script = ExtResource("20_18b55")
-ObjId = 430.0
+ObjId = 6430.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 495.96545, 106.031876, 212.4278)
@@ -536,7 +536,7 @@ metadata/_calculated_global_transform = Transform3D(0.32497406, 0, 0.94572246, 0
 [node name="CapturePointB" type="Node3D" parent="Sector2 - Middle" unique_id=902084716 node_paths=PackedStringArray("CaptureArea") instance=ExtResource("19_nans0")]
 transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, -59.95984, -73.278114, 19.411346)
 script = ExtResource("20_18b55")
-ObjId = 431.0
+ObjId = 6431.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, 408.7676, 100.47224, 432.6191)
@@ -603,7 +603,7 @@ Team = 0
 AltTeam = 0
 HQEnabled = false
 VehicleSpawnersEnabled = true
-ObjId = 223.0
+ObjId = 6223.0
 HQArea = NodePath("HQ_Team1")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 503.27948, 106.23467, 400.15)
 metadata/linked = ["HQArea", "InfantrySpawns"]
@@ -638,7 +638,7 @@ metadata/_calculated_global_transform = Transform3D(-0.5600025, 0, 0.8284904, 0,
 [node name="VehicleSpawner" type="Node3D" parent="Sector2 - Middle/TEAM_1_HQ" unique_id=1901762822 instance=ExtResource("17_omiuj")]
 transform = Transform3D(-0.0067697484, -0.024062976, 0.99968714, 0.99949294, 0.03092359, 0.0075127613, -0.031094247, 0.9992317, 0.023841146, -11.808594, -0.05747986, -9.59021)
 script = ExtResource("18_t18vk")
-ObjId = 330.0
+ObjId = 6330.0
 VehicleType = 12
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 30.0
@@ -647,7 +647,7 @@ metadata/_calculated_global_transform = Transform3D(-0.0067697484, -0.024062976,
 [node name="Sector3" type="Node3D" parent="." unique_id=315810716 node_paths=PackedStringArray("SectorArea") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.79515, 125.404625, 382.1793)
 script = ExtResource("12_5am27")
-ObjId = 204.0
+ObjId = 6204.0
 SectorArea = NodePath("SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.79515, 125.404625, 382.1793)
 metadata/linked = ["SectorArea", "CapturePoints"]
@@ -662,7 +662,7 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1
 
 [node name="AreaTrigger" type="Node3D" parent="Sector3" unique_id=1925248641 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 script = ExtResource("14_0nx16")
-ObjId = 214.0
+ObjId = 6214.0
 Area = NodePath("../SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.79515, 125.404625, 382.1793)
 metadata/linked = ["Area"]
@@ -671,7 +671,7 @@ metadata/linked = ["Area"]
 transform = Transform3D(0.993298, 0, -0.115579, 0, 1, 0, 0.115579, 0, 0.993298, -84.88141, -23.932434, -78.49225)
 script = ExtResource("20_18b55")
 InitialOwner = 2
-ObjId = 440.0
+ObjId = 6440.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(0.993298, 0, -0.115579, 0, 1, 0, 0.115579, 0, 0.993298, 42.91374, 101.47219, 303.68704)
@@ -738,7 +738,7 @@ metadata/_calculated_global_transform = Transform3D(-0.24611895, 0, 0.96924007, 
 transform = Transform3D(0.993298, 0, -0.115579, 0, 1, 0, 0.115579, 0, 0.993298, 94.0164, -22.699501, 48.200928)
 script = ExtResource("20_18b55")
 InitialOwner = 2
-ObjId = 441.0
+ObjId = 6441.0
 OutlineSetting = 1
 CaptureArea = NodePath("CaptureArea")
 metadata/_calculated_global_transform = Transform3D(0.993298, 0, -0.115579, 0, 1, 0, 0.115579, 0, 0.993298, 221.81155, 102.705124, 430.38022)
@@ -807,7 +807,7 @@ script = ExtResource("2_5mt4s")
 Team = 2
 AltTeam = 0
 VehicleSpawnersEnabled = true
-ObjId = 224.0
+ObjId = 6224.0
 HQArea = NodePath("HQ_Team1")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.04263, 103.612724, 334.5692)
 metadata/linked = ["HQArea", "InfantrySpawns"]
@@ -842,7 +842,7 @@ metadata/_calculated_global_transform = Transform3D(0.99889934, 0, 0.04689691, 0
 [node name="VehicleSpawner" type="Node3D" parent="Sector3/TEAM_1_HQ" unique_id=1747720391 instance=ExtResource("17_omiuj")]
 transform = Transform3D(0.6604378, 0.01022926, 0.75081146, 0.10748089, 0.988323, -0.10800873, -0.74314874, 0.15203, 0.651626, -18.115845, -6.106262, 62.898254)
 script = ExtResource("18_t18vk")
-ObjId = 340.0
+ObjId = 6340.0
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 30.0
@@ -851,7 +851,7 @@ metadata/_calculated_global_transform = Transform3D(0.6604378, 0.01022926, 0.750
 [node name="Sector T2Mcoms" type="Node3D" parent="." unique_id=400608533 node_paths=PackedStringArray("SectorArea") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192.52917, 120.78523, 185.72975)
 script = ExtResource("12_5am27")
-ObjId = 205.0
+ObjId = 6205.0
 SectorArea = NodePath("SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192.52917, 120.78523, 185.72975)
 metadata/linked = ["SectorArea", "CapturePoints", "MCOMs"]
@@ -867,7 +867,7 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -
 [node name="AreaTrigger" type="Node3D" parent="Sector T2Mcoms" unique_id=155223159 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.0896, 18.494995, -18.375198)
 script = ExtResource("14_0nx16")
-ObjId = 215.0
+ObjId = 6215.0
 Area = NodePath("../SectorArea")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -206.61877, 139.28023, 167.35455)
 metadata/linked = ["Area"]
@@ -875,7 +875,7 @@ metadata/linked = ["Area"]
 [node name="HQ1AreaTrigger" type="Node3D" parent="Sector T2Mcoms" unique_id=927356210 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -118.59799, 55.208603, -256.191)
 script = ExtResource("14_0nx16")
-ObjId = 151.0
+ObjId = 6151.0
 Area = NodePath("HQ1Area")
 metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -311.12717, 175.99384, -70.46125)
 metadata/linked = ["Area"]
@@ -891,13 +891,13 @@ metadata/_calculated_global_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -
 [node name="MCOM" type="Node3D" parent="Sector T2Mcoms" unique_id=1154434629 instance=ExtResource("15_c1odg")]
 transform = Transform3D(0.924565, 0, 0.38102156, 0, 1, 0, -0.38102156, 0, 0.924565, 92.615265, -20.986824, -69.74117)
 script = ExtResource("16_ea7sf")
-ObjId = 450.0
+ObjId = 6450.0
 metadata/_calculated_global_transform = Transform3D(0.924565, 0, 0.38102156, 0, 1, 0, -0.38102156, 0, 0.924565, -99.91391, 99.79841, 115.98858)
 
 [node name="MCOM2" type="Node3D" parent="Sector T2Mcoms" unique_id=907612007 instance=ExtResource("15_c1odg")]
 transform = Transform3D(0.66905254, 0, -0.7432147, 0, 1, 0, 0.7432147, 0, 0.66905254, 59.222244, -22.04734, 60.075577)
 script = ExtResource("16_ea7sf")
-ObjId = 451.0
+ObjId = 6451.0
 metadata/_calculated_global_transform = Transform3D(0.66905254, 0, -0.7432147, 0, 1, 0, 0.7432147, 0, 0.66905254, -133.30693, 98.73789, 245.80533)
 
 [node name="UH60" type="Node3D" parent="Sector T2Mcoms" unique_id=1063761957 instance=ExtResource("17_omiuj")]

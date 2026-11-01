@@ -4,18 +4,31 @@ export abstract class FrontlinesSector {
     readonly sector: mod.Sector;
     readonly id: number;
     readonly areaTrigger: mod.AreaTrigger;
+    readonly hq: mod.HQ;
     readonly letter: string;
     ownerTeam: mod.Team = neutralTeam();
 
-    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger) {
+    constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ) {
         this.sector = sector;
         this.id = id;
         this.areaTrigger = areaTrigger;
+        this.hq = hq;
         this.letter = LETTERS[id - FIRST_SECTOR_ID];
     }
 
     setOwner(team: mod.Team): void {
         this.ownerTeam = team;
+        this.updateHq();
+    }
+
+    // Only the owner may spawn here; a neutral (contested) sector has no spawn.
+    protected updateHq(): void {
+        if (mod.Equals(this.ownerTeam, neutralTeam())) {
+            mod.EnableHQ(this.hq, false);
+            return;
+        }
+        mod.SetHQTeam(this.hq, this.ownerTeam);
+        mod.EnableHQ(this.hq, true);
     }
 
     enableSectorAndArea(enable: boolean): void {

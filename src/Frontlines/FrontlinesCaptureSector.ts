@@ -2,19 +2,15 @@ import { frontlinesSettings, neutralTeam } from './FrontlinesConfig.ts';
 import { FrontlinesSector } from './FrontlinesSector.ts';
 
 export class FrontlinesCaptureSector extends FrontlinesSector {
-    readonly hq: mod.HQ;
     readonly capturePoints: Map<number, mod.CapturePoint>;
 
     constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ, capturePoints: Map<number, mod.CapturePoint>) {
-        super(sector, id, areaTrigger);
-        this.hq = hq;
+        super(sector, id, areaTrigger, hq);
         this.capturePoints = capturePoints;
     }
 
     override setOwner(team: mod.Team): void {
         super.setOwner(team);
-        mod.SetHQTeam(this.hq, team);
-        mod.EnableHQ(this.hq, true);
         for (const point of this.capturePoints.values()) {
             mod.EnableGameModeObjective(point, true);
             mod.SetCapturePointOwner(point, team);
@@ -27,6 +23,7 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
 
     activate(): void {
         this.ownerTeam = neutralTeam();
+        mod.EnableHQ(this.hq, false);
         for (const point of this.capturePoints.values()) {
             mod.EnableGameModeObjective(point, true);
             mod.SetCapturePointOwner(point, neutralTeam());

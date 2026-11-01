@@ -3,7 +3,7 @@
         {
             "name": "TEAM_1_HQ",
             "AltTeam": "TeamNeutral",
-            "ObjId": 100,
+            "ObjId": 6100,
             "InfantrySpawns": [
                 "TEAM_1_HQ/SpawnPoint_1_1",
                 "TEAM_1_HQ/SpawnPoint_1_2",
@@ -170,7 +170,7 @@
             "name": "TEAM_2_HQ",
             "Team": "Team2",
             "AltTeam": "TeamNeutral",
-            "ObjId": 150,
+            "ObjId": 6150,
             "InfantrySpawns": [
                 "TEAM_2_HQ/SpawnPoint_2_1",
                 "TEAM_2_HQ/SpawnPoint_2_2",
@@ -558,7 +558,7 @@
         },
         {
             "name": "Sector  T1Mcoms",
-            "ObjId": 201,
+            "ObjId": 6201,
             "CapturePoints": [],
             "MCOMs": [
                 "Sector  T1Mcoms/MCOM",
@@ -648,7 +648,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 211,
+            "ObjId": 6211,
             "Area": "Sector  T1Mcoms/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -678,7 +678,7 @@
         },
         {
             "name": "HQ1AreaTrigger",
-            "ObjId": 101,
+            "ObjId": 6101,
             "Area": "Sector  T1Mcoms/HQ1AreaTrigger/HQ1Area",
             "type": "AreaTrigger",
             "right": {
@@ -767,7 +767,7 @@
         },
         {
             "name": "MCOM",
-            "ObjId": 410,
+            "ObjId": 6410,
             "type": "MCOM",
             "right": {
                 "x": -0.78830075,
@@ -793,7 +793,7 @@
         },
         {
             "name": "MCOM2",
-            "ObjId": 411,
+            "ObjId": 6411,
             "type": "MCOM",
             "right": {
                 "x": -0.9998884,
@@ -1098,7 +1098,7 @@
         },
         {
             "name": "Sector1",
-            "ObjId": 202,
+            "ObjId": 6202,
             "CapturePoints": [
                 "Sector1/CapturePointA",
                 "Sector1/CapturePointB"
@@ -1211,7 +1211,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 212,
+            "ObjId": 6212,
             "Area": "Sector1/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -1242,7 +1242,7 @@
         {
             "name": "CapturePointA",
             "InitialOwner": "Team1",
-            "ObjId": 420,
+            "ObjId": 6420,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector1/CapturePointA/Team1/SpawnPoint_1_1",
@@ -1536,7 +1536,7 @@
         {
             "name": "CapturePointB",
             "InitialOwner": "Team1",
-            "ObjId": 421,
+            "ObjId": 6421,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector1/CapturePointB/Team1/SpawnPoint_1_1",
@@ -1816,7 +1816,7 @@
             "name": "TEAM_1_HQ",
             "AltTeam": "TeamNeutral",
             "VehicleSpawnersEnabled": true,
-            "ObjId": 222,
+            "ObjId": 6222,
             "InfantrySpawns": [
                 "Sector1/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector1/TEAM_1_HQ/SpawnPoint_1_2",
@@ -1981,7 +1981,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 320,
+            "ObjId": 6320,
             "VehicleType": "RHIB",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -2010,7 +2010,7 @@
         },
         {
             "name": "Sector2 - Middle",
-            "ObjId": 203,
+            "ObjId": 6203,
             "CapturePoints": [
                 "Sector2 - Middle/CapturePointA",
                 "Sector2 - Middle/CapturePointB"
@@ -2113,7 +2113,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 213,
+            "ObjId": 6213,
             "Area": "Sector2 - Middle/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -2143,7 +2143,7 @@
         },
         {
             "name": "CapturePointA",
-            "ObjId": 430,
+            "ObjId": 6430,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector2 - Middle/CapturePointA/Team1/SpawnPoint_1_1",
@@ -2416,7 +2416,7 @@
         },
         {
             "name": "CapturePointB",
-            "ObjId": 431,
+            "ObjId": 6431,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector2 - Middle/CapturePointB/Team1/SpawnPoint_1_1",
@@ -2713,7 +2713,7 @@
             "AltTeam": "TeamNeutral",
             "HQEnabled": false,
             "VehicleSpawnersEnabled": true,
-            "ObjId": 223,
+            "ObjId": 6223,
             "InfantrySpawns": [
                 "Sector2 - Middle/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector2 - Middle/TEAM_1_HQ/SpawnPoint_1_2",
@@ -2878,7 +2878,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 330,
+            "ObjId": 6330,
             "VehicleType": "Marauder",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -2907,7 +2907,7 @@
         },
         {
             "name": "Sector3",
-            "ObjId": 204,
+            "ObjId": 6204,
             "CapturePoints": [
                 "Sector3/CapturePointA",
                 "Sector3/CapturePointB"
@@ -3000,7 +3000,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 214,
+            "ObjId": 6214,
             "Area": "Sector3/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -3031,7 +3031,7 @@
         {
             "name": "CapturePointA",
             "InitialOwner": "Team2",
-            "ObjId": 440,
+            "ObjId": 6440,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector3/CapturePointA/Team1/SpawnPoint_1_1",
@@ -3395,7 +3395,7 @@
         {
             "name": "CapturePointB",
             "InitialOwner": "Team2",
-            "ObjId": 441,
+            "ObjId": 6441,
             "OutlineSetting": "Flat",
             "InfantrySpawnPoints_Team1": [
                 "Sector3/CapturePointB/Team1/SpawnPoint_1_1",
@@ -3671,7 +3671,7 @@
             "Team": "Team2",
             "AltTeam": "TeamNeutral",
             "VehicleSpawnersEnabled": true,
-            "ObjId": 224,
+            "ObjId": 6224,
             "InfantrySpawns": [
                 "Sector3/TEAM_1_HQ/SpawnPoint_1_1",
                 "Sector3/TEAM_1_HQ/SpawnPoint_1_2",
@@ -3836,7 +3836,7 @@
         },
         {
             "name": "VehicleSpawner",
-            "ObjId": 340,
+            "ObjId": 6340,
             "VehicleType": "RHIB",
             "P_AutoSpawnEnabled": true,
             "P_DefaultRespawnTime": 30,
@@ -3865,7 +3865,7 @@
         },
         {
             "name": "Sector T2Mcoms",
-            "ObjId": 205,
+            "ObjId": 6205,
             "CapturePoints": [],
             "MCOMs": [
                 "Sector T2Mcoms/MCOM",
@@ -3960,7 +3960,7 @@
         },
         {
             "name": "AreaTrigger",
-            "ObjId": 215,
+            "ObjId": 6215,
             "Area": "Sector T2Mcoms/SectorArea",
             "type": "AreaTrigger",
             "right": {
@@ -3990,7 +3990,7 @@
         },
         {
             "name": "HQ1AreaTrigger",
-            "ObjId": 151,
+            "ObjId": 6151,
             "Area": "Sector T2Mcoms/HQ1AreaTrigger/HQ1Area",
             "type": "AreaTrigger",
             "right": {
@@ -4079,7 +4079,7 @@
         },
         {
             "name": "MCOM",
-            "ObjId": 450,
+            "ObjId": 6450,
             "type": "MCOM",
             "right": {
                 "x": 0.924565,
@@ -4105,7 +4105,7 @@
         },
         {
             "name": "MCOM2",
-            "ObjId": 451,
+            "ObjId": 6451,
             "type": "MCOM",
             "right": {
                 "x": 0.66905254,
