@@ -714,6 +714,7 @@ export namespace Frontlines {
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsInteracting)
         ) {
             mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+            mod.Kill(eventPlayer);
         }
     }
 

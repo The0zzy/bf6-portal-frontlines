@@ -1,5 +1,5 @@
 export interface FrontlineSettings {
-    enableTeamSwitch: any;
+    enableTeamSwitch: boolean;
     timeLimit: number,
     captureTime: number,
     captureNeutralizationTime: number,
