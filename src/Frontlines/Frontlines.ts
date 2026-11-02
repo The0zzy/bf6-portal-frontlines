@@ -182,7 +182,6 @@ export namespace Frontlines {
             const team = i < currentSectorIndex ? mod.GetTeam(1) : mod.GetTeam(2);
             if (i !== currentSectorIndex) {
                 sector.setOwner(team);
-                sector.deactivate();
             } else {
                 sector.activate();
             }
@@ -585,7 +584,6 @@ export namespace Frontlines {
         const currentSector = getCurrentSector();
         if (currentSector instanceof FrontlinesMcomSector) {
             currentSector.destroyMcom(eventId);
-            ui?.updateSectorWidths();
             ui?.updateSectorProgress(currentSector);
             if (mod.Equals(currentSector.isCapturedByTeam(), getEnemyTeam(currentSector.ownerTeam))) {
                 console.log('MCOM sector has been captured by the enemy!');

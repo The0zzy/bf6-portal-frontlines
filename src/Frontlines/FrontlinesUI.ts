@@ -65,11 +65,13 @@ interface TeamView {
  */
 export class FrontlinesUI {
     private readonly sectors: FrontlinesSector[];
+    private readonly sectorWidths: number[];
     private readonly views: TeamView[];
     private activeIndex: number = 0;
 
     constructor(sectors: FrontlinesSector[]) {
         this.sectors = sectors;
+        this.sectorWidths = sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
         this.views = [this.createView(mod.GetTeam(1)), this.createView(mod.GetTeam(2))];
     }
 
@@ -89,40 +91,6 @@ export class FrontlinesUI {
      */
     updateSectorProgress(activeSector: FrontlinesSector): void {
         this.updateSector(activeSector, true);
-    }
-
-    /**
-     * Resizes the sector widgets to the current objective counts, e.g. after an MCOM is destroyed.
-     */
-    updateSectorWidths(): void {
-        const sectorWidths = this.getSectorWidths();
-        const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
-        for (const view of this.views) {
-            view.overlay.width = barWidth;
-            view.root.width = barWidth;
-            view.bar.width = barWidth;
-
-            let x = 0;
-            for (let i = 0; i < this.sectors.length; i++) {
-                const width = sectorWidths[i];
-                const widgets = view.sectors.get(this.sectors[i].id);
-                if (widgets) {
-                    widgets.root.x = x;
-                    widgets.root.width = width;
-                    widgets.friendlyFill.width = width;
-                    widgets.enemyFill.width = width;
-                    widgets.outline.width = width;
-                    widgets.label.width = width;
-                    widgets.gradient.x = x;
-                    widgets.gradient.width = width;
-                    widgets.lockLabel.width = width;
-                    widgets.leftLine.x = x;
-                    widgets.rightLine.x = x + width - BOUNDARY_LINE_WIDTH;
-                }
-                x += width;
-            }
-        }
-        this.centerBar();
     }
 
     setTimer(seconds: number): void {
@@ -231,6 +199,7 @@ export class FrontlinesUI {
             return;
         }
         widgets.locked = locked;
+        widgets.root.bgFill = locked ? UI.BgFill.Solid : UI.BgFill.None;
         widgets.label.height = locked ? SECTOR_SIZE - LOCK_LABEL_HEIGHT : SECTOR_SIZE;
         widgets.label.textSize = locked ? LOCKED_LETTER_TEXT_SIZE : LETTER_TEXT_SIZE;
         widgets.lockLabel.visible = locked;
@@ -243,13 +212,9 @@ export class FrontlinesUI {
         return mod.Equals(owner, viewTeam) ? UI.COLORS.BF_BLUE_DARK : UI.COLORS.BF_RED_DARK;
     }
 
-    private getSectorWidths(): number[] {
-        return this.sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
-    }
-
     // Shifts the bar so the active sector's center sits on the screen center.
     private centerBar(): void {
-        const sectorWidths = this.getSectorWidths();
+        const sectorWidths = this.sectorWidths;
         const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
         const offsetToActive = sectorWidths.slice(0, this.activeIndex).reduce((sum, width) => sum + width, 0);
         const x = barWidth / 2 - offsetToActive - sectorWidths[this.activeIndex] / 2;
@@ -260,7 +225,7 @@ export class FrontlinesUI {
     }
 
     private createView(team: mod.Team): TeamView {
-        const sectorWidths = this.getSectorWidths();
+        const sectorWidths = this.sectorWidths;
         const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
 
         const overlay = new UIContainer({

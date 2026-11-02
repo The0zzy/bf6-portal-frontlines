@@ -115,11 +115,6 @@ export abstract class FrontlinesSector {
     abstract activate(): void;
 
     /**
-     * Deactivates this sectors objectives, disabling it for the whole game mode (shouldn't be needed).
-     */
-    abstract deactivate(): void;
-
-    /**
      * Returns whether this sector has been fully captured by a team. 
      * Returns the team owning all capture points, or the neutral team if it hasn't been fully captured.
      */
