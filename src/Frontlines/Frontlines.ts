@@ -36,7 +36,6 @@ export namespace Frontlines {
 
     const playerDataMap: Map<number, PlayerData> = new Map();
 
-    let matchTimer: number = 2400;
     let lastElapsedSeconds: number = 0;
 
     let currentSectorIndex: number = 0;
@@ -142,27 +141,27 @@ export namespace Frontlines {
         return mod.GetTeam(0);
     }
 
+    // Day phase starts at elapsed 0 and repeats every daytime + nighttime minutes.
+    function isDayAt(elapsedSeconds: number): boolean {
+        const cycleMinutes = frontlinesSettings.daytime + frontlinesSettings.nighttime;
+        return Math.floor(elapsedSeconds / 60) % cycleMinutes < frontlinesSettings.daytime;
+    }
+
     // Called every tick from OngoingGlobal; does the per-second work once per elapsed second.
     function updateMatchTimer(): void {
         const elapsedSeconds = Math.floor(mod.GetMatchTimeElapsed());
         if (elapsedSeconds === lastElapsedSeconds) return;
         lastElapsedSeconds = elapsedSeconds;
 
-        if (matchTimer <= 0) return;
-
-        // Timer update
-        matchTimer--;
-        ui?.setTimer(matchTimer);
-        if (matchTimer == 0) {
-            // Time over
+        const timeLimitSeconds = frontlinesSettings.timeLimit * 60;
+        if (elapsedSeconds >= timeLimitSeconds) {
             mod.EndGameMode(getTimeLimitWinner());
             return;
         }
+        ui?.setTimer(timeLimitSeconds - elapsedSeconds);
 
         // Day/Night cycle
-        const totalGameDuration = frontlinesSettings.daytime + frontlinesSettings.nighttime;
-        const minutesPassed = Math.floor(matchTimer / 60) % totalGameDuration;
-        const shouldBeDay = minutesPassed < frontlinesSettings.daytime;
+        const shouldBeDay = isDayAt(elapsedSeconds);
         if (shouldBeDay !== isDay) {
             isDay = shouldBeDay;
             console.log(isDay ? "Transitioning to day." : "Transitioning to night.");
@@ -322,8 +321,8 @@ export namespace Frontlines {
             return;
         }
 
-        matchTimer = frontlinesSettings.timeLimit * 60;
         lastElapsedSeconds = Math.floor(mod.GetMatchTimeElapsed());
+        isDay = isDayAt(lastElapsedSeconds);
         mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
         mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
         mod.SetScoreboardColumnNames(
@@ -336,7 +335,7 @@ export namespace Frontlines {
         mod.SetScoreboardColumnWidths(40, 40, 40, 40, 40);
 
         ui = new FrontlinesUI(sectors);
-        ui.setTimer(matchTimer);
+        ui.setTimer(frontlinesSettings.timeLimit * 60 - lastElapsedSeconds);
 
         outOfBounds = new OutOfBounds({
             gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
@@ -705,7 +704,7 @@ export namespace Frontlines {
      * @method checkTeamSwitchConditions
      * @param {mod.Player} eventPlayer - The player to check for team switch conditions
     */
-    function checkTeamSwitchConditions(eventPlayer: mod.Player): void {
+    async function checkTeamSwitchConditions(eventPlayer: mod.Player): Promise<void> {
         if (!frontlinesSettings.enableTeamSwitch) return;
         if (mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAISoldier)) return;
         if (!mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAlive)) return;
@@ -713,8 +712,9 @@ export namespace Frontlines {
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsCrouching)
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsInteracting)
         ) {
-            mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
             mod.Kill(eventPlayer);
+            await mod.Wait(0);
+            mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
         }
     }
 
