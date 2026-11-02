@@ -3,18 +3,20 @@ import { FrontlinesSector } from './FrontlinesSector.ts';
 
 export class FrontlinesCaptureSector extends FrontlinesSector {
     readonly capturePoints: Map<number, mod.CapturePoint>;
+    private lockEndTime: number = 0;
 
     constructor(sector: mod.Sector, id: number, areaTrigger: mod.AreaTrigger, hq: mod.HQ, capturePoints: Map<number, mod.CapturePoint>) {
         super(sector, id, areaTrigger, hq);
         this.capturePoints = capturePoints;
     }
 
+    // Owned sectors are fully disabled; activate() re-enables the current one.
     override setOwner(team: mod.Team): void {
         super.setOwner(team);
         for (const point of this.capturePoints.values()) {
-            mod.EnableGameModeObjective(point, true);
+            mod.EnableGameModeObjective(point, false);
             mod.SetCapturePointOwner(point, team);
-            mod.EnableCapturePointDeploying(point, true);
+            mod.EnableCapturePointDeploying(point, false);
             mod.SetCapturePointCapturingTime(point, 9999);
             mod.SetCapturePointNeutralizationTime(point, 9999);
             mod.SetMaxCaptureMultiplier(point, 0.1);
@@ -28,24 +30,35 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
             mod.EnableGameModeObjective(point, true);
             mod.SetCapturePointOwner(point, neutralTeam());
             mod.EnableCapturePointDeploying(point, false);
-            mod.SetCapturePointCapturingTime(point, frontlinesSettings.captureTime);
-            mod.SetCapturePointNeutralizationTime(point, frontlinesSettings.neutralCaptureNeutralizationTime);
-            mod.SetMaxCaptureMultiplier(point, 1);
             mod.SetAllObjectivesUIEnabled(true);
         }
+        this.applyCaptureSpeed(false);
     }
 
-    deactivate(): void {
+    lockCapture(seconds: number): void {
+        this.lockEndTime = mod.GetMatchTimeElapsed() + seconds;
+        this.applyCaptureSpeed(true);
+        mod.Wait(seconds).then(() => this.applyCaptureSpeed(false));
+    }
+
+    override getCaptureLockRemaining(): number {
+        return Math.max(0, Math.ceil(this.lockEndTime - mod.GetMatchTimeElapsed()));
+    }
+
+    private applyCaptureSpeed(locked: boolean): void {
         for (const point of this.capturePoints.values()) {
-            mod.EnableGameModeObjective(point, false);
+            mod.SetCapturePointCapturingTime(point, locked ? 9999 : frontlinesSettings.captureTime);
+            mod.SetCapturePointNeutralizationTime(point, locked ? 9999 : frontlinesSettings.neutralCaptureNeutralizationTime);
+            mod.SetMaxCaptureMultiplier(point, locked ? 0.1 : 1);
         }
     }
 
+    // A point only counts once its owner is at 100% progress, so an ongoing capture or neutralization blocks the sector.
     isCapturedByTeam(): mod.Team {
         const seenOwner = mod.GetCurrentOwnerTeam(this.capturePoints.values().next().value!);
         for (const point of this.capturePoints.values()) {
             const owner = mod.GetCurrentOwnerTeam(point);
-            if (!mod.Equals(seenOwner, owner)) {
+            if (!mod.Equals(seenOwner, owner) || mod.GetCaptureProgress(point) < 1) {
                 return neutralTeam();
             }
         }

@@ -10,10 +10,15 @@ import type { FrontlinesSector } from './FrontlinesSector.ts';
 
 const FRIENDLY_COLOR = UI.COLORS.BF_BLUE_BRIGHT;
 const ENEMY_COLOR = UI.COLORS.BF_RED_BRIGHT;
+const LOCKED_COLOR: UI.Color = UI.COLORS.BF_GREY_2;
+const LOCK_LABEL_TEXT_SIZE = 12;
+const LETTER_TEXT_SIZE = 30;
+const LOCKED_LETTER_TEXT_SIZE = 18;
 
 // sector widgets sit right below the native objectives UI
 const ROOT_Y = 100;
 const SECTOR_SIZE = 44;
+const LOCK_LABEL_HEIGHT = SECTOR_SIZE / 2;
 // horizontal space of one native objective icon, calibrate in-game
 const OBJECTIVE_WIDTH = 44;
 const BOUNDARY_LINE_WIDTH = 2;
@@ -33,6 +38,8 @@ interface SectorWidgets {
     enemyFill: UIContainer; // grows from the top
     outline: UIContainer;
     label: UIText;
+    lockLabel: UIText; // lock countdown inside the sector, only visible while locked
+    locked: boolean;
     gradient: UIContainer; // ownership box above the sector, up to the top of the screen
     leftLine: UIContainer;
     rightLine: UIContainer;
@@ -58,10 +65,13 @@ interface TeamView {
  */
 export class FrontlinesUI {
     private readonly sectors: FrontlinesSector[];
+    private readonly sectorWidths: number[];
     private readonly views: TeamView[];
+    private activeIndex: number = 0;
 
     constructor(sectors: FrontlinesSector[]) {
         this.sectors = sectors;
+        this.sectorWidths = sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
         this.views = [this.createView(mod.GetTeam(1)), this.createView(mod.GetTeam(2))];
     }
 
@@ -69,9 +79,11 @@ export class FrontlinesUI {
      * Refreshes all sectors. Non-active sectors are filled in their owner's color, the active one shows its progress.
      */
     updateSectors(activeSector: FrontlinesSector): void {
+        this.activeIndex = this.sectors.indexOf(activeSector);
         for (const sector of this.sectors) {
             this.updateSector(sector, sector === activeSector);
         }
+        this.centerBar();
     }
 
     /**
@@ -79,38 +91,6 @@ export class FrontlinesUI {
      */
     updateSectorProgress(activeSector: FrontlinesSector): void {
         this.updateSector(activeSector, true);
-    }
-
-    /**
-     * Resizes the sector widgets to the current objective counts, e.g. after an MCOM is destroyed.
-     */
-    updateSectorWidths(): void {
-        const sectorWidths = this.getSectorWidths();
-        const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
-        for (const view of this.views) {
-            view.overlay.width = barWidth;
-            view.root.width = barWidth;
-            view.bar.width = barWidth;
-
-            let x = 0;
-            for (let i = 0; i < this.sectors.length; i++) {
-                const width = sectorWidths[i];
-                const widgets = view.sectors.get(this.sectors[i].id);
-                if (widgets) {
-                    widgets.root.x = x;
-                    widgets.root.width = width;
-                    widgets.friendlyFill.width = width;
-                    widgets.enemyFill.width = width;
-                    widgets.outline.width = width;
-                    widgets.label.width = width;
-                    widgets.gradient.x = x;
-                    widgets.gradient.width = width;
-                    widgets.leftLine.x = x;
-                    widgets.rightLine.x = x + width - BOUNDARY_LINE_WIDTH;
-                }
-                x += width;
-            }
-        }
     }
 
     setTimer(seconds: number): void {
@@ -189,12 +169,20 @@ export class FrontlinesUI {
             widgets.friendlyFill.height = Math.round(friendlyProgress * SECTOR_SIZE);
             widgets.enemyFill.height = Math.round(enemyProgress * SECTOR_SIZE);
 
+            const lockRemaining = active ? sector.getCaptureLockRemaining() : 0;
+            const locked = lockRemaining > 0;
+            this.setSectorLocked(widgets, locked);
+            if (locked) {
+                widgets.lockLabel.label = mod.Message(mod.stringkeys.frontlines.lockedCountdownMSG, lockRemaining);
+            }
+            const neutralColor = locked ? LOCKED_COLOR : UI.COLORS.WHITE;
+
             // owned sectors take the dark color of their owner, neutral ones stay white (active) or black
             const ownerColor = this.getOwnerDarkColor(sector.ownerTeam, view.team);
-            widgets.root.bgColor = ownerColor ?? (active ? UI.COLORS.WHITE : UI.COLORS.BLACK);
+            widgets.root.bgColor = ownerColor ?? (active ? neutralColor : UI.COLORS.BLACK);
 
             // active MCOM sectors keep their defending owner, so check active first
-            let boundaryColor: UI.Color = UI.COLORS.WHITE;
+            let boundaryColor: UI.Color = neutralColor;
             if (!active && !mod.Equals(sector.ownerTeam, neutralTeam())) {
                 boundaryColor = mod.Equals(sector.ownerTeam, view.team) ? FRIENDLY_COLOR : ENEMY_COLOR;
             }
@@ -205,6 +193,18 @@ export class FrontlinesUI {
         }
     }
 
+    // Shrinks the letter and shows the lock countdown in the lower half of the sector while locked.
+    private setSectorLocked(widgets: SectorWidgets, locked: boolean): void {
+        if (widgets.locked === locked) {
+            return;
+        }
+        widgets.locked = locked;
+        widgets.root.bgFill = locked ? UI.BgFill.Solid : UI.BgFill.None;
+        widgets.label.height = locked ? SECTOR_SIZE - LOCK_LABEL_HEIGHT : SECTOR_SIZE;
+        widgets.label.textSize = locked ? LOCKED_LETTER_TEXT_SIZE : LETTER_TEXT_SIZE;
+        widgets.lockLabel.visible = locked;
+    }
+
     private getOwnerDarkColor(owner: mod.Team, viewTeam: mod.Team): UI.Color | undefined {
         if (mod.Equals(owner, neutralTeam())) {
             return undefined;
@@ -212,12 +212,20 @@ export class FrontlinesUI {
         return mod.Equals(owner, viewTeam) ? UI.COLORS.BF_BLUE_DARK : UI.COLORS.BF_RED_DARK;
     }
 
-    private getSectorWidths(): number[] {
-        return this.sectors.map(sector => sector.getObjectiveCount() * OBJECTIVE_WIDTH);
+    // Shifts the bar so the active sector's center sits on the screen center.
+    private centerBar(): void {
+        const sectorWidths = this.sectorWidths;
+        const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
+        const offsetToActive = sectorWidths.slice(0, this.activeIndex).reduce((sum, width) => sum + width, 0);
+        const x = barWidth / 2 - offsetToActive - sectorWidths[this.activeIndex] / 2;
+        for (const view of this.views) {
+            view.overlay.x = x;
+            view.root.x = x;
+        }
     }
 
     private createView(team: mod.Team): TeamView {
-        const sectorWidths = this.getSectorWidths();
+        const sectorWidths = this.sectorWidths;
         const barWidth = sectorWidths.reduce((sum, width) => sum + width, 0);
 
         const overlay = new UIContainer({
@@ -306,9 +314,23 @@ export class FrontlinesUI {
                 height: SECTOR_SIZE,
                 anchor: UI.Anchor.TopLeft,
                 label: sector.getLabel(),
-                textSize: 30,
+                textSize: LETTER_TEXT_SIZE,
                 textColor: UI.COLORS.WHITE,
                 textAnchor: UI.Anchor.Center,
+            });
+
+            const lockLabel = new UIText({
+                parent: sectorRoot,
+                x: 0,
+                y: SECTOR_SIZE - LOCK_LABEL_HEIGHT,
+                width,
+                height: LOCK_LABEL_HEIGHT,
+                anchor: UI.Anchor.TopLeft,
+                label: mod.Message(mod.stringkeys.frontlines.lockedCountdownMSG, 0),
+                textSize: LOCK_LABEL_TEXT_SIZE,
+                textColor: UI.COLORS.WHITE,
+                textAnchor: UI.Anchor.Center,
+                visible: false,
             });
 
             // added last so the outline draws on top of the fills
@@ -322,7 +344,18 @@ export class FrontlinesUI {
                 bgFill: UI.BgFill.OutlineThin,
             });
 
-            sectors.set(sector.id, { root: sectorRoot, friendlyFill, enemyFill, outline, label, gradient, leftLine, rightLine });
+            sectors.set(sector.id, {
+                root: sectorRoot,
+                friendlyFill,
+                enemyFill,
+                outline,
+                label,
+                gradient,
+                lockLabel,
+                locked: false,
+                leftLine,
+                rightLine,
+            });
             x += width;
         }
 

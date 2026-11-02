@@ -36,13 +36,13 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         return this.mcoms.filter(mcom => !mcom.destroyed).length;
     }
 
-    // MCOMs stay enabled so the native objectives UI keeps its layout; Bomb arm type keeps them unarmable.
+    // Owned MCOMs are fully disabled; activate() re-enables them when the sector becomes current.
     override setOwner(team: mod.Team): void {
         super.setOwner(team);
         for (const mcom of this.mcoms) {
             mod.SetMCOMOwner(mcom.mcom, team);
-            mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Bomb);
-            mod.EnableGameModeObjective(mcom.mcom, true);
+            // mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Bomb);
+            mod.EnableGameModeObjective(mcom.mcom, false);
         }
     }
 
@@ -52,12 +52,6 @@ export class FrontlinesMcomSector extends FrontlinesSector {
         for (const mcom of this.mcoms) {
             mod.SetMCOMArmType(mcom.mcom, mod.MCOMArmType.Default);
             mod.EnableGameModeObjective(mcom.mcom, true);
-        }
-    }
-
-    deactivate(): void {
-        for (const mcom of this.mcoms) {
-            mod.EnableGameModeObjective(mcom.mcom, false);
         }
     }
 

@@ -36,6 +36,10 @@ export abstract class FrontlinesSector {
         mod.EnableAreaTrigger(this.areaTrigger, enable);
     }
 
+    getCaptureLockRemaining(): number {
+        return 0;
+    }
+
     getLabel(): mod.Message {
         switch (this.letter) {
             case "B":
@@ -109,11 +113,6 @@ export abstract class FrontlinesSector {
      * Sets this sector as the current one to be captured.
      */
     abstract activate(): void;
-
-    /**
-     * Deactivates this sector, disabling it for the whole game mode (shouldn't be needed).
-     */
-    abstract deactivate(): void;
 
     /**
      * Returns whether this sector has been fully captured by a team. 
