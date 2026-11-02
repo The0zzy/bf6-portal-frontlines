@@ -700,10 +700,28 @@ export namespace Frontlines {
         playerDataMap.delete(playerId);
     }
 
+    /**
+     * Checks for team switch conditions and switches the player's team if conditions are met.
+     * @method checkTeamSwitchConditions
+     * @param {mod.Player} eventPlayer - The player to check for team switch conditions
+    */
+    function checkTeamSwitchConditions(eventPlayer: mod.Player): void {
+        if (!frontlinesSettings.enableTeamSwitch) return;
+        if (mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAISoldier)) return;
+        if (!mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsAlive)) return;
+        if (mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsZooming)
+            && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsCrouching)
+            && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsInteracting)
+        ) {
+            mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+        }
+    }
+
     function registerEvents(): void {
         Events.OnMCOMDestroyed.subscribe(handleMCOMDestroyed);
         Events.OnCapturePointCaptured.subscribe(handleCapturePointCaptured);
         Events.OngoingGlobal.subscribe(handleOngoingGlobal);
+        Events.OngoingPlayer.subscribe(checkTeamSwitchConditions);
         Events.OnPlayerEarnedKill.subscribe(handlePlayerEarnedKill);
         Events.OnPlayerEarnedKillAssist.subscribe(handlePlayerEarnedKillAssist);
         Events.OnPlayerJoinGame.subscribe(handlePlayerJoinGame);

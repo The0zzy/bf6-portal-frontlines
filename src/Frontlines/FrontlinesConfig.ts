@@ -1,4 +1,5 @@
 export interface FrontlineSettings {
+    enableTeamSwitch: any;
     timeLimit: number,
     captureTime: number,
     captureNeutralizationTime: number,
@@ -23,7 +24,8 @@ export const debugSettings: FrontlineSettings = {
     redeployTime: 5, //seconds
     daytime: 5, //minutes
     nighttime: 5, //minutes
-    outOfBoundsGracePeriod: 10, //seconds
+    outOfBoundsGracePeriod: 10,
+    enableTeamSwitch: true
 };
 export const defaultSettings: FrontlineSettings = {
     timeLimit: 60, //minutes
@@ -37,6 +39,7 @@ export const defaultSettings: FrontlineSettings = {
     daytime: 14, //minutes
     nighttime: 10, //minutes
     outOfBoundsGracePeriod: 10, //seconds
+    enableTeamSwitch: false
 };
 export const frontlinesSettings = debugSettings;
 
