@@ -339,9 +339,12 @@ export namespace Frontlines {
 
         outOfBounds = new OutOfBounds({
             gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
-            overlay: false,
+            overlayType: OutOfBounds.OverlayType.Hint,
+            anchor: OutOfBounds.Anchor.BottomCenter,
+            title: mod.Message(mod.stringkeys.frontlines.enemyTerritoryMSG),
+            subtitle: () => mod.Message(mod.stringkeys.frontlines.spottedMSG),
             sound: false,
-            spot: true,
+            spot: OutOfBounds.Spot.Minimap,
             penalty: OutOfBounds.Penalty.None,
         });
 

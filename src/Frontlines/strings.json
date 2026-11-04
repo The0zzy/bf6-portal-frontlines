@@ -45,6 +45,8 @@
         "kd": "K/D",
         "kills": "Kills",
         "deaths": "Deaths",
-        "assists": "Assists"
+        "assists": "Assists",
+        "enemyTerritoryMSG": "ENEMY TERRITORY",
+        "spottedMSG": "You are spotted!"
     }
 }

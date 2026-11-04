@@ -11,7 +11,7 @@ Depends on `bf6-portal-utils` modules `events`, `timers`, `sounds` and `ui`.
 | File                | Purpose                                                                       |
 | ------------------- | ----------------------------------------------------------------------------- |
 | `OutOfBounds.ts`    | Area tracking, bounds evaluation, countdown, actions and penalties.           |
-| `OutOfBoundsUI.ts`  | Per-player full-screen overlay (title + countdown), created lazily.           |
+| `OutOfBoundsUI.ts`  | Per-player overlay (`Full` or `Hint`, anchor, title and subtitle), created lazily.           |
 | `strings.json`      | `outOfBounds.title` and `outOfBounds.countdown` (merged by the bundler).      |
 
 ## Usage
@@ -21,9 +21,9 @@ import { OutOfBounds } from '../OutOfBounds/OutOfBounds.ts';
 
 const outOfBounds = new OutOfBounds({
     gracePeriod: 10,
-    overlay: true,
+    overlayType: OutOfBounds.OverlayType.Full,
     sound: true,
-    spot: true,
+    spot: OutOfBounds.Spot.Both,
     penalty: OutOfBounds.Penalty.Undeploy,
 });
 
@@ -48,9 +48,12 @@ Starts tracking areas for all players. Enforcement stays off until `activate()` 
 | Option                          | Default | Description                                                                         |
 | ------------------------------- | ------- | ----------------------------------------------------------------------------------- |
 | `gracePeriod`                   | —       | Seconds a player may stay out of bounds before the penalty applies.                 |
-| `overlay`                       | `true`  | Full-screen overlay with countdown (human players only).                            |
+| `overlayType`                   | `Full`  | `Full` for a full-screen overlay, `Hint` for text only, `None` to disable (see [Overlay types](#overlay-types)). Human players only. |
+| `anchor`                        | `TopCenter` / `TopLeft` | Position of the overlay, see `OutOfBounds.Anchor`. Default depends on `overlayType`. |
+| `title`                         | `OUT OF BOUNDS` | Title `mod.Message`.                                                        |
+| `subtitle`                      | `Return to combat {}!` | `(secondsRemaining) => mod.Message`, the countdown text.                    |
 | `sound`                         | `true`  | Countdown sound every second (human players only).                                  |
-| `spot`                          | `false` | Spots the player on minimap and in world for everyone while out of bounds.          |
+| `spot`                          | `None`  | Spots the player for everyone while out of bounds: `Both` (minimap and world), `Minimap` or `World`. |
 | `penalty`                       | `Kill`  | Applied when the grace period runs out, see [Penalties](#penalties).                |
 | `damagePerSecond`               | `10`    | Damage dealt every second for `Penalty.DamagePerSecond`.                            |
 | `undeployIfDeployedOutOfBounds` | `false` | Undeploys players still out of bounds 1s after deploying (e.g. on a squad mate).    |
@@ -75,6 +78,17 @@ Whether the player is currently out of bounds (countdown running).
 ### `destroy()`
 
 Unsubscribes from all events and cleans up all UI, timers and the sound object.
+
+## Overlay types
+
+| Type   | Behavior                                                                                  |
+| ------ | ----------------------------------------------------------------------------------------- |
+| `Full` | Full-screen background with a title box and the countdown below; restricts the view.     |
+| `Hint` | Smaller title and countdown as text without background; does not restrict the view.      |
+| `None` | No overlay. Sound and spot still apply.                                                   |
+
+The `anchor` option applies to both types, e.g. `OutOfBounds.Anchor.BottomRight` places the overlay in the bottom-right
+corner. For `Full`, the anchor is used as the position of the title block.
 
 ## Penalties
 
