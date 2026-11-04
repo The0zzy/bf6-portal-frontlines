@@ -73,6 +73,23 @@ export namespace Frontlines {
         return result;
     }
 
+    function spawnVOObject(): mod.VO {
+        return mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0)) as mod.VO;
+    }
+
+    // one persistent VO object per team, spawned once in init(); concurrent VO lines per team need separate objects
+    let voTeam1: mod.VO | undefined;
+    let voTeam2: mod.VO | undefined;
+
+    function playVO(team: mod.Team, event: mod.VoiceOverEvents2D, flag: mod.VoiceOverFlags): void {
+        const vo = mod.Equals(team, mod.GetTeam(1)) ? voTeam1 : voTeam2;
+        if (!vo) {
+            console.log(`ERROR: playVO() - VO object for team is not spawned!`);
+            return;
+        }
+        mod.PlayVO(vo, event, flag, team);
+    }
+
     function getCapturePointVoiceFlag(capturePoint: mod.CapturePoint): mod.VoiceOverFlags {
         const voiceFlags = [mod.VoiceOverFlags.Alpha, mod.VoiceOverFlags.Bravo, mod.VoiceOverFlags.Charlie];
         const currentSector = getCurrentSector();
@@ -274,14 +291,9 @@ export namespace Frontlines {
         mod.SetMessageForGameEventNotificationData(sectorLostNotification, sectorLooseMessage, defendNextSectorMessage);
         mod.SendGameEventNotification(sectorLostNotification, getEnemyTeam(team));
 
-        const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha, team);
-        mod.PlayVO(vo, mod.VoiceOverEvents2D.SectorTakenDefender, mod.VoiceOverFlags.Alpha, getEnemyTeam(team));
-        mod.Wait(6).then(() => {
-            if (vo) {
-                mod.UnspawnObject(vo);
-            }
-        });
+        // PlayVO requires a flag; the sector lines do not depend on it
+        playVO(team, mod.VoiceOverEvents2D.SectorTakenAttacker, mod.VoiceOverFlags.Alpha);
+        playVO(getEnemyTeam(team), mod.VoiceOverEvents2D.SectorTakenDefender, mod.VoiceOverFlags.Alpha);
 
         if (mod.Equals(team, mod.GetTeam(1))) {
             currentSectorIndex++;
@@ -320,6 +332,9 @@ export namespace Frontlines {
             mod.EndGameMode(mod.GetTeam(0));
             return;
         }
+
+        voTeam1 = spawnVOObject();
+        voTeam2 = spawnVOObject();
 
         lastElapsedSeconds = Math.floor(mod.GetMatchTimeElapsed());
         isDay = isDayAt(lastElapsedSeconds);
@@ -616,15 +631,9 @@ export namespace Frontlines {
                 updateScoreboard(player, playerData);
             }
 
-            const vo = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_VOModule_OneShot2D, mod.CreateVector(0, 0, 0), mod.CreateVector(0, 0, 0));
             const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag, capturingTeam);
-            mod.PlayVO(vo, mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag, getEnemyTeam(capturingTeam));
-            mod.Wait(6).then(() => {
-                if (vo) {
-                    mod.UnspawnObject(vo);
-                }
-            });
+            playVO(capturingTeam, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag);
+            playVO(getEnemyTeam(capturingTeam), mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag);
 
             if (!mod.Equals(neutralTeam(), currentSector.isCapturedByTeam())) {
                 currentSector.setOwner(capturingTeam);
