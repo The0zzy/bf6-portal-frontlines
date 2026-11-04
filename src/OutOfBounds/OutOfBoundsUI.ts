@@ -3,8 +3,6 @@ import { UIContainer } from 'bf6-portal-utils/ui/components/container';
 import { UIText } from 'bf6-portal-utils/ui/components/text';
 import { OutOfBounds } from './OutOfBounds.ts';
 
-const RED = { r: 1, g: 0.2, b: 0.2 };
-
 /** Full-screen overlay: title box in the upper part of the screen, countdown below it. */
 const FULL_LAYOUT = { margin: 300, width: 800, lineHeight: 120, gap: 20, titleSize: 56, subtitleSize: 48 };
 /** Hint: smaller text without background. */
@@ -92,28 +90,26 @@ export class OutOfBoundsUI {
             width: layout.width,
             height: panelHeight,
             anchor: ui,
-            bgFill: UI.BgFill.None,
+            bgFill: UI.BgFill.OutlineThin,
+            bgColor: UI.COLORS.BF_RED_DARK,
+            bgAlpha: 0.9,
+            receiver: this.player,
         };
 
-        let root: UIContainer;
-        let panel: UIContainer;
-        if (full) {
-            root = new UIContainer({
-                x: 0,
-                y: 0,
-                width: 1920,
-                height: 1080,
-                anchor: UI.Anchor.Center,
-                bgColor: UI.COLORS.BLACK,
-                bgAlpha: 0.9,
-                bgFill: UI.BgFill.Blur,
-                receiver: this.player,
-            });
-            panel = new UIContainer({ ...panelOptions, parent: root });
-        } else {
-            root = new UIContainer({ ...panelOptions, receiver: this.player });
-            panel = root;
-        }
+        const root = new UIContainer({
+            x: 0,
+            y: 0,
+            width: 1920,
+            height: 1080,
+            anchor: UI.Anchor.Center,
+            bgColor: UI.COLORS.BLACK,
+            bgAlpha: 0.9,
+            bgFill: UI.BgFill.Blur,
+            receiver: this.player,
+            visible: full
+        });
+
+        const panel = new UIContainer({ ...panelOptions });
 
         const titleStyle = full
             ? { bgColor: { r: 0.6, g: 0.1, b: 0.1 }, bgAlpha: 0.8, bgFill: UI.BgFill.Blur }
@@ -125,11 +121,11 @@ export class OutOfBoundsUI {
             y: 0,
             width: layout.width,
             height: layout.lineHeight,
-            anchor: UI.Anchor.TopLeft,
+            anchor: UI.Anchor.TopCenter,
             ...titleStyle,
             label: this.title,
             textSize: layout.titleSize,
-            textColor: RED,
+            textColor: UI.COLORS.BF_RED_DARK,
             textAnchor: text,
         });
 
@@ -139,11 +135,11 @@ export class OutOfBoundsUI {
             y: layout.lineHeight + layout.gap,
             width: layout.width,
             height: layout.lineHeight,
-            anchor: UI.Anchor.TopLeft,
+            anchor: UI.Anchor.BottomCenter,
             bgFill: UI.BgFill.None,
             label: this.subtitle(0),
             textSize: layout.subtitleSize,
-            textColor: RED,
+            textColor: UI.COLORS.BF_RED_DARK,
             textAnchor: text,
         });
         return root;
