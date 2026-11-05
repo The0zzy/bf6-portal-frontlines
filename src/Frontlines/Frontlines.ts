@@ -354,9 +354,12 @@ export namespace Frontlines {
 
         outOfBounds = new OutOfBounds({
             gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
-            overlay: false,
+            overlayType: OutOfBounds.OverlayType.Hint,
+            anchor: OutOfBounds.Anchor.BottomCenter,
+            title: mod.Message(mod.stringkeys.frontlines.enemyTerritoryMSG),
+            subtitle: () => mod.Message(mod.stringkeys.frontlines.spottedMSG),
             sound: false,
-            spot: true,
+            spot: OutOfBounds.Spot.Minimap,
             penalty: OutOfBounds.Penalty.None,
         });
 
@@ -628,14 +631,14 @@ export namespace Frontlines {
                 updateScoreboard(player, playerData);
             }
 
-            const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-            playVO(capturingTeam, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag);
-            playVO(getEnemyTeam(capturingTeam), mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag);
-
+            // the last point of a sector takeover is silent; the sector taken VO plays in nextSector()
             if (!mod.Equals(neutralTeam(), currentSector.isCapturedByTeam())) {
                 currentSector.setOwner(capturingTeam);
                 nextSector(capturingTeam);
             } else {
+                const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
+                playVO(capturingTeam, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag);
+                playVO(getEnemyTeam(capturingTeam), mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag);
                 mod.EnableCapturePointDeploying(eventCapturePoint, true);
             }
         }
@@ -721,9 +724,9 @@ export namespace Frontlines {
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsCrouching)
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsInteracting)
         ) {
-            mod.Kill(eventPlayer);
-            await mod.Wait(0);
-            mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+            const newTeam = mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2);
+            mod.UndeployPlayer(eventPlayer);
+            mod.SetTeam(eventPlayer, newTeam);
         }
     }
 

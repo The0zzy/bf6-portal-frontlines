@@ -31,7 +31,8 @@ export class OutOfBounds {
     private static readonly DEPLOY_CHECK_DELAY_MS = 1000;
     private static readonly SPOT_DURATION = 2;
 
-    private readonly options: Required<OutOfBounds.Options>;
+    private readonly options: Required<Omit<OutOfBounds.Options, 'overlayType' | 'anchor' | 'title' | 'subtitle'>> &
+        OutOfBoundsUI.Config;
     private readonly players = new Map<number, PlayerState>();
     private teamAreas: TeamAreas[] = [];
     private unsubscribers: (() => void)[] = [];
@@ -40,9 +41,9 @@ export class OutOfBounds {
 
     constructor(options: OutOfBounds.Options) {
         this.options = {
-            overlay: true,
+            overlayType: OutOfBounds.OverlayType.Full,
             sound: true,
-            spot: false,
+            spot: OutOfBounds.Spot.None,
             penalty: OutOfBounds.Penalty.Kill,
             damagePerSecond: 10,
             undeployIfDeployedOutOfBounds: false,
@@ -244,7 +245,7 @@ export class OutOfBounds {
         state.outOfBounds = false;
         this.clearCountdown(state);
         state.ui?.hide();
-        if (this.options.spot && mod.IsPlayerValid(state.player)) {
+        if (this.options.spot !== OutOfBounds.Spot.None && mod.IsPlayerValid(state.player)) {
             mod.SpotTarget(state.player, mod.SpotStatus.Unspot);
         }
     }
@@ -278,19 +279,30 @@ export class OutOfBounds {
         this.notify(state);
     }
 
+    private spotStatus(): mod.SpotStatus {
+        switch (this.options.spot) {
+            case OutOfBounds.Spot.Minimap:
+                return mod.SpotStatus.SpotInMinimap;
+            case OutOfBounds.Spot.World:
+                return mod.SpotStatus.SpotInWorld;
+            default:
+                return mod.SpotStatus.SpotInBoth;
+        }
+    }
+
     private endsOnPenalty(): boolean {
         return this.options.penalty === OutOfBounds.Penalty.Kill || this.options.penalty === OutOfBounds.Penalty.Undeploy;
     }
 
     private notify(state: PlayerState): void {
-        if (this.options.spot) {
-            mod.SpotTarget(state.player, OutOfBounds.SPOT_DURATION, mod.SpotStatus.SpotInBoth);
+        if (this.options.spot !== OutOfBounds.Spot.None) {
+            mod.SpotTarget(state.player, OutOfBounds.SPOT_DURATION, this.spotStatus());
         }
 
         if (mod.GetSoldierState(state.player, mod.SoldierStateBool.IsAISoldier)) return;
 
-        if (this.options.overlay) {
-            state.ui ??= new OutOfBoundsUI(state.player);
+        if (this.options.overlayType !== OutOfBounds.OverlayType.None) {
+            state.ui ??= new OutOfBoundsUI(state.player, this.options);
             state.ui.show(state.secondsRemaining);
         }
         if (this.sfx) {
@@ -320,15 +332,55 @@ export namespace OutOfBounds {
         DamagePerSecond,
     }
 
+    export enum OverlayType {
+        /** Full-screen overlay with a background that blocks the view. */
+        Full,
+        /** Text only, no background; does not restrict the view. */
+        Hint,
+        /** No overlay. */
+        None,
+    }
+
+    /** Where the out-of-bounds player is spotted. Maps to `mod.SpotStatus`. */
+    export enum Spot {
+        /** No spotting. */
+        None,
+        /** Minimap and in-world. */
+        Both,
+        /** Minimap only. */
+        Minimap,
+        /** In-world only. */
+        World,
+    }
+
+    /** Position of the overlay on screen, used by both overlay types. */
+    export enum Anchor {
+        TopLeft,
+        TopCenter,
+        TopRight,
+        CenterLeft,
+        Center,
+        CenterRight,
+        BottomLeft,
+        BottomCenter,
+        BottomRight,
+    }
+
     export interface Options {
         /** Seconds a player may stay out of bounds before the penalty applies. */
         gracePeriod: number;
-        /** Full-screen overlay with countdown (human players only). Default: true. */
-        overlay?: boolean;
+        /** Appearance of the overlay, see `OverlayType`. Use `None` to disable it. Default: Full. */
+        overlayType?: OverlayType;
+        /** Position of the overlay. Default: TopCenter for Full, TopLeft for Hint. */
+        anchor?: Anchor;
+        /** Title message. Default: "OUT OF BOUNDS". */
+        title?: mod.Message;
+        /** Subtitle message for the countdown, receives the seconds remaining. Default: "Return to combat {}!". */
+        subtitle?: (secondsRemaining: number) => mod.Message;
         /** Countdown sound every second (human players only). Default: true. */
         sound?: boolean;
-        /** Spots the player on minimap and in world for everyone while out of bounds. Default: false. */
-        spot?: boolean;
+        /** Spots the player for everyone while out of bounds (minimap, world or both). Default: None. */
+        spot?: Spot;
         /** Applied when the grace period runs out. Default: Kill. */
         penalty?: Penalty;
         /** Damage per second for `Penalty.DamagePerSecond`. Default: 10. */

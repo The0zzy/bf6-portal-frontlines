@@ -10,13 +10,12 @@ export class FrontlinesCaptureSector extends FrontlinesSector {
         this.capturePoints = capturePoints;
     }
 
-    // Owned sectors are fully disabled; activate() re-enables the current one.
     override setOwner(team: mod.Team): void {
         super.setOwner(team);
         for (const point of this.capturePoints.values()) {
             mod.EnableGameModeObjective(point, false);
             mod.SetCapturePointOwner(point, team);
-            mod.EnableCapturePointDeploying(point, false);
+            mod.EnableCapturePointDeploying(point, true);
             mod.SetCapturePointCapturingTime(point, 9999);
             mod.SetCapturePointNeutralizationTime(point, 9999);
             mod.SetMaxCaptureMultiplier(point, 0.1);
