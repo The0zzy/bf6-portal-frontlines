@@ -631,14 +631,14 @@ export namespace Frontlines {
                 updateScoreboard(player, playerData);
             }
 
-            const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
-            playVO(capturingTeam, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag);
-            playVO(getEnemyTeam(capturingTeam), mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag);
-
+            // the last point of a sector takeover is silent; the sector taken VO plays in nextSector()
             if (!mod.Equals(neutralTeam(), currentSector.isCapturedByTeam())) {
                 currentSector.setOwner(capturingTeam);
                 nextSector(capturingTeam);
             } else {
+                const voiceFlag = getCapturePointVoiceFlag(eventCapturePoint);
+                playVO(capturingTeam, mod.VoiceOverEvents2D.ObjectiveCaptured, voiceFlag);
+                playVO(getEnemyTeam(capturingTeam), mod.VoiceOverEvents2D.ObjectiveCapturedEnemy, voiceFlag);
                 mod.EnableCapturePointDeploying(eventCapturePoint, true);
             }
         }

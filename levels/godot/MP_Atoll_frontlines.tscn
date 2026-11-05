@@ -225,6 +225,7 @@ metadata/_calculated_global_transform = Transform3D(0.793566, 0, 0.608484, 0, 1,
 metadata/linked = ["CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2"]
 
 [node name="CaptureArea" parent="Sector2/CapturePointA" unique_id=1454111015 instance=ExtResource("3_hvicx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.687744, 0)
 points = PackedVector2Array(23.124603, 12.186386, 6.5295105, -27.397934, -22.884216, -18.865173, -32.298737, -10.679901, -32.9411, -8.21405, -30.058136, -7.005188, -16.24884, 27.160568, -2.4816895, 19.397507)
 height = 11.0
 metadata/_calculated_global_transform = Transform3D(0.793566, 0, 0.608484, 0, 1, 0, -0.608484, 0, 0.793566, 423.85077, 100.26813, -159.28734)
@@ -582,9 +583,9 @@ metadata/_calculated_global_transform = Transform3D(0.993298, 0, -0.115579, 0, 1
 metadata/linked = ["CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2"]
 
 [node name="CaptureArea" parent="Sector4/CapturePointB" unique_id=1334439181 instance=ExtResource("3_hvicx")]
-transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, -1.4901161e-08, 0, 1, 0, 1.4901161e-08, 0, 1, 0, -9.089294, 0)
 points = PackedVector2Array(-31.667145, -2.4013977, -29.804993, 56.99582, 26.609528, 54.810577, 24.942535, -3.5858765)
-height = 18.0
+height = 30.0
 metadata/_calculated_global_transform = Transform3D(0.993298, 0, -0.115579, 0, 1, 0, 0.115579, 0, 0.993298, 221.81155, 102.705124, 430.38022)
 
 [node name="Team1" type="Node3D" parent="Sector4/CapturePointB" unique_id=1250143937]
