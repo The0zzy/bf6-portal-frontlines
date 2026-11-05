@@ -724,9 +724,9 @@ export namespace Frontlines {
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsCrouching)
             && mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsInteracting)
         ) {
-            mod.Kill(eventPlayer);
-            await mod.Wait(0);
-            mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+            const newTeam = mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2);
+            mod.UndeployPlayer(eventPlayer);
+            mod.SetTeam(eventPlayer, newTeam);
         }
     }
 
