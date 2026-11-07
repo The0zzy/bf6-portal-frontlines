@@ -12,11 +12,11 @@ Dokumentiert, wie `frontlines_3sector.tscn`, `frontlines_5sector.tscn` und `fron
 ## Layout-Regeln
 
 - Sektoren liegen auf der X-Achse in einer geraden Linie, kein Ring.
-- Sektor-Abstand: 200 m. Sektoren berühren sich Kante an Kante.
-- Sektor-Area: 200×200 (`points = PackedVector2Array(-100, -100, 100, -100, 100, 100, -100, 100)`).
+- Sektor-Abstand: 100 m (= Sektorbreite). Sektoren berühren sich Kante an Kante.
+- Sektor-Area: 100×100 (`points = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)`).
 - CP-Area: 40×40 (±20).
-- Team-HQ-Areas: 200×200. Position: äußerster Sektor ±400 (3er), ±600 (5er), ±800 (7er). Das ergibt Kantenkontakt mit dem äußersten Sektor.
-- Sektor-HQ: Position nicht in der Mitte und nicht in einem Quadranten. Lokales X = ±50 (Vorzeichen nach Sektorposition: x<0 → -50, x≥0 → +50).
+- Team-HQ-Areas: 200×200. Position: äußerster Sektor ±250 (3er), ±350 (5er), ±450 (7er). Das ergibt Kantenkontakt mit dem äußersten Sektor.
+- Sektor-HQ: Position nicht in der Mitte und nicht in einem Quadranten. Lokales X = ±25 (Vorzeichen nach Sektorposition: x<0 → -25, x≥0 → +25).
 - Area-Trigger: Mitte der Area, lokal `(0, 150, 0)`. Setzt Höhe 300 voraus.
 - Sektor-HQs nutzen die Sektor-Area (`HQArea = ../S{i}_area`). Die HQ-Größe spielt daher keine Rolle.
 
