@@ -44,6 +44,7 @@ Quelle: `src/Frontlines/FrontlinesConfig.ts`.
 
 - VehicleType 22 für Quadbike: vom Benutzer akzeptiert, nicht gegen die Engine verifiziert. Im Repo gibt es keinen Quadbike-Enum.
 - CP-Team-Spawns: 2 pro Team (Demo nutzt 4).
+- CP-Spawns haben keinen Node3D-Container pro Team. Team und CP stehen im Namen/Pfad, z.B. `S2/S2_cp1/S2_cp1_t1_spawnpoint1`. Die `InfantrySpawnPoints_Team1/2`-Arrays des CP und die `InfantrySpawns`-Arrays der HQs verweisen auf diese Pfade.
 - S6-InitialOwner und Fahrzeugtypen sind aus dem Demo-Muster abgeleitet.
 - Trigger-Höhe `(0,150,0)` setzt eine Area-Höhe von 300 voraus.
 - CP-Areas wurden ebenfalls verdoppelt (40 statt 20), obwohl die Anforderung sich auf alle Areas bezog.

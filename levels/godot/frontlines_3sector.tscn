@@ -168,27 +168,23 @@ InitialOwner = 1
 ObjId = 6420
 OutlineSetting = 1
 CaptureArea = NodePath("S2_cp1_area")
-InfantrySpawnPoints_Team1 = [NodePath("S2_cp1_t1/S2_cp1_t1_spawnpoint1"), NodePath("S2_cp1_t1/S2_cp1_t1_spawnpoint2")]
-InfantrySpawnPoints_Team2 = [NodePath("S2_cp1_t2/S2_cp1_t2_spawnpoint1"), NodePath("S2_cp1_t2/S2_cp1_t2_spawnpoint2")]
+InfantrySpawnPoints_Team1 = [NodePath("S2_cp1_t1_spawnpoint1"), NodePath("S2_cp1_t1_spawnpoint2")]
+InfantrySpawnPoints_Team2 = [NodePath("S2_cp1_t2_spawnpoint1"), NodePath("S2_cp1_t2_spawnpoint2")]
 
 [node name="S2_cp1_area" parent="S2/S2_cp1" instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
 height = 20.0
 
-[node name="S2_cp1_t1" type="Node3D" parent="S2/S2_cp1"]
-
-[node name="S2_cp1_t1_spawnpoint1" parent="S2/S2_cp1/S2_cp1_t1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t1_spawnpoint1" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
 
-[node name="S2_cp1_t1_spawnpoint2" parent="S2/S2_cp1/S2_cp1_t1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t1_spawnpoint2" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
 
-[node name="S2_cp1_t2" type="Node3D" parent="S2/S2_cp1"]
-
-[node name="S2_cp1_t2_spawnpoint1" parent="S2/S2_cp1/S2_cp1_t2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t2_spawnpoint1" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
 
-[node name="S2_cp1_t2_spawnpoint2" parent="S2/S2_cp1/S2_cp1_t2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t2_spawnpoint2" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 4)
 
 [node name="S2_cp2" parent="S2" node_paths=PackedStringArray("CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2") instance=ExtResource("19_nans0")]
@@ -197,27 +193,23 @@ InitialOwner = 1
 ObjId = 6421
 OutlineSetting = 1
 CaptureArea = NodePath("S2_cp2_area")
-InfantrySpawnPoints_Team1 = [NodePath("S2_cp2_t1/S2_cp2_t1_spawnpoint1"), NodePath("S2_cp2_t1/S2_cp2_t1_spawnpoint2")]
-InfantrySpawnPoints_Team2 = [NodePath("S2_cp2_t2/S2_cp2_t2_spawnpoint1"), NodePath("S2_cp2_t2/S2_cp2_t2_spawnpoint2")]
+InfantrySpawnPoints_Team1 = [NodePath("S2_cp2_t1_spawnpoint1"), NodePath("S2_cp2_t1_spawnpoint2")]
+InfantrySpawnPoints_Team2 = [NodePath("S2_cp2_t2_spawnpoint1"), NodePath("S2_cp2_t2_spawnpoint2")]
 
 [node name="S2_cp2_area" parent="S2/S2_cp2" instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
 height = 20.0
 
-[node name="S2_cp2_t1" type="Node3D" parent="S2/S2_cp2"]
-
-[node name="S2_cp2_t1_spawnpoint1" parent="S2/S2_cp2/S2_cp2_t1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t1_spawnpoint1" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
 
-[node name="S2_cp2_t1_spawnpoint2" parent="S2/S2_cp2/S2_cp2_t1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t1_spawnpoint2" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
 
-[node name="S2_cp2_t2" type="Node3D" parent="S2/S2_cp2"]
-
-[node name="S2_cp2_t2_spawnpoint1" parent="S2/S2_cp2/S2_cp2_t2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t2_spawnpoint1" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
 
-[node name="S2_cp2_t2_spawnpoint2" parent="S2/S2_cp2/S2_cp2_t2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t2_spawnpoint2" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 4)
 
 [node name="S2_hq" parent="S2" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
@@ -227,7 +219,7 @@ ObjId = 6222
 VehicleSpawnersEnabled = true
 HQArea = NodePath("../S2_area")
 HQProtectionAreaVolume = NodePath("../S2_area")
-InfantrySpawns = [NodePath("S2_hq_spawnpoint1"), NodePath("S2_hq_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t1/S2_cp1_t1_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t1/S2_cp1_t1_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t2/S2_cp1_t2_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t2/S2_cp1_t2_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t1/S2_cp2_t1_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t1/S2_cp2_t1_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t2/S2_cp2_t2_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t2/S2_cp2_t2_spawnpoint2")]
+InfantrySpawns = [NodePath("S2_hq_spawnpoint1"), NodePath("S2_hq_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t1_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t1_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t2_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t2_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t1_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t1_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t2_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t2_spawnpoint2")]
 VehicleSpawners = [NodePath("S2_hq_vehicle1")]
 
 [node name="S2_hq_spawnpoint1" parent="S2/S2_hq" instance=ExtResource("5_cluh4")]
