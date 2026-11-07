@@ -94,18 +94,6 @@ export class OutOfBoundsUI {
         const full = this.overlayType === OutOfBounds.OverlayType.Full;
         const layout = full ? FULL_LAYOUT : HINT_LAYOUT;
         const { ui, text, inwardX, inwardY } = anchorLayout(this.anchor);
-        const panelHeight = layout.lineHeight * 2 + layout.gap;
-        const panelOptions = {
-            x: inwardX * layout.margin,
-            y: inwardY * layout.margin,
-            width: layout.width,
-            height: panelHeight,
-            anchor: ui,
-            bgFill: UI.BgFill.OutlineThin,
-            bgColor: UI.COLORS.BF_RED_DARK,
-            bgAlpha: 0.9,
-            receiver: this.player,
-        };
 
         if (full) {
             this.backdrop = new UIContainer({
@@ -123,7 +111,17 @@ export class OutOfBoundsUI {
         }
 
         // root-level panel (not a child of root), so it must be tracked separately
-        this.panel = new UIContainer({ ...panelOptions });
+        this.panel = new UIContainer({
+            x: inwardX * layout.margin,
+            y: inwardY * layout.margin,
+            width: layout.width,
+            height: layout.lineHeight * 2 + layout.gap,
+            anchor: ui,
+            bgFill: UI.BgFill.Blur,
+            bgColor: UI.COLORS.BF_RED_DARK,
+            bgAlpha: 0.9,
+            receiver: this.player,
+        });
 
         const titleStyle = full
             ? { bgColor: { r: 0.6, g: 0.1, b: 0.1 }, bgAlpha: 0.8, bgFill: UI.BgFill.Blur }

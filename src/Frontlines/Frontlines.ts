@@ -352,16 +352,7 @@ export namespace Frontlines {
         ui = new FrontlinesUI(sectors);
         ui.setTimer(frontlinesSettings.timeLimit * 60 - lastElapsedSeconds);
 
-        outOfBounds = new OutOfBounds({
-            gracePeriod: frontlinesSettings.outOfBoundsGracePeriod,
-            overlayType: OutOfBounds.OverlayType.Hint,
-            anchor: OutOfBounds.Anchor.BottomCenter,
-            title: mod.Message(mod.stringkeys.frontlines.enemyTerritoryMSG),
-            subtitle: () => mod.Message(mod.stringkeys.frontlines.spottedMSG),
-            sound: false,
-            spot: OutOfBounds.Spot.Minimap,
-            penalty: OutOfBounds.Penalty.None,
-        });
+        outOfBounds = new OutOfBounds(frontlinesSettings.outOfBounds);
 
         setupHqs();
         startCapture();

@@ -1,3 +1,16 @@
+import { OutOfBounds } from '../OutOfBounds/OutOfBounds.ts';
+
+export interface OutOfBoundsSettings {
+    gracePeriod: number; //seconds
+    overlayType: OutOfBounds.OverlayType;
+    anchor: OutOfBounds.Anchor;
+    title: mod.Message;
+    subtitle: (secondsRemaining: number) => mod.Message;
+    sound: boolean;
+    spot: OutOfBounds.Spot;
+    penalty: OutOfBounds.Penalty;
+}
+
 export interface FrontlineSettings {
     enableTeamSwitch: boolean;
     timeLimit: number,
@@ -10,7 +23,7 @@ export interface FrontlineSettings {
     redeployTime: number,
     daytime: number,
     nighttime: number,
-    outOfBoundsGracePeriod: number
+    outOfBounds: OutOfBoundsSettings
 }
 
 export const debugSettings: FrontlineSettings = {
@@ -24,8 +37,19 @@ export const debugSettings: FrontlineSettings = {
     redeployTime: 5, //seconds
     daytime: 5, //minutes
     nighttime: 5, //minutes
-    outOfBoundsGracePeriod: 10,
-    enableTeamSwitch: true
+    enableTeamSwitch: true,
+    outOfBounds: {
+        gracePeriod: 10,
+        overlayType: OutOfBounds.OverlayType.Hint,
+        anchor: OutOfBounds.Anchor.BottomCenter,
+        title: mod.Message(mod.stringkeys.frontlines.enemyTerritoryMSG),
+        subtitle: (secondsRemaining: number) => secondsRemaining > 0
+            ? mod.Message(mod.stringkeys.frontlines.willBeSpottedMSG, secondsRemaining)
+            : mod.Message(mod.stringkeys.frontlines.spottedMSG),
+        sound: false,
+        spot: OutOfBounds.Spot.Minimap,
+        penalty: OutOfBounds.Penalty.None
+    }
 };
 export const defaultSettings: FrontlineSettings = {
     timeLimit: 60, //minutes
@@ -38,8 +62,19 @@ export const defaultSettings: FrontlineSettings = {
     redeployTime: 15, //seconds
     daytime: 14, //minutes
     nighttime: 10, //minutes
-    outOfBoundsGracePeriod: 10, //seconds
-    enableTeamSwitch: false
+    enableTeamSwitch: false,
+    outOfBounds: {
+        gracePeriod: 10,
+        overlayType: OutOfBounds.OverlayType.Hint,
+        anchor: OutOfBounds.Anchor.BottomCenter,
+        title: mod.Message(mod.stringkeys.frontlines.enemyTerritoryMSG),
+        subtitle: (secondsRemaining: number) => secondsRemaining > 0
+            ? mod.Message(mod.stringkeys.frontlines.willBeSpottedMSG, secondsRemaining)
+            : mod.Message(mod.stringkeys.frontlines.spottedMSG),
+        sound: false,
+        spot: OutOfBounds.Spot.Minimap,
+        penalty: OutOfBounds.Penalty.None
+    }
 };
 export const frontlinesSettings = debugSettings;
 

@@ -47,6 +47,7 @@
         "deaths": "Deaths",
         "assists": "Assists",
         "enemyTerritoryMSG": "ENEMY TERRITORY",
+        "willBeSpottedMSG": "You will be spotted in {}",
         "spottedMSG": "You are spotted!"
     }
 }
