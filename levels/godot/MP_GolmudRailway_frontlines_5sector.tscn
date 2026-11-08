@@ -215,7 +215,7 @@ transform = Transform3D(-0.9557621, 0, -0.29414052, 0, 1, 0, 0.29414052, 0, -0.9
 ObjId = 6411
 
 [node name="S1_hq" parent="S1" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.988, 0.0, -137.2929)
 AltTeam = 0
 ObjId = 6221
 VehicleSpawnersEnabled = true
@@ -225,61 +225,61 @@ InfantrySpawns = []
 VehicleSpawners = [NodePath("S1_hq_vehicle1"), NodePath("S1_hq_vehicle2"), NodePath("S1_hq_vehicle3"), NodePath("S1_hq_vehicle4"), NodePath("S1_hq_vehicle5"), NodePath("S1_hq_vehicle6"), NodePath("S1_hq_vehicle7"), NodePath("S1_hq_vehicle8"), NodePath("S1_hq_vehicle9"), NodePath("S1_hq_vehicle10")]
 
 [node name="S1_hq_vehicle1" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.9955574, 0, 0.09416117, 0, 1, 0, -0.09416117, 0, -0.9955574, -37.829197, 1.4175415, 90.75026)
+transform = Transform3D(-0.9955574, 0, 0.09416117, 0, 1, 0, -0.09416117, 0, -0.9955574, -53.8172, 1.4175, 228.0431)
 ObjId = 6310
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle2" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.99763215, 0, 0.06878212, 0, 1, 0, -0.06878212, 0, -0.99763215, -43.916954, 2.649353, 108.16535)
+transform = Transform3D(-0.99763215, 0, 0.06878212, 0, 1, 0, -0.06878212, 0, -0.99763215, -59.905, 2.6494, 245.4582)
 ObjId = 6311
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle3" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.98750174, 0, 0.15760675, 0, 1, 0, -0.15760675, 0, -0.98750174, -0.5858002, 2.026062, 107.44458)
+transform = Transform3D(-0.98750174, 0, 0.15760675, 0, 1, 0, -0.15760675, 0, -0.98750174, -16.5738, 2.0261, 244.7375)
 ObjId = 6312
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle4" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.9986633, 0, -0.05167389, 0, 1, 0, 0.05167389, 0, -0.9986633, -22.747229, -0.63275146, 111.371895)
+transform = Transform3D(-0.9986633, 0, -0.05167389, 0, 1, 0, 0.05167389, 0, -0.9986633, -38.7353, -0.6328, 248.6648)
 ObjId = 6313
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle5" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.9979312, 0, 0.06428794, 0, 1, 0, -0.06428794, 0, -0.9979312, -10.878166, -1.0576782, 98.76404)
+transform = Transform3D(-0.9979312, 0, 0.06428794, 0, 1, 0, -0.06428794, 0, -0.9979312, -26.8662, -1.0577, 236.0569)
 ObjId = 6314
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle6" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.9997193, 0, -0.023682449, 0, 1, 0, 0.023682449, 0, -0.9997193, 7.7416, -2.619812, 85.170044)
+transform = Transform3D(-0.9997193, 0, -0.023682449, 0, 1, 0, 0.023682449, 0, -0.9997193, -8.2464, -2.6198, 222.4629)
 ObjId = 6315
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle7" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.49151224, 0, 0.8708705, 0, 1, 0, -0.8708705, 0, -0.49151224, -25.326195, -6.5968018, 71.56885)
+transform = Transform3D(-0.49151224, 0, 0.8708705, 0, 1, 0, -0.8708705, 0, -0.49151224, -41.3142, -6.5968, 208.8617)
 ObjId = 6316
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle8" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.7695997, 0, -0.6385263, 0, 1, 0, 0.6385263, 0, -0.7695997, 9.31134, 4.255371, 107.8241)
+transform = Transform3D(-0.7695997, 0, -0.6385263, 0, 1, 0, 0.6385263, 0, -0.7695997, -6.6767, 4.2554, 245.117)
 ObjId = 6317
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle9" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.9999306, 0, 0.011762798, 0, 1, 0, -0.011762798, 0, -0.9999306, -15.457636, -0.26745605, 106.324646)
+transform = Transform3D(-0.9999306, 0, 0.011762798, 0, 1, 0, -0.011762798, 0, -0.9999306, -31.4457, -0.2675, 243.6175)
 ObjId = 6318
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S1_hq_vehicle10" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(-0.98874056, 0, 0.14963838, 0, 1, 0, -0.14963838, 0, -0.98874056, -31.145256, 0.66412354, 114.90784)
+transform = Transform3D(-0.98874056, 0, 0.14963838, 0, 1, 0, -0.14963838, 0, -0.98874056, -47.1333, 0.6641, 252.2007)
 ObjId = 6319
 VehicleType = 22
 P_AutoSpawnEnabled = true
@@ -632,7 +632,7 @@ transform = Transform3D(-0.7012578, 0, -0.7129075, 0, 1, 0, 0.7129075, 0, -0.701
 ObjId = 6451
 
 [node name="S5_hq" parent="S5" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106.1341, 0.0, 116.3711)
 AltTeam = 0
 ObjId = 6225
 VehicleSpawnersEnabled = true
@@ -642,61 +642,61 @@ InfantrySpawns = []
 VehicleSpawners = [NodePath("S5_hq_vehicle1"), NodePath("S5_hq_vehicle2"), NodePath("S5_hq_vehicle3"), NodePath("S5_hq_vehicle4"), NodePath("S5_hq_vehicle5"), NodePath("S5_hq_vehicle6"), NodePath("S5_hq_vehicle7"), NodePath("S5_hq_vehicle8"), NodePath("S5_hq_vehicle9"), NodePath("S5_hq_vehicle10")]
 
 [node name="S5_hq_vehicle1" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.9999898, 0, 0.0045025013, 0, 1, 0, -0.0045025013, 0, 0.9999898, -35.90818, -23.865662, -58.45801)
+transform = Transform3D(0.9999898, 0, 0.0045025013, 0, 1, 0, -0.0045025013, 0, 0.9999898, 70.2259, -23.8657, -174.8291)
 ObjId = 6350
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle2" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.9999732, 0, -0.007313311, 0, 1, 0, 0.007313311, 0, 0.9999732, -24.633009, -24.567444, -57.96633)
+transform = Transform3D(0.9999732, 0, -0.007313311, 0, 1, 0, 0.007313311, 0, 0.9999732, 81.501, -24.5674, -174.3374)
 ObjId = 6351
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle3" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.5206675, 0, -0.8537599, 0, 1, 0, 0.8537599, 0, 0.5206675, -41.32865, -23.141357, -71.252556)
+transform = Transform3D(0.5206675, 0, -0.8537599, 0, 1, 0, 0.8537599, 0, 0.5206675, 64.8054, -23.1414, -187.6236)
 ObjId = 6352
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle4" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.43857503, 0, -0.8986947, 0, 1, 0, 0.8986947, 0, 0.43857503, -32.66114, -23.889893, -79.99209)
+transform = Transform3D(0.43857503, 0, -0.8986947, 0, 1, 0, 0.8986947, 0, 0.43857503, 73.4729, -23.8899, -196.3632)
 ObjId = 6353
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle5" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.6191901, 0, -0.78524125, 0, 1, 0, 0.78524125, 0, 0.6191901, -50.050735, -22.510742, -62.74032)
+transform = Transform3D(0.6191901, 0, -0.78524125, 0, 1, 0, 0.78524125, 0, 0.6191901, 56.0833, -22.5107, -179.1114)
 ObjId = 6354
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle6" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.9608906, 0, -0.27692887, 0, 1, 0, 0.27692887, 0, 0.9608906, -63.63282, -22.776001, -72.48428)
+transform = Transform3D(0.9608906, 0, -0.27692887, 0, 1, 0, 0.27692887, 0, 0.9608906, 42.5012, -22.776, -188.8554)
 ObjId = 6355
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle7" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.9519427, 0, -0.30627683, 0, 1, 0, 0.30627683, 0, 0.9519427, -57.961716, -23.505066, -81.152596)
+transform = Transform3D(0.9519427, 0, -0.30627683, 0, 1, 0, 0.30627683, 0, 0.9519427, 48.1723, -23.5051, -197.5237)
 ObjId = 6356
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle8" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.9895284, 0, -0.14433879, 0, 1, 0, 0.14433879, 0, 0.9895284, -53.729156, -23.784302, -86.50724)
+transform = Transform3D(0.9895284, 0, -0.14433879, 0, 1, 0, 0.14433879, 0, 0.9895284, 52.4049, -23.7843, -202.8783)
 ObjId = 6357
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle9" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.75210464, 0, -0.6590439, 0, 1, 0, 0.6590439, 0, 0.75210464, -34.343487, -24.403381, -88.44322)
+transform = Transform3D(0.75210464, 0, -0.6590439, 0, 1, 0, 0.6590439, 0, 0.75210464, 71.7906, -24.4034, -204.8143)
 ObjId = 6358
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
 [node name="S5_hq_vehicle10" parent="S5/S5_hq" instance=ExtResource("17_omiuj")]
-transform = Transform3D(0.97737545, 0, 0.2115126, 0, 1, 0, -0.2115126, 0, 0.97737545, -26.41903, -24.229675, -86.28754)
+transform = Transform3D(0.97737545, 0, 0.2115126, 0, 1, 0, -0.2115126, 0, 0.97737545, 79.715, -24.2297, -202.6586)
 ObjId = 6359
 VehicleType = 22
 P_AutoSpawnEnabled = true

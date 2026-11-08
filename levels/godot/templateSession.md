@@ -65,6 +65,7 @@ Mapping:
 - `Sector T2Mcoms` → `S5` (6205), MCOMs `S5_mcom1/2` (6450/6451), 10 Fahrzeuge unter `S5_hq` (6350–6359).
 - Root-HQs `t1_hq` (6100) und `t2_hq` (6150) mit je 10 Quadbike-Fahrzeugen (Template-Muster). Ihre Area `t{n}_hq_area` ist das Polygon `HQ1Area` aus `Sector T{n}Mcoms/HQ1AreaTrigger` (statische Team-HQ-Area, Höhe 300). Der lokale Transform ist der Offset zum Root-HQ (Weltposition HQ1Area minus Weltposition TEAM_n_HQ, berechnet über die Parent-Kette). Die `HQ_Team`-Polygone entfallen.
 - Sektor-Trigger zentriert in der Area (Y = Area-Offset + 150).
+- S1/S5-HQ (`S1_hq`, `S5_hq`) liegt top-down in der Mitte der Sektor-Area (X/Z-Bbox-Mitte, Y = 0 relativ zum Sektor). Die 10 Fahrzeuge sind relativ dazu verschoben, ihre Weltposition bleibt gleich.
 - Kept verbatim: `CombatArea`, `Camera3D/DeployCam`, `Static` (Assets, Terrain, Decal).
 
 Bekannte Abweichungen:
