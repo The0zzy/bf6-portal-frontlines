@@ -49,6 +49,31 @@ Quelle: `src/Frontlines/FrontlinesConfig.ts`.
 - Trigger-Höhe `(0,150,0)` setzt eine Area-Höhe von 300 voraus.
 - CP-Areas wurden ebenfalls verdoppelt (40 statt 20), obwohl die Anforderung sich auf alle Areas bezog.
 
+## Anwendung auf MP_GolmudRailway (5-Sektor-Template)
+
+Datei: `levels/godot/MP_GolmudRailway_frontlines.tscn` (ersetzt die alte Struktur). Header-UID bleibt `uid://rt0feja734ml`.
+
+Quelle: `MP_GolmudRailway_frontlines` aus Portal. Die Sektor-Transforms stammen aus der Quelle, die Child-Transforms bleiben lokal erhalten.
+
+Mapping:
+- `Sector T1Mcoms` → `S1` (6201), MCOMs `S1_mcom1/2` (6410/6411), 10 Fahrzeuge unter `S1_hq` (6310–6319).
+- `Sector1` → `S2` (6202), CPs `S2_cp1/2` (6420/6421, InitialOwner 1), HQ `S2_hq` (6222), VS `S2_hq_vehicle1` (6320).
+- `Sector2 - Middle` → `S3` (6203), nur `S3_cp1` (6430), HQ `S3_hq` (6223), VS `S3_hq_vehicle1` (6330).
+- `Sector3` → `S4` (6204), CPs `S4_cp1/2` (6440/6441, InitialOwner 2), HQ `S4_hq` (6224), VS `S4_hq_vehicle1` (6340).
+- `Sector T2Mcoms` → `S5` (6205), MCOMs `S5_mcom1/2` (6450/6451), 10 Fahrzeuge unter `S5_hq` (6350–6359).
+- Root-HQs `t1_hq` (6100) und `t2_hq` (6150) mit je 10 Quadbike-Fahrzeugen (Template-Muster), Areas 10×10 (Template-Größe).
+- Sektor-Trigger zentriert in der Area (Y = Area-Offset + 150).
+- Kept verbatim: `CombatArea`, `Camera3D/DeployCam`, `Static` (Assets, Terrain, Decal).
+
+Bekannte Abweichungen:
+- S2–S4 HQ-Areas: die Golmud-HQ-Polygone wurden übernommen (`S{i}_hq_area`). Das Template nutzt dort den Sektor-Bereich.
+- S3 hat nur einen CP (Quelle hatte einen).
+- CP-Spawns: 4 pro Team statt 2.
+- Bugfix in der Quelle: `Sector3`-CP A verwies bei Team-2-Slot 2 auf `Team1/SpawnPoint_1_2`. Jetzt korrekt auf Team2.
+- VehicleType 22 (Quadbike) weiterhin nicht gegen die Engine verifiziert.
+
+Validierung: Link-Check (`/tmp/validate_frontlines.py`-Logik) ohne Fehler, 61 eindeutige ObjIds. Kein Godot-Parse-Test (Godot nicht installiert).
+
 ## Verbindung zur Copilot CLI
 
 Auf einem Rechner mit Godot: Repo klonen, Branch `godot-templates` auswählen. So ist die Dateistruktur direkt verfügbar. Eine direkte Session-Verbindung ist nicht geprüft.
