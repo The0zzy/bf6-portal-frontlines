@@ -66,7 +66,8 @@ Mapping:
 - Kept verbatim: `CombatArea`, `Camera3D/DeployCam`, `Static` (Assets, Terrain, Decal).
 
 Bekannte Abweichungen:
-- S2–S4 HQ-Areas: die Golmud-HQ-Polygone wurden übernommen (`S{i}_hq_area`). Das Template nutzt dort den Sektor-Bereich.
+- S2–S4 HQs haben keine eigene Area mehr. `HQArea` und `HQProtectionAreaVolume` zeigen auf `../S{i}_area` (Sektor-Area, wie im Template). Die Golmud-HQ-Polygone (`HQ_Team1`) entfallen.
+- Areas: Sektor-Areas aus Golmud `SectorArea`, CP-Areas aus Golmud `CaptureArea`, Root-HQ-Areas aus `HQ_Team`-Polygonen. Die HQ1AreaTrigger-Polygone in S1/S5 sind nicht übernommen.
 - S3 hat nur einen CP (Quelle hatte einen).
 - CP-Spawns: 4 pro Team statt 2.
 - Bugfix in der Quelle: `Sector3`-CP A verwies bei Team-2-Slot 2 auf `Team1/SpawnPoint_1_2`. Jetzt korrekt auf Team2.
