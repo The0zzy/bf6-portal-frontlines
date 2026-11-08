@@ -265,7 +265,7 @@ transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
 
 [node name="VehicleSpawner7" parent="Sector" unique_id=199406978 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.9969901, 0, -0.07753545, 0, 1, 0, 0.07753545, 0, -0.9969901, -42.46826, 12.952362, -55.636078)
+transform = Transform3D(-0.9969901, 0, -0.07753545, 0, 1, 0, 0.07753545, 0, -0.9969901, -42.46826, 15.952362, -55.636078)
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
@@ -283,7 +283,7 @@ P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
 
 [node name="VehicleSpawner" parent="Sector" unique_id=1270381243 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.77437055, 0, 0.63273203, 0, 1, 0, -0.63273203, 0, 0.77437055, 100.84961, 4.2130814, 113.580475)
+transform = Transform3D(0.77437055, 0, 0.63273203, 0, 1, 0, -0.63273203, 0, 0.77437055, 100.84961, 7.213081, 113.580475)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 150
@@ -371,7 +371,7 @@ transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
 
 [node name="VehicleSpawner" parent="Sector2/TEAM_1_HQ" unique_id=828854307 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.295546, -0.787962, 0.540155, 0.787962, -0.118629, -0.604187, 0.540155, 0.604187, 0.585824, 27.3649, 7.46375, -40.652)
+transform = Transform3D(0.295546, -0.787962, 0.540155, 0.787962, -0.118629, -0.604187, 0.540155, 0.604187, 0.585824, 27.3649, 10.46375, -40.652)
 ObjId = 502
 VehicleType = 8
 P_AutoSpawnEnabled = true
@@ -444,7 +444,7 @@ transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
 
 [node name="VehicleSpawner" parent="Sector3/TEAM_1_HQ" unique_id=976728368 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.681727, 0.697299, 0.221412, -0.578099, 0.327943, 0.747164, 0.448386, -0.63736, 0.626676, -30.4845, -8.89516, 22.3774)
+transform = Transform3D(0.681727, 0.697299, 0.221412, -0.578099, 0.327943, 0.747164, 0.448386, -0.63736, 0.626676, -30.4845, -5.89516, 22.3774)
 ObjId = 503
 VehicleType = 8
 P_AutoSpawnEnabled = true
@@ -503,7 +503,7 @@ transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
 
 [node name="VehicleSpawner7" parent="Sector3" unique_id=1193726902 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.9969901, 0, -0.07753545, 0, 1, 0, 0.07753545, 0, -0.9969901, 78.42999, 12.952362, -149.18408)
+transform = Transform3D(-0.9969901, 0, -0.07753545, 0, 1, 0, 0.07753545, 0, -0.9969901, 78.42999, 15.952362, -149.18408)
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
@@ -613,7 +613,7 @@ transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
 
 [node name="VehicleSpawner" parent="Sector6" unique_id=1072420264 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.9787886, 0, -0.20487206, 0, 1, 0, 0.20487206, 0, 0.9787886, 70.98657, 4.885414, 150.01147)
+transform = Transform3D(0.9787886, 0, -0.20487206, 0, 1, 0, 0.20487206, 0, 0.9787886, 70.98657, 7.885414, 150.01147)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 150
@@ -689,19 +689,19 @@ transform = Transform3D(1, 0, 3.72529e-09, 0, 1, 0, -3.72529e-09, 0, 1, -0.37728
 points = PackedVector2Array(-4.33664, -1.70758, -5.00214, 6.36859, 4.66574, 6.8584, 5.35239, -1.47235)
 
 [node name="VehicleSpawner2" parent="Sector4" unique_id=2041567669 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 30.357666, -24.281929, 41.458984)
+transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 30.357666, -21.281929, 41.458984)
 VehicleType = 7
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300
 
 [node name="VehicleSpawner3" parent="Sector4" unique_id=1592678836 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 28.573975, -25.772423, 50.45459)
+transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 28.573975, -22.772423, 50.45459)
 VehicleType = 5
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300
 
 [node name="VehicleSpawner" parent="Sector4" unique_id=576022585 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.34916097, 0, 0.93706256, 0, 1, 0, -0.93706256, 0, 0.34916097, 606.3054, -21.117874, -209.08875)
+transform = Transform3D(0.34916097, 0, 0.93706256, 0, 1, 0, -0.93706256, 0, 0.34916097, 606.3054, -18.117874, -209.08875)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 150
@@ -725,7 +725,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner4" parent="Sector4" unique_id=1809381947 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.3082198, 0, 0.9513146, 0, 1, 0, -0.9513146, 0, 0.3082198, 630.9015, -22.605362, -211.91852)
+transform = Transform3D(0.3082198, 0, 0.9513146, 0, 1, 0, -0.9513146, 0, 0.3082198, 630.9015, -19.605362, -211.91852)
 VehicleType = 3
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300
@@ -740,7 +740,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner5" parent="Sector4" unique_id=798316283 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.3846009, 0, 0.9230827, 0, 1, 0, -0.9230827, 0, 0.3846009, 624.29724, -24.048523, -191.36316)
+transform = Transform3D(0.3846009, 0, 0.9230827, 0, 1, 0, -0.9230827, 0, 0.3846009, 624.29724, -21.048523, -191.36316)
 VehicleType = 17
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300
@@ -756,7 +756,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner7" parent="Sector4" unique_id=1783536070 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.18268326, 0, -0.98317224, 0, 1, 0, 0.98317224, 0, -0.18268326, 47.60742, -25.245049, 76.78833)
+transform = Transform3D(-0.18268326, 0, -0.98317224, 0, 1, 0, 0.98317224, 0, -0.18268326, 47.60742, -22.245049, 76.78833)
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
@@ -768,7 +768,7 @@ P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
 
 [node name="VehicleSpawner6" parent="Sector4" unique_id=487079731 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 41.56079, -24.714005, 90.79651)
+transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 41.56079, -21.714005, 90.79651)
 VehicleType = 26
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300
@@ -823,15 +823,15 @@ transform = Transform3D(1, 0, 3.72529e-09, 0, 1, 0, -3.72529e-09, 0, 1, -0.37728
 points = PackedVector2Array(-4.33664, -1.70758, -5.00214, 6.36859, 4.66574, 6.8584, 5.35239, -1.47235)
 
 [node name="VehicleSpawner2" parent="Sector5" unique_id=1197806209 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.49947038, 0, 0.86633086, 0, 1, 0, -0.86633086, 0, -0.49947038, -237.40079, 8.970886, 211.28482)
+transform = Transform3D(-0.49947038, 0, 0.86633086, 0, 1, 0, -0.86633086, 0, -0.49947038, -237.40079, 11.970886, 211.28482)
 VehicleType = 7
 
 [node name="VehicleSpawner3" parent="Sector5" unique_id=543509865 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.49947038, 0, 0.86633086, 0, 1, 0, -0.86633086, 0, -0.49947038, -227.9136, 10.29509, 214.19965)
+transform = Transform3D(-0.49947038, 0, 0.86633086, 0, 1, 0, -0.86633086, 0, -0.49947038, -227.9136, 13.29509, 214.19965)
 VehicleType = 5
 
 [node name="VehicleSpawner" parent="Sector5" unique_id=308484462 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.9405556, 0, 0.33964056, 0, 1, 0, -0.33964056, 0, -0.9405556, -145.9454, 9.123993, 277.58484)
+transform = Transform3D(-0.9405556, 0, 0.33964056, 0, 1, 0, -0.33964056, 0, -0.9405556, -145.9454, 12.123993, 277.58484)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_ApplyDamageToAbandonVehicle = false
@@ -852,7 +852,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner4" parent="Sector5" unique_id=2137248214 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.7864933, 0, -0.6175989, 0, 1, 0, 0.6175989, 0, 0.7864933, -176.61642, 9.055481, 256.03482)
+transform = Transform3D(0.7864933, 0, -0.6175989, 0, 1, 0, 0.6175989, 0, 0.7864933, -176.61642, 12.055481, 256.03482)
 VehicleType = 3
 P_AutoSpawnEnabled = true
 P_ApplyDamageToAbandonVehicle = false
@@ -866,7 +866,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner5" parent="Sector5" unique_id=1246016728 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(0.7897593, 0, -0.6134171, 0, 1, 0, 0.6134171, 0, 0.7897593, -195.56448, 9.331696, 240.87546)
+transform = Transform3D(0.7897593, 0, -0.6134171, 0, 1, 0, 0.6134171, 0, 0.7897593, -195.56448, 12.331696, 240.87546)
 VehicleType = 8
 P_AutoSpawnEnabled = true
 P_ApplyDamageToAbandonVehicle = false
@@ -880,7 +880,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="VehicleSpawner7" parent="Sector5" unique_id=1369668843 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.18268326, 0, -0.98317224, 0, 1, 0, 0.98317224, 0, -0.18268326, 39.93747, -0.13922119, -323.36652)
+transform = Transform3D(-0.18268326, 0, -0.98317224, 0, 1, 0, 0.98317224, 0, -0.18268326, 39.93747, 2.860779, -323.36652)
 VehicleType = 21
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
@@ -892,7 +892,7 @@ P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 120
 
 [node name="VehicleSpawner6" parent="Sector5" unique_id=190768285 instance=ExtResource("11_ydt2c")]
-transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 27.64096, 0.39182281, -316.06433)
+transform = Transform3D(-0.6392641, 0, 0.76898754, 0, 1, 0, -0.76898754, 0, -0.6392641, 27.64096, 3.391823, -316.06433)
 VehicleType = 26
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 300

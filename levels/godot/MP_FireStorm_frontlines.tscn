@@ -179,18 +179,18 @@ transform = Transform3D(1, 0, 3.72529e-09, 0, 1, 0, -3.72529e-09, 0, 1, -0.37728
 points = PackedVector2Array(-4.33664, -1.70758, -5.00214, 6.36859, 4.66574, 6.8584, 5.35239, -1.47235)
 
 [node name="UH60" parent="Sector  T1Mcoms" unique_id=1894637490 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.99080515, 0, -0.13529994, 0, 1, 0, 0.13529994, 0, -0.99080515, -22.961563, -15.063171, -40.330845)
+transform = Transform3D(-0.99080515, 0, -0.13529994, 0, 1, 0, 0.13529994, 0, -0.99080515, -22.961563, -12.063171, -40.330845)
 VehicleType = 5
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 45
 
 [node name="Lilttle Bird" parent="Sector  T1Mcoms" unique_id=1429274622 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.78543574, 0, 0.618944, 0, 1, 0, -0.618944, 0, -0.78543574, 14.021777, -15.091904, 38.84828)
+transform = Transform3D(-0.78543574, 0, 0.618944, 0, 1, 0, -0.618944, 0, -0.78543574, 14.021777, -12.091904, 38.84828)
 VehicleType = 7
 P_DefaultRespawnTime = 60
 
 [node name="Bradley IFV" parent="Sector  T1Mcoms" unique_id=165411975 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.80540067, 0, 0.59273034, 0, 1, 0, -0.59273034, 0, -0.80540067, -42.63263, -14.543503, 39.460655)
+transform = Transform3D(-0.80540067, 0, 0.59273034, 0, 1, 0, -0.59273034, 0, -0.80540067, -42.63263, -11.543503, 39.460655)
 VehicleType = 17
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 60
@@ -205,7 +205,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Vector1" parent="Sector  T1Mcoms" unique_id=843553656 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.006841123, 0, 0.9999764, 0, 1, 0, -0.9999764, 0, 0.006841123, -42.668472, -14.940918, -13.965435)
+transform = Transform3D(0.006841123, 0, 0.9999764, 0, 1, 0, -0.9999764, 0, 0.006841123, -42.668472, -11.940918, -13.965435)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -213,7 +213,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Vector2" parent="Sector  T1Mcoms" unique_id=1958724221 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.006841123, 0, 0.9999764, 0, 1, 0, -0.9999764, 0, 0.006841123, -47.58092, -14.940918, -1.0630895)
+transform = Transform3D(0.006841123, 0, 0.9999764, 0, 1, 0, -0.9999764, 0, 0.006841123, -47.58092, -11.940918, -1.0630895)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -221,7 +221,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike1" parent="Sector  T1Mcoms" unique_id=1048887998 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.49151224, 0, 0.8708705, 0, 1, 0, -0.8708705, 0, -0.49151224, -57.08557, -14.940918, 14.206848)
+transform = Transform3D(-0.49151224, 0, 0.8708705, 0, 1, 0, -0.8708705, 0, -0.49151224, -57.08557, -11.940918, 14.206848)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -229,7 +229,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike2" parent="Sector  T1Mcoms" unique_id=1118050207 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.5994291, 0, 0.80042756, 0, 1, 0, -0.80042756, 0, -0.5994291, -53.085327, -14.940918, 24.886684)
+transform = Transform3D(-0.5994291, 0, 0.80042756, 0, 1, 0, -0.80042756, 0, -0.5994291, -53.085327, -11.940918, 24.886684)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -237,7 +237,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike3" parent="Sector  T1Mcoms" unique_id=1362164550 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.8560502, 0, -0.51689225, 0, 1, 0, 0.51689225, 0, -0.8560502, 18.398252, -14.854507, 0.8752367)
+transform = Transform3D(-0.8560502, 0, -0.51689225, 0, 1, 0, 0.51689225, 0, -0.8560502, 18.398252, -11.854507, 0.8752367)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -245,7 +245,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike4" parent="Sector  T1Mcoms" unique_id=1225821555 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.708795, 0, -0.7054142, 0, 1, 0, 0.7054142, 0, -0.708795, 26.076569, -14.854507, 13.591667)
+transform = Transform3D(-0.708795, 0, -0.7054142, 0, 1, 0, 0.7054142, 0, -0.708795, 26.076569, -11.854507, 13.591667)
 VehicleType = 9
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -376,7 +376,7 @@ transform = Transform3D(-0.99773043, 0, -0.06733621, 0, 1, 0, 0.06733621, 0, -0.
 transform = Transform3D(0.9994896, 0, -0.03193438, 0, 1, 0, 0.03193438, 0, 0.9994896, -11.664734, -0.027496338, -2.314766)
 
 [node name="VehicleSpawner" parent="Sector1/TEAM_1_HQ" unique_id=1981489469 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.004727371, -0.9974344, 0.071424544, 0.9965452, 0.0012236312, 0.08304017, -0.08291458, 0.07157003, 0.9939829, -26.362331, -0.006609862, 1.0582118)
+transform = Transform3D(-0.004727371, -0.9974344, 0.071424544, 0.9965452, 0.0012236312, 0.08304017, -0.08291458, 0.07157003, 0.9939829, -26.362331, 2.99339, 1.0582118)
 ObjId = 501
 VehicleType = 9
 P_AutoSpawnEnabled = true
@@ -506,7 +506,7 @@ transform = Transform3D(-0.9804021, 0, -0.19700725, 0, 1, 0, 0.19700725, 0, -0.9
 transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 20.580832, -1.3501205, 20.53657)
 
 [node name="VehicleSpawner" parent="Sector2 - Middle/TEAM_1_HQ" unique_id=1724791355 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.006769749, -0.9999256, -0.01010257, 0.999493, -0.007079834, 0.031025019, -0.031094251, -0.0098877335, 0.99946713, -29.992441, 2.4372797, -3.0511794)
+transform = Transform3D(-0.006769749, -0.9999256, -0.01010257, 0.999493, -0.007079834, 0.031025019, -0.031094251, -0.0098877335, 0.99946713, -29.992441, 5.43728, -3.0511794)
 ObjId = 502
 VehicleType = 9
 P_AutoSpawnEnabled = true
@@ -637,7 +637,7 @@ transform = Transform3D(-0.9824375, 0, 0.1865926, 0, 1, 0, -0.1865926, 0, -0.982
 transform = Transform3D(0.99889934, 0, 0.04689691, 0, 1, 0, -0.04689691, 0, 0.99889934, 2.5654297, -0.052093506, -9.352791)
 
 [node name="VehicleSpawner" parent="Sector3/TEAM_1_HQ" unique_id=1381059223 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.9876889, 0.01022926, -0.1560966, -0.03371959, 0.988323, -0.14859635, 0.15275446, 0.15202999, 0.9765004, 46.076836, 0.96324, 7.83371)
+transform = Transform3D(0.9876889, 0.01022926, -0.1560966, -0.03371959, 0.988323, -0.14859635, 0.15275446, 0.15202999, 0.9765004, 46.076836, 3.96324, 7.83371)
 ObjId = 503
 VehicleType = 9
 P_AutoSpawnEnabled = true
@@ -687,19 +687,19 @@ transform = Transform3D(1, 0, 3.72529e-09, 0, 1, 0, -3.72529e-09, 0, 1, -0.37728
 points = PackedVector2Array(-4.33664, -1.70758, -5.00214, 6.36859, 4.66574, 6.8584, 5.35239, -1.47235)
 
 [node name="UH60" parent="Sector T2Mcoms" unique_id=1264086689 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.711523, 0, -0.70266265, 0, 1, 0, 0.70266265, 0, 0.711523, 190.50842, -5.913475, -223.99767)
+transform = Transform3D(0.711523, 0, -0.70266265, 0, 1, 0, 0.70266265, 0, 0.711523, 190.50842, -2.913475, -223.99767)
 VehicleType = 19
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 45
 
 [node name="Little Bird" parent="Sector T2Mcoms" unique_id=1793843900 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.63487846, 0, -0.7726119, 0, 1, 0, 0.7726119, 0, 0.63487846, 208.40155, -6.0716553, -170.57231)
+transform = Transform3D(0.63487846, 0, -0.7726119, 0, 1, 0, 0.7726119, 0, 0.63487846, 208.40155, -3.071655, -170.57231)
 VehicleType = 8
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 60
 
 [node name="CV90" parent="Sector T2Mcoms" unique_id=1540178713 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.57165885, 0, -0.82049173, 0, 1, 0, 0.82049173, 0, -0.57165885, 247.57855, -7.0324936, -200.26306)
+transform = Transform3D(-0.57165885, 0, -0.82049173, 0, 1, 0, 0.82049173, 0, -0.57165885, 247.57855, -4.032494, -200.26306)
 VehicleType = 3
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 60
@@ -707,7 +707,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Leopard" parent="Sector T2Mcoms" unique_id=486924721 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.64616406, 0, -0.7631987, 0, 1, 0, 0.7631987, 0, -0.64616406, 256.97766, -7.0423355, -213.03769)
+transform = Transform3D(-0.64616406, 0, -0.7631987, 0, 1, 0, 0.7631987, 0, -0.64616406, 256.97766, -4.042336, -213.03769)
 VehicleType = 1
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 60
@@ -715,7 +715,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Flyer" parent="Sector T2Mcoms" unique_id=1195056428 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.9974608, 0, 0.07121906, 0, 1, 0, -0.07121906, 0, 0.9974608, 188.45255, -6.074127, -201.97984)
+transform = Transform3D(0.9974608, 0, 0.07121906, 0, 1, 0, -0.07121906, 0, 0.9974608, 188.45255, -3.074127, -201.97984)
 VehicleType = 13
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -723,7 +723,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Flyer2" parent="Sector T2Mcoms" unique_id=598430382 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.4641003, 0, -0.8857828, 0, 1, 0, 0.8857828, 0, 0.4641003, 205.89479, -6.908272, -191.42995)
+transform = Transform3D(0.4641003, 0, -0.8857828, 0, 1, 0, 0.8857828, 0, 0.4641003, 205.89479, -3.908272, -191.42995)
 VehicleType = 13
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -731,7 +731,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike" parent="Sector T2Mcoms" unique_id=1569483197 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.4641003, 0, -0.8857828, 0, 1, 0, 0.8857828, 0, 0.4641003, 220.38599, -7.054016, -190.3256)
+transform = Transform3D(0.4641003, 0, -0.8857828, 0, 1, 0, 0.8857828, 0, 0.4641003, 220.38599, -4.054016, -190.3256)
 VehicleType = 23
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -739,7 +739,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike2" parent="Sector T2Mcoms" unique_id=554589336 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.94949126, 0, 0.31379378, 0, 1, 0, -0.31379378, 0, 0.94949126, 186.64926, -5.7538223, -213.25711)
+transform = Transform3D(0.94949126, 0, 0.31379378, 0, 1, 0, -0.31379378, 0, 0.94949126, 186.64926, -2.753822, -213.25711)
 VehicleType = 23
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -747,7 +747,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike3" parent="Sector T2Mcoms" unique_id=1534225954 instance=ExtResource("12_ct7un")]
-transform = Transform3D(0.9152906, 0, -0.40279454, 0, 1, 0, 0.40279454, 0, 0.9152906, 211.84637, -6.8395615, -229.14313)
+transform = Transform3D(0.9152906, 0, -0.40279454, 0, 1, 0, 0.40279454, 0, 0.9152906, 211.84637, -3.839562, -229.14313)
 VehicleType = 23
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10
@@ -755,7 +755,7 @@ P_ApplyDamageToAbandonVehicle = false
 P_AbandonVehiclesOutOfCombatArea = false
 
 [node name="Bike4" parent="Sector T2Mcoms" unique_id=1983927490 instance=ExtResource("12_ct7un")]
-transform = Transform3D(-0.63788104, 0, -0.7701351, 0, 1, 0, 0.7701351, 0, -0.63788104, 235.43054, -7.007759, -190.70844)
+transform = Transform3D(-0.63788104, 0, -0.7701351, 0, 1, 0, 0.7701351, 0, -0.63788104, 235.43054, -4.007759, -190.70844)
 VehicleType = 23
 P_AutoSpawnEnabled = true
 P_DefaultRespawnTime = 10

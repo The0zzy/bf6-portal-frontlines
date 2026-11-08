@@ -79,6 +79,17 @@ Bekannte Abweichungen:
 
 Validierung: Link-Check (`/tmp/validate_frontlines.py`-Logik) ohne Fehler, 61 eindeutige ObjIds. Kein Godot-Parse-Test (Godot nicht installiert).
 
+## Fahrzeug-Anhebung auf weiteren Karten (Contaminated, FireStorm, Granite_ClubHouse_Portal, Isolated)
+
+Regel: Jeder `VehicleType`-Node ohne `VehicleType`-Vorfahren wird lokal um +3 auf Y angehoben. Kinder folgen ihrem Parent und werden nicht zusätzlich angehoben. Alle Vorfahren sind reine Y-Rotationen mit Skalierung 1, daher ist lokal +3 gleich Welt +3.
+
+- Contaminated: 18 Fahrzeuge/Spawner angehoben.
+- FireStorm: 22 angehoben.
+- Granite_ClubHouse_Portal: 12 angehoben (inkl. `Sector4/VehicleSpawner5/VehicleSpawner5`, da der Parent keinen VehicleType hat).
+- Isolated: 20 angehoben.
+- Validierung: Knotenanzahl unverändert, alle Y-Deltas gegenüber HEAD exakt +3.
+- Die Höhe ist eine Annahme ohne Terrain-Prüfung. Original-Golmud (`MP_GolmudRailway_frontlines.tscn`) bleibt unverändert. Atoll ist ausgenommen.
+
 ## Verbindung zur Copilot CLI
 
 Auf einem Rechner mit Godot: Repo klonen, Branch `godot-templates` auswählen. So ist die Dateistruktur direkt verfügbar. Eine direkte Session-Verbindung ist nicht geprüft.
