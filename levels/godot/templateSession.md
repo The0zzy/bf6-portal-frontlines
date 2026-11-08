@@ -74,6 +74,7 @@ Bekannte Abweichungen:
 - S3 hat nur einen CP (Quelle hatte einen).
 - CP-Spawns: 4 pro Team statt 2.
 - Bugfix in der Quelle: `Sector3`-CP A verwies bei Team-2-Slot 2 auf `Team1/SpawnPoint_1_2`. Jetzt korrekt auf Team2.
+- Alle Fahrzeug-Spawner (Root-HQ, Sektor-HQ, S2–S4 VS) sind um `VEH_LIFT = 3` Einheiten über den Ursprung ihres HQ/Sektors angehoben. Grund: Fahrzeuge fielen durch das Terrain. Der Wert ist eine Annahme, da das Terrain ohne Godot nicht prüfbar ist. Bei Bedarf im Generator anpassen.
 - VehicleType 22 (Quadbike) weiterhin nicht gegen die Engine verifiziert.
 
 Validierung: Link-Check (`/tmp/validate_frontlines.py`-Logik) ohne Fehler, 61 eindeutige ObjIds. Kein Godot-Parse-Test (Godot nicht installiert).
