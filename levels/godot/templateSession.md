@@ -51,7 +51,9 @@ Quelle: `src/Frontlines/FrontlinesConfig.ts`.
 
 ## Anwendung auf MP_GolmudRailway (5-Sektor-Template)
 
-Datei: `levels/godot/MP_GolmudRailway_frontlines.tscn` (ersetzt die alte Struktur). Header-UID bleibt `uid://rt0feja734ml`.
+Dateien:
+- `levels/godot/MP_GolmudRailway_frontlines.tscn`: Originalstand (alte, händische Struktur), unverändert zum Vergleich wiederhergestellt.
+- `levels/godot/MP_GolmudRailway_frontlines_5sector.tscn`: neue Variante aus dem 5-Sektor-Template. Eigene UID `uid://c5golmud5sct0`, damit beide Szenen parallel existieren können.
 
 Quelle: `MP_GolmudRailway_frontlines` aus Portal. Die Sektor-Transforms stammen aus der Quelle, die Child-Transforms bleiben lokal erhalten.
 
