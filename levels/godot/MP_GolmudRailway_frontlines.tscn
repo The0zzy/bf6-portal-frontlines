@@ -26,11 +26,12 @@ InfantrySpawns = [NodePath("t1_hq_spawnpoint1"), NodePath("t1_hq_spawnpoint2"), 
 VehicleSpawners = [NodePath("t1_hq_vehicle1"), NodePath("t1_hq_vehicle2"), NodePath("t1_hq_vehicle3"), NodePath("t1_hq_vehicle4"), NodePath("t1_hq_vehicle5"), NodePath("t1_hq_vehicle6"), NodePath("t1_hq_vehicle7"), NodePath("t1_hq_vehicle8"), NodePath("t1_hq_vehicle9"), NodePath("t1_hq_vehicle10")]
 
 [node name="t1_hq_area" parent="t1_hq" instance=ExtResource("3_hvicx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-points = PackedVector2Array(5, 5, 5, -5, -5, -5, -5, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.0757, -58.9527, -205.1409)
+points = PackedVector2Array(-83.29969, 49.641113, -123.04511, 53.460327, -148.62509, 50.12793, -276.99585, 38.789978, -296.93936, 178.81012, -219.8425, 241.31268, -73.1232, 241.2862, 33.431236, 204.47443, 93.50141, 145.02301, 118.561165, 48.809082, 5.5659084, 31.184143, -24.36129, 58.98346, -36.137398, 40.562256, -69.2543, 47.891296)
+height = 300.0
 
 [node name="t1_hq_trigger" parent="t1_hq" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 155.0, 0.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8866, 91.0473, -68.8925)
 ObjId = 6101
 Area = NodePath("../t1_hq_area")
 
@@ -118,11 +119,12 @@ VehicleSpawners = [NodePath("t2_hq_vehicle1"), NodePath("t2_hq_vehicle2"), NodeP
 Team = 2
 
 [node name="t2_hq_area" parent="t2_hq" instance=ExtResource("3_hvicx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-points = PackedVector2Array(5, 5, 5, -5, -5, -5, -5, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.9542, -52.8276, -175.3986)
+points = PackedVector2Array(36.377655, 59.913727, -121.30342, 148.60931, -231.79094, 312.5559, -45.63739, 290.21606, 131.28383, 288.79663, 362.84814, 314.71854, 346.10825, 232.37737, 331.32565, 151.42506, 289.79355, 78.91992)
+height = 300.0
 
 [node name="t2_hq_trigger" parent="t2_hq" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 155.0, 0.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.4256, 97.1724, 11.9176)
 ObjId = 6151
 Area = NodePath("../t2_hq_area")
 

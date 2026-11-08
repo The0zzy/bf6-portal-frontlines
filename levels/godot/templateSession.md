@@ -61,13 +61,13 @@ Mapping:
 - `Sector2 - Middle` → `S3` (6203), nur `S3_cp1` (6430), HQ `S3_hq` (6223), VS `S3_hq_vehicle1` (6330).
 - `Sector3` → `S4` (6204), CPs `S4_cp1/2` (6440/6441, InitialOwner 2), HQ `S4_hq` (6224), VS `S4_hq_vehicle1` (6340).
 - `Sector T2Mcoms` → `S5` (6205), MCOMs `S5_mcom1/2` (6450/6451), 10 Fahrzeuge unter `S5_hq` (6350–6359).
-- Root-HQs `t1_hq` (6100) und `t2_hq` (6150) mit je 10 Quadbike-Fahrzeugen (Template-Muster), Areas 10×10 (Template-Größe).
+- Root-HQs `t1_hq` (6100) und `t2_hq` (6150) mit je 10 Quadbike-Fahrzeugen (Template-Muster). Ihre Area `t{n}_hq_area` ist das Polygon `HQ1Area` aus `Sector T{n}Mcoms/HQ1AreaTrigger` (statische Team-HQ-Area, Höhe 300). Der lokale Transform ist der Offset zum Root-HQ (Weltposition HQ1Area minus Weltposition TEAM_n_HQ, berechnet über die Parent-Kette). Die `HQ_Team`-Polygone entfallen.
 - Sektor-Trigger zentriert in der Area (Y = Area-Offset + 150).
 - Kept verbatim: `CombatArea`, `Camera3D/DeployCam`, `Static` (Assets, Terrain, Decal).
 
 Bekannte Abweichungen:
 - S2–S4 HQs haben keine eigene Area mehr. `HQArea` und `HQProtectionAreaVolume` zeigen auf `../S{i}_area` (Sektor-Area, wie im Template). Die Golmud-HQ-Polygone (`HQ_Team1`) entfallen.
-- Areas: Sektor-Areas aus Golmud `SectorArea`, CP-Areas aus Golmud `CaptureArea`, Root-HQ-Areas aus `HQ_Team`-Polygonen. Die HQ1AreaTrigger-Polygone in S1/S5 sind nicht übernommen.
+- Areas: Sektor-Areas aus Golmud `SectorArea`, CP-Areas aus Golmud `CaptureArea`, Root-HQ-Areas aus `HQ1Area` (siehe oben). Die HQ1AreaTrigger-ObjId 2001/3001 wird nicht übernommen. Die HQ1Area-Polygone in S1/S5 sind als Root-HQ-Area verwendet.
 - S3 hat nur einen CP (Quelle hatte einen).
 - CP-Spawns: 4 pro Team statt 2.
 - Bugfix in der Quelle: `Sector3`-CP A verwies bei Team-2-Slot 2 auf `Team1/SpawnPoint_1_2`. Jetzt korrekt auf Team2.
