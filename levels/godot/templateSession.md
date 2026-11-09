@@ -102,6 +102,16 @@ Regel: Jeder `VehicleType`-Node ohne `VehicleType`-Vorfahren wird im Generator u
 - MCOM-Sektoren behalten alle Quell-Fahrzeuge (10 statt 8 im Template). Einige liegen weit vom Sektorzentrum entfernt (z. B. `S5_hq_vehicle1` bei ca. (190, 3, −224)), weil die Quelle sie nahe am T2-HQ platziert. Diese Entfernung ist bewusst beibehalten und sollte geprüft werden.
 - Fahrzeugtyp 22 (Quadbike) ist angenommen, nicht verifiziert.
 
+## Granite ClubHouse Portal (`MP_Granite_ClubHouse_Portal_frontlines_5sector.tscn`)
+
+- Quelle: `MP_Granite_ClubHouse_Portal_frontlines.tscn`. Sektorreihenfolge per Projektion auf die Achse T1-HQ → T2-HQ (Annahme): S1 = `Sector4` (MCOM, Root-Area T1), S2 = `Sector` (CP, Owner 1), S3 = `Sector3` (CP, Owner 2), S4 = `Sector2` (2 CPs, ohne Owner), S5 = `Sector5` (MCOM, Root-Area T2).
+- CP-Spawns liegen in der Quelle nur direkt unter `CapturePoint` (keine Team1/Team2-Unterknoten). Beide Teams verweisen auf dieselben Knoten; das Template bildet das mit `InfantrySpawnPoints_Team1/2` ab.
+- `Sector/TEAM_1_HQ` hat keinen Fahrzeug-Spawner, daher hat S2 keine HQ-Fahrzeuge. S3 und S4 haben je 1 HQ-Fahrzeug.
+- MCOM-Sektoren übernehmen die Quell-Fahrzeuge (S1: 7, S5: 8) statt 8 im Template. Einige liegen weit vom Zentrum (z. B. `S5_hq_vehicle1` bei ca. (75, 3, −319)). Bewusst beibehalten, zu prüfen.
+- Zwei Fahrzeuge ohne `VehicleType` (2 in Sector4, 1 in Sector5) wurden weggelassen.
+- Single-CP-Sektoren (S2, S3) haben nur einen CP, nicht zwei wie das Template. Position: `(-hqx, 0, 0)` relativ zum Sektor, wie in der Quelle.
+- Fahrzeugtyp 22 (Quadbike) ist angenommen, nicht verifiziert.
+
 ## Verbindung zur Copilot CLI
 
 Auf einem Rechner mit Godot: Repo klonen, Branch `godot-templates` auswählen. So ist die Dateistruktur direkt verfügbar. Eine direkte Session-Verbindung ist nicht geprüft.
