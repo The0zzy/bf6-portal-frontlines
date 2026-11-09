@@ -94,6 +94,14 @@ Regel: Jeder `VehicleType`-Node ohne `VehicleType`-Vorfahren wird im Generator u
 - Root-HQs `t1_hq` (6100) und `t2_hq` (6150) aus `TEAM_1_HQ`/`TEAM_2_HQ`. Team-2-Root-Fahrzeuge bekommen 6152–6161.
 - Eigene Generator-Skripte liegen nur in `/tmp` und sind nicht im Repo.
 
+## FireStorm (`MP_FireStorm_frontlines_5sector.tscn`)
+
+- Quelle: `MP_FireStorm_frontlines.tscn`. Zuordnung: `Sector  T1Mcoms` → S1 (MCOM, 10 Fahrzeuge), `Sector1` → S2 (CP, Owner 1), `Sector2 - Middle` → S3 (CP, 2 CPs, ohne Owner), `Sector3` → S4 (CP, Owner 2), `Sector T2Mcoms` → S5 (MCOM, 10 Fahrzeuge).
+- Achtung: Der Name `Sector  T1Mcoms` hat ein Doppelleerzeichen, `Sector T2Mcoms` nur eines. Pfade müssen exakt stimmen.
+- `TEAM_2_HQ/HQ_Team2` hat kein `points`-Feld. Die Root-Area von t2_hq stammt deshalb aus `Sector T2Mcoms/HQ1AreaTrigger/HQ1Area` (spiegelt T1 mit `Sector  T1Mcoms/HQ1AreaTrigger/HQ1Area`).
+- MCOM-Sektoren behalten alle Quell-Fahrzeuge (10 statt 8 im Template). Einige liegen weit vom Sektorzentrum entfernt (z. B. `S5_hq_vehicle1` bei ca. (190, 3, −224)), weil die Quelle sie nahe am T2-HQ platziert. Diese Entfernung ist bewusst beibehalten und sollte geprüft werden.
+- Fahrzeugtyp 22 (Quadbike) ist angenommen, nicht verifiziert.
+
 ## Verbindung zur Copilot CLI
 
 Auf einem Rechner mit Godot: Repo klonen, Branch `godot-templates` auswählen. So ist die Dateistruktur direkt verfügbar. Eine direkte Session-Verbindung ist nicht geprüft.
