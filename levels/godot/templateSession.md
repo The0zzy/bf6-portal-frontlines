@@ -79,16 +79,20 @@ Bekannte Abweichungen:
 
 Validierung: Link-Check (`/tmp/validate_frontlines.py`-Logik) ohne Fehler, 61 eindeutige ObjIds. Kein Godot-Parse-Test (Godot nicht installiert).
 
-## Fahrzeug-Anhebung auf weiteren Karten (Contaminated, FireStorm, Granite_ClubHouse_Portal, Isolated)
+## Fahrzeug-Anhebung (nur in neuen Template-Dateien)
 
-Regel: Jeder `VehicleType`-Node ohne `VehicleType`-Vorfahren wird lokal um +3 auf Y angehoben. Kinder folgen ihrem Parent und werden nicht zusätzlich angehoben. Alle Vorfahren sind reine Y-Rotationen mit Skalierung 1, daher ist lokal +3 gleich Welt +3.
+Die Originalkarten (Contaminated, FireStorm, Granite_ClubHouse_Portal, Isolated, Golmud) bleiben unverändert. Der Lift wurde dort zurückgenommen (Commit `8cdb669`). Anhebung gilt nur für die neuen `*_5sector`/`*_7sector`-Dateien.
 
-- Contaminated: 18 Fahrzeuge/Spawner angehoben.
-- FireStorm: 22 angehoben.
-- Granite_ClubHouse_Portal: 12 angehoben (inkl. `Sector4/VehicleSpawner5/VehicleSpawner5`, da der Parent keinen VehicleType hat).
-- Isolated: 20 angehoben.
-- Validierung: Knotenanzahl unverändert, alle Y-Deltas gegenüber HEAD exakt +3.
-- Die Höhe ist eine Annahme ohne Terrain-Prüfung. Original-Golmud (`MP_GolmudRailway_frontlines.tscn`) bleibt unverändert. Atoll ist ausgenommen.
+Regel: Jeder `VehicleType`-Node ohne `VehicleType`-Vorfahren wird im Generator um `VEH_LIFT = 3` auf Y angehoben. Kinder folgen ihrem Parent und werden nicht zusätzlich angehoben. Vorfahren sind Y-Rotationen mit Skalierung 1, daher ist lokal +3 gleich Welt +3.
+
+- Die Höhe ist eine Annahme ohne Terrain-Prüfung. Bei Bedarf im Generator anpassen.
+
+## Contaminated (`MP_Contaminated_frontlines_5sector.tscn`)
+
+- Quelle: `MP_Contaminated_frontlines.tscn`. Zuordnung: `Sector T1Mcoms` → S1 (MCOM), `Sector1` → S2 (CP A/B), `Sector2 - Middle` → S3 (CP A), `Sector3` → S4 (CP A/B), `Sector T2Mcoms` → S5 (MCOM).
+- Sektor-Transforms entstehen durch Matrixkomposition (Y-Rotationen der CP-Parents). Einfaches Addieren der Translationen ist falsch.
+- Root-HQs `t1_hq` (6100) und `t2_hq` (6150) aus `TEAM_1_HQ`/`TEAM_2_HQ`. Team-2-Root-Fahrzeuge bekommen 6152–6161.
+- Eigene Generator-Skripte liegen nur in `/tmp` und sind nicht im Repo.
 
 ## Verbindung zur Copilot CLI
 
