@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://e4h24ssq2r0n"]
 
 [ext_resource type="PackedScene" path="res://objects/gameplay/common/HQ_PlayerSpawner.tscn" id="1_48eg8"]
 [ext_resource type="PackedScene" uid="uid://jv31so3xcr7p" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.tscn" id="3_hvicx"]
@@ -9,353 +9,350 @@
 [ext_resource type="PackedScene" path="res://objects/gameplay/common/VehicleSpawner.tscn" id="17_omiuj"]
 [ext_resource type="PackedScene" path="res://objects/gameplay/conquest/CapturePoint.tscn" id="19_nans0"]
 
-[node name="Frontlines_3Sector" type="Node3D"]
+[node name="Frontlines_3Sector" type="Node3D" unique_id=333513683]
 
-[node name="t1_hq" parent="." node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
+[node name="t1_hq" parent="." unique_id=1582961894 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250, 0, 0)
 AltTeam = 0
-ObjId = 6100
 VehicleSpawnersEnabled = true
+ObjId = 6100
 HQArea = NodePath("t1_hq_area")
 HQProtectionAreaVolume = NodePath("t1_hq_area")
 InfantrySpawns = [NodePath("t1_hq_spawnpoint1"), NodePath("t1_hq_spawnpoint2"), NodePath("t1_hq_spawnpoint3"), NodePath("t1_hq_spawnpoint4")]
 VehicleSpawners = [NodePath("t1_hq_vehicle1"), NodePath("t1_hq_vehicle2"), NodePath("t1_hq_vehicle3"), NodePath("t1_hq_vehicle4"), NodePath("t1_hq_vehicle5"), NodePath("t1_hq_vehicle6"), NodePath("t1_hq_vehicle7"), NodePath("t1_hq_vehicle8"), NodePath("t1_hq_vehicle9"), NodePath("t1_hq_vehicle10")]
 
-[node name="t1_hq_area" parent="t1_hq" instance=ExtResource("3_hvicx")]
+[node name="t1_hq_area" parent="t1_hq" unique_id=1878398412 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-100, -100, 100, -100, 100, 100, -100, 100)
 height = 300.0
 
-[node name="t1_hq_trigger" parent="t1_hq" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
+[node name="t1_hq_trigger" parent="t1_hq" unique_id=146071598 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 ObjId = 6101
 Area = NodePath("../t1_hq_area")
 
-[node name="t1_hq_spawnpoint1" parent="t1_hq" instance=ExtResource("5_cluh4")]
+[node name="t1_hq_spawnpoint1" parent="t1_hq" unique_id=1596707704 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="t1_hq_spawnpoint2" parent="t1_hq" instance=ExtResource("5_cluh4")]
+[node name="t1_hq_spawnpoint2" parent="t1_hq" unique_id=1165024836 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
-[node name="t1_hq_spawnpoint3" parent="t1_hq" instance=ExtResource("5_cluh4")]
+[node name="t1_hq_spawnpoint3" parent="t1_hq" unique_id=418824210 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="t1_hq_spawnpoint4" parent="t1_hq" instance=ExtResource("5_cluh4")]
+[node name="t1_hq_spawnpoint4" parent="t1_hq" unique_id=434679137 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="t1_hq_vehicle1" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle1" parent="t1_hq" unique_id=11409683 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 10)
 ObjId = 6102
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle2" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle2" parent="t1_hq" unique_id=2071451354 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 10)
 ObjId = 6103
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle3" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle3" parent="t1_hq" unique_id=854377855 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 ObjId = 6104
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle4" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle4" parent="t1_hq" unique_id=485973801 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 10)
 ObjId = 6105
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle5" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle5" parent="t1_hq" unique_id=1554534330 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
 ObjId = 6106
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle6" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle6" parent="t1_hq" unique_id=1661792 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 18)
 ObjId = 6107
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle7" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle7" parent="t1_hq" unique_id=1129215798 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 18)
 ObjId = 6108
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle8" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle8" parent="t1_hq" unique_id=1304515890 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
 ObjId = 6109
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle9" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle9" parent="t1_hq" unique_id=799069635 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 18)
 ObjId = 6110
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t1_hq_vehicle10" parent="t1_hq" instance=ExtResource("17_omiuj")]
+[node name="t1_hq_vehicle10" parent="t1_hq" unique_id=118375495 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 18)
 ObjId = 6111
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="S1" parent="." node_paths=PackedStringArray("SectorArea", "MCOMs") instance=ExtResource("11_t7x1p")]
+[node name="S1" parent="." unique_id=1790201014 node_paths=PackedStringArray("SectorArea", "MCOMs") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100, 0, 0)
 ObjId = 6201
 SectorArea = NodePath("S1_area")
 MCOMs = [NodePath("S1_mcom1"), NodePath("S1_mcom2")]
 
-[node name="S1_area" parent="S1" instance=ExtResource("3_hvicx")]
+[node name="S1_area" parent="S1" unique_id=320963278 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
 height = 300.0
 
-[node name="S1_trigger" parent="S1" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
+[node name="S1_trigger" parent="S1" unique_id=293736181 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 ObjId = 6211
 Area = NodePath("../S1_area")
 
-[node name="S1_mcom1" parent="S1" instance=ExtResource("15_c1odg")]
+[node name="S1_mcom1" parent="S1" unique_id=1076504033 instance=ExtResource("15_c1odg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -25)
 ObjId = 6410
 
-[node name="S1_mcom2" parent="S1" instance=ExtResource("15_c1odg")]
+[node name="S1_mcom2" parent="S1" unique_id=1394667328 instance=ExtResource("15_c1odg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 25)
 ObjId = 6411
 
-[node name="S1_hq" parent="S1" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
+[node name="S1_hq" parent="S1" unique_id=1595292048 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 0)
 AltTeam = 0
-ObjId = 6221
 VehicleSpawnersEnabled = true
+ObjId = 6221
 HQArea = NodePath("../S1_area")
 HQProtectionAreaVolume = NodePath("../S1_area")
 InfantrySpawns = [NodePath("S1_hq_spawnpoint1"), NodePath("S1_hq_spawnpoint2")]
 VehicleSpawners = [NodePath("S1_hq_vehicle1")]
 
-[node name="S1_hq_spawnpoint1" parent="S1/S1_hq" instance=ExtResource("5_cluh4")]
+[node name="S1_hq_spawnpoint1" parent="S1/S1_hq" unique_id=1173096198 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="S1_hq_spawnpoint2" parent="S1/S1_hq" instance=ExtResource("5_cluh4")]
+[node name="S1_hq_spawnpoint2" parent="S1/S1_hq" unique_id=1034645482 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="S1_hq_vehicle1" parent="S1/S1_hq" instance=ExtResource("17_omiuj")]
+[node name="S1_hq_vehicle1" parent="S1/S1_hq" unique_id=1785495844 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 ObjId = 6310
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="S2" parent="." node_paths=PackedStringArray("SectorArea", "CapturePoints") instance=ExtResource("11_t7x1p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="S2" parent="." unique_id=1485789100 node_paths=PackedStringArray("SectorArea", "CapturePoints") instance=ExtResource("11_t7x1p")]
 ObjId = 6202
 SectorArea = NodePath("S2_area")
 CapturePoints = [NodePath("S2_cp1"), NodePath("S2_cp2")]
 
-[node name="S2_area" parent="S2" instance=ExtResource("3_hvicx")]
+[node name="S2_area" parent="S2" unique_id=1444808629 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
 height = 300.0
 
-[node name="S2_trigger" parent="S2" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
+[node name="S2_trigger" parent="S2" unique_id=1226247758 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 ObjId = 6212
 Area = NodePath("../S2_area")
 
-[node name="S2_cp1" parent="S2" node_paths=PackedStringArray("CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2") instance=ExtResource("19_nans0")]
+[node name="S2_cp1" parent="S2" unique_id=1698136402 node_paths=PackedStringArray("CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2") instance=ExtResource("19_nans0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -25)
 InitialOwner = 1
 ObjId = 6420
-OutlineSetting = 1
 CaptureArea = NodePath("S2_cp1_area")
 InfantrySpawnPoints_Team1 = [NodePath("S2_cp1_t1_spawnpoint1"), NodePath("S2_cp1_t1_spawnpoint2")]
 InfantrySpawnPoints_Team2 = [NodePath("S2_cp1_t2_spawnpoint1"), NodePath("S2_cp1_t2_spawnpoint2")]
 
-[node name="S2_cp1_area" parent="S2/S2_cp1" instance=ExtResource("3_hvicx")]
+[node name="S2_cp1_area" parent="S2/S2_cp1" unique_id=1029589012 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
 height = 20.0
 
-[node name="S2_cp1_t1_spawnpoint1" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t1_spawnpoint1" parent="S2/S2_cp1" unique_id=1683056465 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
 
-[node name="S2_cp1_t1_spawnpoint2" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t1_spawnpoint2" parent="S2/S2_cp1" unique_id=1297942000 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
 
-[node name="S2_cp1_t2_spawnpoint1" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t2_spawnpoint1" parent="S2/S2_cp1" unique_id=1094620064 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
 
-[node name="S2_cp1_t2_spawnpoint2" parent="S2/S2_cp1" instance=ExtResource("5_cluh4")]
+[node name="S2_cp1_t2_spawnpoint2" parent="S2/S2_cp1" unique_id=259486998 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 4)
 
-[node name="S2_cp2" parent="S2" node_paths=PackedStringArray("CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2") instance=ExtResource("19_nans0")]
+[node name="S2_cp2" parent="S2" unique_id=368171764 node_paths=PackedStringArray("CaptureArea", "InfantrySpawnPoints_Team1", "InfantrySpawnPoints_Team2") instance=ExtResource("19_nans0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 25)
 InitialOwner = 1
 ObjId = 6421
-OutlineSetting = 1
 CaptureArea = NodePath("S2_cp2_area")
 InfantrySpawnPoints_Team1 = [NodePath("S2_cp2_t1_spawnpoint1"), NodePath("S2_cp2_t1_spawnpoint2")]
 InfantrySpawnPoints_Team2 = [NodePath("S2_cp2_t2_spawnpoint1"), NodePath("S2_cp2_t2_spawnpoint2")]
 
-[node name="S2_cp2_area" parent="S2/S2_cp2" instance=ExtResource("3_hvicx")]
+[node name="S2_cp2_area" parent="S2/S2_cp2" unique_id=1279263 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
 height = 20.0
 
-[node name="S2_cp2_t1_spawnpoint1" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t1_spawnpoint1" parent="S2/S2_cp2" unique_id=880898376 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
 
-[node name="S2_cp2_t1_spawnpoint2" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t1_spawnpoint2" parent="S2/S2_cp2" unique_id=173610287 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
 
-[node name="S2_cp2_t2_spawnpoint1" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t2_spawnpoint1" parent="S2/S2_cp2" unique_id=214092782 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
 
-[node name="S2_cp2_t2_spawnpoint2" parent="S2/S2_cp2" instance=ExtResource("5_cluh4")]
+[node name="S2_cp2_t2_spawnpoint2" parent="S2/S2_cp2" unique_id=312189414 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 4)
 
-[node name="S2_hq" parent="S2" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
+[node name="S2_hq" parent="S2" unique_id=1038300134 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
 AltTeam = 0
-ObjId = 6222
 VehicleSpawnersEnabled = true
+ObjId = 6222
 HQArea = NodePath("../S2_area")
 HQProtectionAreaVolume = NodePath("../S2_area")
 InfantrySpawns = [NodePath("S2_hq_spawnpoint1"), NodePath("S2_hq_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t1_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t1_spawnpoint2"), NodePath("../S2_cp1/S2_cp1_t2_spawnpoint1"), NodePath("../S2_cp1/S2_cp1_t2_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t1_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t1_spawnpoint2"), NodePath("../S2_cp2/S2_cp2_t2_spawnpoint1"), NodePath("../S2_cp2/S2_cp2_t2_spawnpoint2")]
 VehicleSpawners = [NodePath("S2_hq_vehicle1")]
 
-[node name="S2_hq_spawnpoint1" parent="S2/S2_hq" instance=ExtResource("5_cluh4")]
+[node name="S2_hq_spawnpoint1" parent="S2/S2_hq" unique_id=1455576059 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="S2_hq_spawnpoint2" parent="S2/S2_hq" instance=ExtResource("5_cluh4")]
+[node name="S2_hq_spawnpoint2" parent="S2/S2_hq" unique_id=182001853 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="S2_hq_vehicle1" parent="S2/S2_hq" instance=ExtResource("17_omiuj")]
+[node name="S2_hq_vehicle1" parent="S2/S2_hq" unique_id=1923160963 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 ObjId = 6320
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="S3" parent="." node_paths=PackedStringArray("SectorArea", "MCOMs") instance=ExtResource("11_t7x1p")]
+[node name="S3" parent="." unique_id=1608799645 node_paths=PackedStringArray("SectorArea", "MCOMs") instance=ExtResource("11_t7x1p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 0)
 ObjId = 6203
 SectorArea = NodePath("S3_area")
 MCOMs = [NodePath("S3_mcom1"), NodePath("S3_mcom2")]
 
-[node name="S3_area" parent="S3" instance=ExtResource("3_hvicx")]
+[node name="S3_area" parent="S3" unique_id=1965334879 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
 height = 300.0
 
-[node name="S3_trigger" parent="S3" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
+[node name="S3_trigger" parent="S3" unique_id=1831531365 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 ObjId = 6213
 Area = NodePath("../S3_area")
 
-[node name="S3_mcom1" parent="S3" instance=ExtResource("15_c1odg")]
+[node name="S3_mcom1" parent="S3" unique_id=1838385357 instance=ExtResource("15_c1odg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -25)
 ObjId = 6430
 
-[node name="S3_mcom2" parent="S3" instance=ExtResource("15_c1odg")]
+[node name="S3_mcom2" parent="S3" unique_id=851621755 instance=ExtResource("15_c1odg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 25)
 ObjId = 6431
 
-[node name="S3_hq" parent="S3" node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
+[node name="S3_hq" parent="S3" unique_id=1313731148 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
 AltTeam = 0
-ObjId = 6223
 VehicleSpawnersEnabled = true
+ObjId = 6223
 HQArea = NodePath("../S3_area")
 HQProtectionAreaVolume = NodePath("../S3_area")
 InfantrySpawns = [NodePath("S3_hq_spawnpoint1"), NodePath("S3_hq_spawnpoint2")]
 VehicleSpawners = [NodePath("S3_hq_vehicle1")]
 
-[node name="S3_hq_spawnpoint1" parent="S3/S3_hq" instance=ExtResource("5_cluh4")]
+[node name="S3_hq_spawnpoint1" parent="S3/S3_hq" unique_id=1947920092 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="S3_hq_spawnpoint2" parent="S3/S3_hq" instance=ExtResource("5_cluh4")]
+[node name="S3_hq_spawnpoint2" parent="S3/S3_hq" unique_id=464957746 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="S3_hq_vehicle1" parent="S3/S3_hq" instance=ExtResource("17_omiuj")]
+[node name="S3_hq_vehicle1" parent="S3/S3_hq" unique_id=927934795 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 ObjId = 6330
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq" parent="." node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
+[node name="t2_hq" parent="." unique_id=205916675 node_paths=PackedStringArray("HQArea", "HQProtectionAreaVolume", "InfantrySpawns", "VehicleSpawners") instance=ExtResource("1_48eg8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, 0, 0)
 AltTeam = 0
-ObjId = 6150
 VehicleSpawnersEnabled = true
+ObjId = 6150
 HQArea = NodePath("t2_hq_area")
 HQProtectionAreaVolume = NodePath("t2_hq_area")
 InfantrySpawns = [NodePath("t2_hq_spawnpoint1"), NodePath("t2_hq_spawnpoint2"), NodePath("t2_hq_spawnpoint3"), NodePath("t2_hq_spawnpoint4")]
 VehicleSpawners = [NodePath("t2_hq_vehicle1"), NodePath("t2_hq_vehicle2"), NodePath("t2_hq_vehicle3"), NodePath("t2_hq_vehicle4"), NodePath("t2_hq_vehicle5"), NodePath("t2_hq_vehicle6"), NodePath("t2_hq_vehicle7"), NodePath("t2_hq_vehicle8"), NodePath("t2_hq_vehicle9"), NodePath("t2_hq_vehicle10")]
 
-[node name="t2_hq_area" parent="t2_hq" instance=ExtResource("3_hvicx")]
+[node name="t2_hq_area" parent="t2_hq" unique_id=480226916 instance=ExtResource("3_hvicx")]
 points = PackedVector2Array(-100, -100, 100, -100, 100, 100, -100, 100)
 height = 300.0
 
-[node name="t2_hq_trigger" parent="t2_hq" node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
+[node name="t2_hq_trigger" parent="t2_hq" unique_id=933471398 node_paths=PackedStringArray("Area") instance=ExtResource("13_bekln")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 ObjId = 6151
 Area = NodePath("../t2_hq_area")
 
-[node name="t2_hq_spawnpoint1" parent="t2_hq" instance=ExtResource("5_cluh4")]
+[node name="t2_hq_spawnpoint1" parent="t2_hq" unique_id=1702999694 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="t2_hq_spawnpoint2" parent="t2_hq" instance=ExtResource("5_cluh4")]
+[node name="t2_hq_spawnpoint2" parent="t2_hq" unique_id=427845402 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
-[node name="t2_hq_spawnpoint3" parent="t2_hq" instance=ExtResource("5_cluh4")]
+[node name="t2_hq_spawnpoint3" parent="t2_hq" unique_id=1468963319 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="t2_hq_spawnpoint4" parent="t2_hq" instance=ExtResource("5_cluh4")]
+[node name="t2_hq_spawnpoint4" parent="t2_hq" unique_id=1439282096 instance=ExtResource("5_cluh4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="t2_hq_vehicle1" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle1" parent="t2_hq" unique_id=11830403 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 10)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle2" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle2" parent="t2_hq" unique_id=384739241 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 10)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle3" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle3" parent="t2_hq" unique_id=69393614 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle4" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle4" parent="t2_hq" unique_id=1824303127 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 10)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle5" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle5" parent="t2_hq" unique_id=1223264973 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle6" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle6" parent="t2_hq" unique_id=494918163 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 18)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle7" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle7" parent="t2_hq" unique_id=1803441199 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 18)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle8" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle8" parent="t2_hq" unique_id=255792352 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle9" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle9" parent="t2_hq" unique_id=1662464775 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 18)
 VehicleType = 22
 P_AutoSpawnEnabled = true
 
-[node name="t2_hq_vehicle10" parent="t2_hq" instance=ExtResource("17_omiuj")]
+[node name="t2_hq_vehicle10" parent="t2_hq" unique_id=1416866494 instance=ExtResource("17_omiuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 18)
 VehicleType = 22
 P_AutoSpawnEnabled = true
