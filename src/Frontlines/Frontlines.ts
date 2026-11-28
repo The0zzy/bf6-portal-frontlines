@@ -130,7 +130,7 @@ export namespace Frontlines {
     }
 
     /**
-     * 
+     *
      * @returns mod.Team the team that currently holds more territory; ties return the neutral team (team 0).
      */
     function getTimeLimitWinner(): mod.Team {
@@ -340,6 +340,10 @@ export namespace Frontlines {
         isDay = isDayAt(lastElapsedSeconds);
         mod.SetGameModeTimeLimit(frontlinesSettings.timeLimit * 60 * 2);
         mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
+        mod.SetScoreboardHeader(
+            mod.Message(mod.stringkeys.frontlines.team1),
+            mod.Message(mod.stringkeys.frontlines.team2),
+        )
         mod.SetScoreboardColumnNames(
             mod.Message(mod.stringkeys.frontlines.captures),
             mod.Message(mod.stringkeys.frontlines.kd),

@@ -47,6 +47,8 @@
         "deaths": "Deaths",
         "assists": "Assists",
         "enemyTerritoryMSG": "ENEMY TERRITORY",
-        "spottedMSG": "You are spotted!"
+        "spottedMSG": "You are spotted!",
+        "team1": "NATO",
+        "team2": "Pax Armata"
     }
 }
